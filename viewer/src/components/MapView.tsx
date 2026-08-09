@@ -149,18 +149,34 @@ export default function MapView({
     }
   }
 
+  /**
+   * Wheel zoom, attached directly rather than through React's `onWheel`.
+   *
+   * React registers wheel listeners as passive at the document root, so `preventDefault` inside a
+   * synthetic wheel handler does nothing except log "Unable to preventDefault inside passive event
+   * listener invocation" on every notch. The page therefore scrolled or pinch-zoomed underneath the
+   * map while the map zoomed too. A native listener with `{ passive: false }` is the only way to
+   * claim the gesture.
+   */
+  useEffect(() => {
+    const svg = svgRef.current;
+    if (!svg) return;
+    const onWheel = (event: WheelEvent) => {
+      event.preventDefault();
+      const anchor = toScene(event.clientX, event.clientY);
+      camera.zoomBy(Math.exp(event.deltaY * 0.0016), anchor);
+      setView(camera.current);
+    };
+    svg.addEventListener('wheel', onWheel, { passive: false });
+    return () => svg.removeEventListener('wheel', onWheel);
+  });
+
   return (
     <div className="map-view" ref={containerRef}>
       <svg
         ref={svgRef}
         viewBox={`${vMinX} ${-vMaxY} ${viewWidth} ${viewHeight}`}
         preserveAspectRatio="xMidYMid slice"
-        onWheel={(event) => {
-          event.preventDefault();
-          const anchor = toScene(event.clientX, event.clientY);
-          camera.zoomBy(Math.exp(event.deltaY * 0.0016), anchor);
-          setView(camera.current);
-        }}
         onPointerDown={(event) => {
           (event.target as Element).setPointerCapture?.(event.pointerId);
           dragRef.current = { x: event.clientX, y: event.clientY };
