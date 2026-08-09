@@ -1,5 +1,6 @@
 import type { TourScript } from '@d3d/contracts';
 import type { KernelEvents } from '@d3d/viewer-kernel';
+import CollapsiblePanel from './CollapsiblePanel';
 
 interface Props {
   tour: TourScript;
@@ -15,27 +16,38 @@ function clock(seconds: number): string {
   return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`;
 }
 
-export default function TourPanel({ tour, progress, speed, awaitingUser, onControl, onSpeed }: Props) {
+export default function TourPanel({
+  tour,
+  progress,
+  speed,
+  awaitingUser,
+  onControl,
+  onSpeed,
+}: Props) {
   const ratio = progress && progress.totalS > 0 ? progress.elapsedS / progress.totalS : 0;
 
-  return (
-    <div className="tour-panel">
-      <div className="tour-head">
-        <div>
-          <strong>{tour.title}</strong>
-          {tour.party && (
-            <span className="muted small">
-              {' '}
-              · {tour.party.label ?? `party of ${tour.party.size}`}
-              {tour.party.pace_mps ? ` · ${tour.party.pace_mps} m/s` : ''}
-            </span>
-          )}
-        </div>
-        <div className="muted small">
-          {progress ? `${clock(progress.elapsedS)} / ${clock(progress.totalS)}` : ''}
-        </div>
-      </div>
+  // The summary row has to carry enough that a collapsed tour is still followable: where the party
+  // is, what is happening, and how far through it is.
+  const summary = (
+    <div className="tour-summary">
+      <span className="tour-summary-title">{tour.title}</span>
+      <span className="muted small tour-summary-status">
+        {progress
+          ? progress.phase === 'travelling'
+            ? `→ ${progress.nextStopName ?? 'next stop'} · ${Math.round(progress.distanceRemainingM)} m`
+            : progress.phase === 'dwelling'
+              ? `at ${progress.stopName}`
+              : progress.phase
+          : 'ready'}
+      </span>
+      <span className="muted small">
+        {progress ? `${clock(progress.elapsedS)} / ${clock(progress.totalS)}` : ''}
+      </span>
+    </div>
+  );
 
+  return (
+    <CollapsiblePanel storageKey="tour" className="tour-panel" summary={summary}>
       <div className="tour-progress">
         <div className="tour-progress-fill" style={{ width: `${Math.min(100, ratio * 100)}%` }} />
       </div>
@@ -61,20 +73,10 @@ export default function TourPanel({ tour, progress, speed, awaitingUser, onContr
         ))}
       </ol>
 
-      {progress && (
-        <div className="tour-status muted small">
-          {progress.phase === 'travelling'
-            ? `walking to ${progress.nextStopName ?? 'the next stop'} · ${Math.round(progress.distanceRemainingM)} m to go`
-            : progress.phase === 'dwelling'
-              ? `at ${progress.stopName}`
-              : progress.phase}
-        </div>
-      )}
-
       <div className="tour-controls">
-        <button onClick={() => onControl('previous')}>◀</button>
+        <button onClick={() => onControl('previous')} title="Previous stop">◀</button>
         <button onClick={() => onControl('toggle')}>play / pause</button>
-        <button onClick={() => onControl('next')}>▶</button>
+        <button onClick={() => onControl('next')} title="Next stop">▶</button>
         <button onClick={() => onControl('restart')}>restart</button>
         <label className="speed">
           speed
@@ -93,6 +95,6 @@ export default function TourPanel({ tour, progress, speed, awaitingUser, onContr
           The tour is waiting for you — continue
         </button>
       )}
-    </div>
+    </CollapsiblePanel>
   );
 }

@@ -1,5 +1,6 @@
 import type { AssetMetadata } from '@d3d/contracts';
 import { CONFIDENCE_COLORS, CONFIDENCE_LABELS } from '@d3d/contracts';
+import CollapsiblePanel from './CollapsiblePanel';
 
 const LABELS: Record<string, string> = {
   address: 'Address',
@@ -31,7 +32,12 @@ const UNITS: Record<string, string> = {
   lot_area_m2: ' m²',
 };
 
-export default function MetadataPanel({ metadata }: { metadata: AssetMetadata | null }) {
+interface Props {
+  metadata: AssetMetadata | null;
+  onClose?: () => void;
+}
+
+export default function MetadataPanel({ metadata, onClose }: Props) {
   if (!metadata) {
     return (
       <section className="panel">
@@ -39,6 +45,9 @@ export default function MetadataPanel({ metadata }: { metadata: AssetMetadata | 
         <p className="muted">
           Click a building to read its record. Every value shown comes from a registered source and
           carries a confidence grade.
+        </p>
+        <p className="muted small">
+          Double-click anywhere in the scene to walk there.
         </p>
       </section>
     );
@@ -48,16 +57,36 @@ export default function MetadataPanel({ metadata }: { metadata: AssetMetadata | 
     ([, value]) => value !== null && value !== '',
   );
 
-  return (
-    <section className="panel">
-      <h2>{metadata.display_name}</h2>
+  const summary = (
+    <div className="metadata-summary">
+      <span
+        className="chip small"
+        style={{ background: CONFIDENCE_COLORS[metadata.confidence] }}
+        title={CONFIDENCE_LABELS[metadata.confidence]}
+      >
+        {metadata.confidence}
+      </span>
+      <span className="metadata-summary-title">{metadata.display_name}</span>
+    </div>
+  );
 
-      <div className="confidence-row">
-        <span className="chip" style={{ background: CONFIDENCE_COLORS[metadata.confidence] }}>
-          {metadata.confidence}
-        </span>
-        <span className="muted small">{CONFIDENCE_LABELS[metadata.confidence]}</span>
-      </div>
+  return (
+    <CollapsiblePanel
+      // Keyed by asset, so opening a new building always shows its details rather than inheriting
+      // the collapsed state of the last one.
+      key={metadata.asset_id}
+      storageKey="metadata"
+      className="panel metadata-panel"
+      summary={summary}
+      actions={
+        onClose ? (
+          <button className="icon-button" onClick={onClose} title="Clear selection">
+            ✕
+          </button>
+        ) : undefined
+      }
+    >
+      <p className="muted small confidence-note">{CONFIDENCE_LABELS[metadata.confidence]}</p>
 
       <dl className="kv">
         {attributes.map(([key, value]) => (
@@ -104,6 +133,6 @@ export default function MetadataPanel({ metadata }: { metadata: AssetMetadata | 
           <dd>{metadata.review_status}</dd>
         </div>
       </dl>
-    </section>
+    </CollapsiblePanel>
   );
 }

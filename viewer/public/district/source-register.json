@@ -134,16 +134,49 @@
    "grants_confidence": "A",
    "verified": true,
    "notes": "Position, species and trunk diameter (dbh, inches) per street tree. Positions and species are grade A; the rendered canopy is a procedural form for the genus and is therefore graded C."
+  },
+  {
+   "source_id": "DSRC-011",
+   "title": "NYC Building Footprints, Lower Manhattan frontage",
+   "tier": "A",
+   "publisher": "NYC Office of Technology and Innovation, via NYC Open Data",
+   "url": "https://data.cityofnewyork.us/resource/5zhs-2jue.json",
+   "accessed": "2026-08-09",
+   "license": "NYC Open Data Terms of Use",
+   "attribution_required": true,
+   "attribution_text": "Building footprints: NYC Open Data (OTI)",
+   "native_crs": "EPSG:2263",
+   "vertical_datum": "NAVD88",
+   "units": "feet",
+   "positional_accuracy_m": 0.61,
+   "grants_confidence": "A",
+   "verified": true,
+   "notes": "Same dataset as DSRC-001, queried across the river for the skyline visible from DUMBO. Delivered as silhouette blocks, so the rendered geometry is graded B even though the source is A. See DOQ-008."
+  },
+  {
+   "source_id": "DSRC-012",
+   "title": "OpenStreetMap ferry routes and terminals",
+   "tier": "B",
+   "publisher": "OpenStreetMap contributors, via Overpass API",
+   "url": "https://overpass-api.de/api/interpreter",
+   "accessed": "2026-08-09",
+   "license": "ODbL-1.0",
+   "attribution_required": true,
+   "attribution_text": "\u00a9 OpenStreetMap contributors",
+   "native_crs": "EPSG:4326",
+   "grants_confidence": "B",
+   "verified": true,
+   "notes": "East River ferry route lines and landings, including the real Pier 11 to DUMBO/Fulton Ferry service. Vessels follow these lines; their speed and spacing are nominal, not a timetable. See DOQ-009."
   }
  ],
  "provenance": {
   "module_id": "dumbo-district",
   "generated_by": "dumbo-district-3d/scripts@1.0.0",
-  "generated_at": "2026-08-09T17:18:24+00:00",
+  "generated_at": "2026-08-09T18:24:27+00:00",
   "source_documents": [
    {
     "path": "DUMBO-GEOSPATIAL-CONTROL.md",
-    "sha256": "8198094ff9dfb950a4d5a77f356f7960c079d8c55574b216959db4a00047bf32"
+    "sha256": "e357b5304f2c107abcc8a176286584b429850f8ca72438cda65bf3b750fa5e5b"
    }
   ]
  }

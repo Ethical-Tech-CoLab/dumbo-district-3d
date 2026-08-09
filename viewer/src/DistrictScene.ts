@@ -8,12 +8,14 @@
  */
 
 import * as THREE from 'three';
-import type { AssetMetadata, Tile, ViewerMode } from '@d3d/contracts';
+import type { AssetMetadata, Placement, Tile, ViewerMode } from '@d3d/contracts';
 import {
   EventBus,
   Frame,
   LodSelector,
   TileStreamer,
+  applyPlacement,
+  resolvePlacement,
   type KernelEvents,
   type LoadedModule,
   type ModuleRegistry,
@@ -29,6 +31,14 @@ import {
   type PavingDocument,
 } from './SceneDressing';
 import type { ScenePropSet } from '@d3d/contracts';
+import {
+  WaterScene,
+  buildHorizon,
+  seasonForDate,
+  type HorizonDocument,
+  type Season,
+  type WaterDocument,
+} from './FarField';
 
 export interface TileBuilding {
   id: string;
@@ -98,12 +108,15 @@ export class DistrictScene {
   private highlight: THREE.Mesh | null = null;
   private confidenceOverlay = false;
   private bridgePlaceholder: THREE.Group | null = null;
+  private bridgeProxyPending = false;
   private ground: GroundGrid | null = null;
   private groundMesh: THREE.Mesh | null = null;
   private pavingGroup: THREE.Group | null = null;
   private propsGroup: THREE.Group | null = null;
   private facades: FacadeDocument | null = null;
   private propStats = { instances: 0, drawCalls: 0 };
+  private horizonGroup: THREE.Group | null = null;
+  private water: WaterScene | null = null;
 
   constructor(canvas: HTMLCanvasElement, options: SceneOptions) {
     this.options = options;
@@ -125,7 +138,34 @@ export class DistrictScene {
     this.scene.add(this.sun);
 
     this.scene.add(this.tileRoot);
-    this.addWater();
+  }
+
+  // ------------------------------------------------------------- far field
+
+  /** Distant skyline across the river. Real footprints, reduced to silhouettes. */
+  setHorizon(doc: HorizonDocument): void {
+    if (this.horizonGroup) this.scene.remove(this.horizonGroup);
+    this.horizonGroup = buildHorizon(doc);
+    this.scene.add(this.horizonGroup);
+  }
+
+  /** Water surface plus ferries and seasonal recreational craft. */
+  setWater(doc: WaterDocument, season: Season = seasonForDate()): void {
+    if (this.water) {
+      this.scene.remove(this.water.group);
+      this.water.dispose();
+    }
+    this.water = new WaterScene(doc, season);
+    this.scene.add(this.water.group);
+  }
+
+  get vesselCount(): number {
+    return this.water?.vesselCount ?? 0;
+  }
+
+  /** Advance animated far-field content. Called from the shell's frame loop. */
+  updateFarField(dtSeconds: number): void {
+    this.water?.update(dtSeconds);
   }
 
   // ------------------------------------------------------------------ ground
@@ -173,6 +213,16 @@ export class DistrictScene {
 
     for (let row = 0; row < rows - 1; row++) {
       for (let col = 0; col < cols - 1; col++) {
+        // Skip quads whose corners are all water, so the East River is water rather than
+        // extrapolated land. A quad touching the shore is kept, which gives a bank at the edge.
+        if (
+          !grid.isLand(col, row) &&
+          !grid.isLand(col + 1, row) &&
+          !grid.isLand(col, row + 1) &&
+          !grid.isLand(col + 1, row + 1)
+        ) {
+          continue;
+        }
         const a = row * cols + col;
         const b = a + 1;
         const c = a + cols;
@@ -192,19 +242,6 @@ export class DistrictScene {
     const mesh = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({ vertexColors: true }));
     this.scene.add(mesh);
     this.groundMesh = mesh;
-  }
-
-  private addWater(): void {
-    // The East River, north and west of the district. Rendered at mean high water, which sits
-    // 0.59 m above this frame's NAVD88 zero (DCTL-010).
-    const water = new THREE.Mesh(
-      new THREE.PlaneGeometry(5000, 5000),
-      new THREE.MeshLambertMaterial({ color: 0x3f5c74, transparent: true, opacity: 0.92 }),
-    );
-    water.rotation.x = -Math.PI / 2;
-    water.position.set(0, 0.59, 0);
-    water.renderOrder = -1;
-    this.scene.add(water);
   }
 
   // --------------------------------------------------------------- dressing
@@ -515,6 +552,45 @@ export class DistrictScene {
     return null;
   }
 
+  /**
+   * Ground point under a screen position, for double-click-to-walk-there.
+   *
+   * Raycasts against terrain and paving first; if the ray misses both — pointing at sky, say —
+   * intersects the plane at the camera's own foot height, which keeps the gesture responsive
+   * rather than silently doing nothing.
+   */
+  pickGround(ndcX: number, ndcY: number): [number, number] | null {
+    this.raycaster.setFromCamera(new THREE.Vector2(ndcX, ndcY), this.camera);
+
+    const targets: THREE.Object3D[] = [];
+    if (this.groundMesh) targets.push(this.groundMesh);
+    if (this.pavingGroup) targets.push(this.pavingGroup);
+    // Buildings too: double-clicking a facade should walk you to its base, not do nothing.
+    targets.push(this.tileRoot);
+
+    const hits = this.raycaster.intersectObjects(targets, true);
+    if (hits.length) {
+      const p = hits[0].point;
+      const scene = Frame.renderToScene([p.x, p.y, p.z]);
+      return [scene[0], scene[1]];
+    }
+
+    // Nothing hit — the ray is pointing at sky. Fall back to the horizontal plane at the camera's
+    // own foot level, so the gesture still does something sensible instead of silently failing.
+    const origin = this.raycaster.ray.origin;
+    const direction = this.raycaster.ray.direction;
+    if (direction.y >= -1e-4) return null;
+    const footY = origin.y - this.eyeHeightM;
+    const t = (footY - origin.y) / direction.y;
+    if (!Number.isFinite(t) || t <= 0) return null;
+    const hit = origin.clone().addScaledVector(direction, t);
+    const scene = Frame.renderToScene([hit.x, hit.y, hit.z]);
+    return [scene[0], scene[1]];
+  }
+
+  /** Eye height the shell is using, so ground picking can fall back to the right plane. */
+  eyeHeightM = 1.65;
+
   /** Where a registered asset ended up, so tour `look_at` can target it. */
   resolveBuildingAnchor(localId: string): [number, number, number] | null {
     const building = this.metadataById.get(localId);
@@ -585,17 +661,95 @@ export class DistrictScene {
    * rule has a visible, honest failure mode: when the bridge module ships a real proxy, this is
    * deleted and nothing else changes.
    */
+  /**
+   * Show a foreign module's content: its published proxy if it has one, otherwise a labelled
+   * placeholder.
+   *
+   * The placeholder is deliberately ugly — a red wireframe envelope sized from the owner's own
+   * published control dimensions — so that nobody mistakes it for their model. When they publish a
+   * real proxy this method loads that instead and the placeholder never appears.
+   */
   ensureBridgePlaceholder(): void {
-    if (this.bridgePlaceholder) return;
+    if (this.bridgePlaceholder || this.bridgeProxyPending) return;
     const bridge = this.options.registry.module('manhattan-bridge');
     if (!bridge?.manifest.placement) return;
 
+    const proxyUrn = bridge.manifest.proxy?.asset_id;
+    const entry = proxyUrn ? this.options.registry.resolve(proxyUrn) : null;
+    const capped = bridge.manifest.proxy?.max_level ?? 2;
+    const variant = entry?.asset.variants
+      ?.filter((v) => v.level <= capped && v.url && (v.format === 'glb' || v.format === 'gltf'))
+      .sort((a, b) => b.level - a.level)[0];
+
+    if (variant?.url) {
+      this.bridgeProxyPending = true;
+      const url = this.options.registry.urlFor(entry!.module, variant.url);
+      void this.loadForeignProxy(url, bridge.manifest.placement, proxyUrn!);
+      return;
+    }
+
+    this.addPlaceholderEnvelope(bridge);
+  }
+
+  /**
+   * Load a foreign module's GLB and place it by the placement it published.
+   *
+   * The module authors in its own engineering frame; `placement` composes that into the shared
+   * scene frame, including the vertical datum correction. Nothing here knows what the geometry is.
+   */
+  private async loadForeignProxy(
+    url: string,
+    placement: Placement,
+    urn: string,
+  ): Promise<void> {
+    try {
+      const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
+      const loader = new GLTFLoader();
+      const gltf = await loader.loadAsync(url);
+
+      const resolved = resolvePlacement(placement);
+      const group = new THREE.Group();
+      group.add(gltf.scene);
+
+      // Compose the module's local frame into the scene frame, then convert to render axes.
+      const origin = applyPlacement(resolved, [0, 0, 0]);
+      const renderOrigin = Frame.sceneToRender(origin);
+      group.position.set(renderOrigin[0], renderOrigin[1], renderOrigin[2]);
+      group.rotation.y = ((placement.yaw_deg ?? 0) * Math.PI) / 180;
+      group.scale.setScalar(placement.scale ?? 1);
+
+      group.traverse((node) => {
+        if (node instanceof THREE.Mesh) {
+          node.userData = { foreign: true, selectable: false, urn };
+        }
+      });
+      group.userData = { foreignModule: 'manhattan-bridge', urn };
+
+      this.scene.add(group);
+      this.bridgePlaceholder = group;
+      this.options.bus.emit('module:loaded', { moduleId: 'manhattan-bridge' });
+    } catch (error) {
+      this.options.bus.emit('warning', {
+        code: 'foreign.proxy_failed',
+        message:
+          `The Manhattan Bridge proxy could not be loaded (${error instanceof Error ? error.message : String(error)}); ` +
+          'falling back to a labelled placeholder.',
+      });
+      const bridge = this.options.registry.module('manhattan-bridge');
+      if (bridge) this.addPlaceholderEnvelope(bridge);
+    } finally {
+      this.bridgeProxyPending = false;
+    }
+  }
+
+  private addPlaceholderEnvelope(bridge: LoadedModule): void {
     const envelope = (bridge.manifest.extensions?.['dumbo-district'] as
       | { placeholder_envelope?: { length_m: number; tower_height_m: number; deck_width_m: number } }
       | undefined)?.placeholder_envelope;
     if (!envelope) return;
 
     const placement = bridge.manifest.placement;
+    if (!placement) return;
     const group = new THREE.Group();
 
     const box = new THREE.BoxGeometry(envelope.length_m, 3, envelope.deck_width_m);
@@ -614,8 +768,6 @@ export class DistrictScene {
       group.add(tower);
     }
 
-    // The deck sits at the bridge's own clearance above its datum; the placement's z already
-    // carries the MHW -> NAVD88 correction (DCTL-010).
     group.position.set(placement.translation_m[0], placement.translation_m[2] + 41, -placement.translation_m[1]);
     group.rotation.y = ((placement.yaw_deg ?? 0) * Math.PI) / 180;
     group.userData = { placeholder: true, moduleId: 'manhattan-bridge' };

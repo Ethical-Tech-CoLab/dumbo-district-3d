@@ -2,8 +2,8 @@
 
 Where the DUMBO district twin goes next, and why in this order.
 
-Phase 1 is complete and reported in [IMPLEMENTATION-REPORT.md](IMPLEMENTATION-REPORT.md).
-Phase 2 items marked ✅ were delivered alongside this document.
+Phase 1 is reported in [IMPLEMENTATION-REPORT.md](IMPLEMENTATION-REPORT.md).
+Items marked ✅ have shipped.
 
 ---
 
@@ -19,143 +19,112 @@ Three tests, applied in order:
    can see.
 
 Deliberately *not* a criterion: how impressive it looks in isolation. Photogrammetry would be the
-flashiest next step and is close to the bottom, because aligning it to an unregistered terrain
-surface would mean redoing it.
+flashiest next step and is near the bottom, because aligning it to an unregistered terrain surface
+would mean redoing it.
 
 ---
 
-## Phase 2 — accuracy and presence
+## Shipped
 
-### M2.1 — Basemap layers in map view ✅
-
-Terrain, street, satellite and hybrid, in the idiom users expect from Google and Bing, without
-adopting a vendor SDK or a second coordinate system.
-
-Delivered: `basemap.schema.json`, `BasemapController` in the kernel, five credential-free layers,
-and [BASEMAP-LAYERS.md](../digital-3d-shared-contracts/BASEMAP-LAYERS.md).
-
-A side effect worth more than the feature: the red corridor marking tiles that declare the Manhattan
-Bridge lands exactly on the real bridge in both OSM street and USGS satellite imagery. That is a
-free, continuous check on this module's georeferencing.
-
-### M2.2 — Scene dressing in walk view ✅
-
-1,252 street trees from the Forestry census, 1,986 paved surfaces with kerbs, and 381 facades with
-procedural window banding derived from PLUTO class and year.
-
-Delivered: `scene-props.schema.json`, `build_scene_dressing.py`, and
-[SCENE-DRESSING.md](../digital-3d-shared-contracts/SCENE-DRESSING.md). Measured at 60 fps with
-1,252 instances in 30 draw calls.
-
-### M2.3 — Terrain from NYC DEM and LiDAR — **highest priority remaining**
-
-Retires `DOQ-003`, the largest inferred component in the model.
-
-Ground height is currently interpolated from building base elevations. Those samples are grade A;
-the surface between them is grade C, and everything that touches the ground inherits that: the
-walking camera, every tree, every paving quad, every tour stop.
-
-- Ingest `DSRC-008` (already registered, deliberately, so the remedy has a name).
-- Replace `build_ground_grid` with a resampled DEM; keep the same output contract so nothing
-  downstream changes.
-- Promote the ground surface from `C` to `A` and close `DOQ-003`.
-
-Everything below inherits accuracy from this, which is why it goes first.
-
-### M2.4 — Consume the real bridge proxy
-
-The bridge team has begun publishing (their manifest and attribution now appear in our viewer). When
-their level-2 proxy GLB lands:
-
-- Delete the red wireframe placeholder from `DistrictScene`.
-- Drop the `dumbo-district.placeholder_envelope` extension from their manifest.
-- Delete `viewer/public/modules/manhattan-bridge/bridge-manifest.json` and point `depends_on` at
-  their published URL.
-- Re-check the provisional placement against their geometry once it is visible in context.
-
-### M2.5 — Ratify or correct the bridge placement
-
-`DOQ-001` / their `OQ-009`. Ours is grade D, derived from OSM centreline. Once M2.4 lands the
-placement can be judged visually against real geometry, which is a far better test than the numbers
-alone.
-
-### M2.6 — Shoreline and waterfront surfaces
-
-Water is currently an infinite plane at mean high water, with a visible seam where it meets terrain.
-NYC publishes a planimetric shoreline. Fixing this also improves the Brooklyn Bridge Park stops on
-the family tour, which are waterfront-facing.
-
-### M2.7 — Traced sidewalk polygons
-
-Retires `DOQ-006`. Paving is currently derived from centrelines with typical widths. NYC's
-planimetric sidewalk dataset would give real kerb lines and resolve junctions properly.
-Lower priority than it looks: at walking speed the derived version reads correctly.
+| | |
+|---|---|
+| ✅ **Basemap layers** | Terrain, street, satellite, hybrid and plain. Provider-agnostic, all credential-free. [BASEMAP-LAYERS.md](../digital-3d-shared-contracts/BASEMAP-LAYERS.md) |
+| ✅ **Scene dressing** | 1,252 census street trees, 1,986 paved surfaces with kerbs, 381 procedural facades. [SCENE-DRESSING.md](../digital-3d-shared-contracts/SCENE-DRESSING.md) |
+| ✅ **Map camera** | Pan, zoom, and externally driven fly-to. A tour now opens over the whole district and flies in to its first stop. |
+| ✅ **Collapsible UI** | Tour, photos and building details collapse to a clickable status row; state persists. Double-click or double-tap walks you there. |
+| ✅ **Manhattan horizon** | 2,103 real skyline silhouettes across the river, with aerial perspective. Not a painted backdrop. |
+| ✅ **Water and vessels** | Water at mean high water, ferries on 49 real OSM routes, seasonal sailboats and jetskis. Terrain is clipped to a land mask so the river is water. |
+| ✅ **Photo survey contract** | Evidence model for crowdsourced photography, plus a volunteer capture guide. [PHOTO-SURVEY.md](../digital-3d-shared-contracts/PHOTO-SURVEY.md) |
+| ✅ **Real bridge proxy consumed** | The Manhattan Bridge team published; the viewer now loads their 4,620-triangle proxy GLB and places it by their `placement`. The red wireframe placeholder is gone, and remains only as the fallback when their module is unavailable. |
 
 ---
 
-## Phase 3 — fidelity
+## Note on the bridge integration
 
-### M3.1 — Roof forms from LiDAR
+The bridge team ratified the placement this project proposed: `provisional` is now `false` and the
+grade moved from `D` to `C`, with the same azimuth and translation. `DOQ-001` can close once we have
+re-checked it against their geometry in context.
 
-Every roof is currently flat at the dataset roof height, which is the dominant term in LOD0's
-declared 0.2 m error. LiDAR-derived roof forms would justify a mesh-based LOD0 and let that error
-figure drop honestly.
-
-Depends on M2.3, since it uses the same LiDAR ingest.
-
-### M3.2 — Facade imagery
-
-Retires `DOQ-007`. Facades currently describe the *kind* of building. Street-level imagery would
-make them describe *that* building.
-
-Requires a licensing decision before any technical work: Mapillary is ODbL and usable; most
-commercial street imagery is not redistributable. **Resolve the licence first** — this is exactly
-the trap documented in BASEMAP-LAYERS.md §3, where an endpoint answering `200` was mistaken for
-permission.
-
-### M3.3 — District photogrammetry
-
-Deliberately last among fidelity items, despite being the most impressive. Photogrammetry must be
-aligned to a control surface; aligning it to today's interpolated ground would mean redoing it after
-M2.3. The original brief also excluded it from Phase 1, and that judgement still holds.
-
-### M3.4 — Named landmark models
-
-Jane's Carousel, the Archway, Empire Stores. These are the objects tour stops actually point at, and
-the ones a visitor recognises. The prop contract already supports it: set `url` on a prototype and
-the same instances render a real GLB.
-
-Small, high-visibility, and independent of everything else — a good candidate to slot in whenever
-modelling capacity appears.
+Their artifacts are co-served from `viewer/public/modules/`, which is **gitignored**. That is
+deliberate: committing their GLB would put bridge geometry in this repository, which the standing
+obligation below forbids. Co-serving is a deployment convenience; ownership is unchanged.
 
 ---
 
-## Phase 4 — platform
+## Next — accuracy
 
-### M4.1 — Tour recording to video
+### M3.1 — Terrain from NYC DEM and LiDAR — **highest priority**
 
-The `FrameLoop` hidden-document fallback already makes headless rendering work, which was the hard
-part. Remaining work is frame-accurate stepping and muxing.
+Retires `DOQ-003`, still the largest inferred component in the model.
 
-### M4.2 — Directions provider adapter
+Ground height is interpolated from building base elevations. Those samples are grade A; the surface
+between them is grade C, and everything touching the ground inherits it: the walking camera, every
+tree, every paving quad, every tour stop, and now the land mask that decides where the river starts.
 
-Replace `route_leg` in `build_tour.py` with a Google, Bing, Apple or OSRM response. The tour format
-was shaped as a directions format specifically so this is a rename rather than a rewrite. Worth
-doing to *prove* that claim, not because the internal router is inadequate.
+- Ingest `DSRC-008`, registered since Phase 1 so the remedy has a name.
+- Replace `build_ground_grid`, keeping the output contract so nothing downstream changes.
+- Derive the land mask from the DEM's own water surface rather than from the district boundary.
+- Promote ground from `C` to `A` and close `DOQ-003`.
 
-### M4.3 — 3D Tiles export
+### M3.2 — Run the photo campaign
 
-The tile index is deliberately 3D-Tiles-shaped. At district scale the current format is better
-(smaller, re-extrudable). At borough scale it would not be. Do this when a second district is added,
-not before.
+The contract and volunteer guide exist; the corpus does not. This is the highest-value item after
+terrain, because it retires two open questions at once and is the only one that scales with
+community effort rather than engineering time.
 
-### M4.4 — A second district
+- Seed from Mapillary (CC BY-SA, carries bearing) and Wikimedia Commons, licence-checked per file.
+- Stand up the auto-screen step: EXIF, dedupe, face and plate blurring, district clip.
+- Promote `facades.json` entries from inferred `C` to observed `B`, per building, closing `DOQ-007`
+  incrementally rather than in bulk.
 
-The real test of whether the viewer is a *tool* rather than a DUMBO application. Everything is in
-place: the frame is shared and canonical, dressing is data, basemaps are provider-agnostic, and
-nothing district-specific is compiled into the viewer.
+### M3.3 — Verify the consumed bridge proxy in context
 
-Until this is done, "the viewer is generic" is a design claim rather than a demonstrated fact.
+Their proxy now loads and renders. Remaining:
+
+- Re-check the ratified placement against their geometry from several viewpoints, then close
+  `DOQ-001` or file a correction.
+- Move from co-serving their files to fetching their published URL, which is the deployment that
+  actually proves the contract (option B in the coordination note).
+- Drop the `placeholder_envelope` extension from their manifest once the fallback is no longer
+  wanted.
+
+### M3.4 — Close the placement open question
+
+`DOQ-001` / their `OQ-009`. They have ratified the placement we proposed; we still owe a visual
+check against their geometry before closing it on our side.
+
+### M3.5 — Traced sidewalk polygons
+
+Retires `DOQ-006`. Lower priority than it looks: at walking speed the derived kerbs read correctly.
+
+### M3.6 — Shoreline geometry
+
+The land mask is currently the district boundary polygon, which traces the shoreline by inspection
+(`DOQ-005`). NYC's planimetric shoreline would make the water's edge real, and would improve the
+waterfront tour stops.
+
+---
+
+## Then — fidelity
+
+| | |
+|---|---|
+| **M4.1 Roof forms from LiDAR** | Flat roofs dominate LOD0's declared 0.2 m error. Depends on M3.1's ingest. |
+| **M4.2 Facade textures from the photo corpus** | Only after M3.2 has enough rectified, licensed images. Deriving attributes comes first; textures are a heavier step with redistribution consequences. |
+| **M4.3 Named landmark models** | Jane's Carousel, the Archway, Empire Stores — the objects tours point at. The prop contract already supports it: set `url` on a prototype. Small, high-visibility, independent. |
+| **M4.4 District photogrammetry** | Deliberately last. Must be aligned to a control surface; doing it before M3.1 means doing it twice. |
+
+---
+
+## Platform
+
+| | |
+|---|---|
+| **M5.1 Tour recording to video** | The `FrameLoop` hidden-document fallback already makes headless rendering work. Remaining: frame-accurate stepping and muxing. |
+| **M5.2 Directions provider adapter** | Replace `route_leg` with a Google, Bing, Apple or OSRM response. Worth doing to *prove* the format claim. |
+| **M5.3 3D Tiles export** | The tile index is deliberately 3D-Tiles-shaped. Do this when a second district exists, not before. |
+| **M5.4 A second district** | The real test of whether the viewer is a tool rather than a DUMBO application. Everything is in place: shared frame, dressing as data, provider-agnostic basemaps, no district-specific code in the viewer. Until this is done, "the viewer is generic" is a design claim rather than a demonstrated fact. |
+| **M5.5 Mobile pass** | Panels collapse and double-tap works, but pointer-lock walking has no touch equivalent yet. Do after M5.4 so the port does not bake in DUMBO assumptions. |
 
 ---
 
@@ -165,10 +134,9 @@ Until this is done, "the viewer is generic" is a design claim rather than a demo
 |---|---|
 | Collision / physics | A survey tool, not a game. Walking through a wall is a feature when inspecting. |
 | Interiors | No authoritative source; would be invention at district scale. |
-| Vehicles and pedestrians | Animated agents imply behavioural claims the data cannot support. |
-| Historic time slices | Interesting, but needs a temporal dimension in the contracts first. |
-| Weather and seasons | The tour contract already declares `weather`; no renderer yet. Cosmetic. |
-| Mobile / VR | Do after M4.4 proves genericity, or the port hard-codes DUMBO assumptions. |
+| Pedestrians and vehicles | Animated agents imply behavioural claims the data cannot support. Vessels are the exception, and even they are graded C and D and confined to declared routes and areas. |
+| Historic time slices | Needs a temporal dimension in the contracts first. The photo survey's `captured_at` is the beginning of one. |
+| Weather rendering | The tour contract declares `weather`; no renderer yet. Cosmetic. |
 
 ---
 
@@ -180,5 +148,6 @@ Independent of milestones, and non-negotiable:
 - **The frame anchor is frozen** for contract major version 1.
 - **Every new asset carries `source_basis`, `source_refs` and an honest `confidence`.**
 - **Every inference gets an open question ID** before it ships, not after someone notices.
-- **Attribution stays visible** — ODbL and NYC Open Data both require it.
+- **Photographs never grant grade `A`.** They are evidence of appearance, not of dimension.
+- **Attribution stays visible** — ODbL, NYC Open Data and every basemap provider require it.
 - **The build fails on frame drift.** Do not weaken that check to make a build pass.

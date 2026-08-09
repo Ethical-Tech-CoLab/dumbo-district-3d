@@ -63,7 +63,7 @@
  "route_source": {
   "provider": "internal_router",
   "profile": "walking",
-  "generated_at": "2026-08-09T16:05:24+00:00",
+  "generated_at": "2026-08-09T18:26:36+00:00",
   "attribution_text": "Route computed on OpenStreetMap data \u00a9 OpenStreetMap contributors, ODbL",
   "notes": "A* over the district walk network, split into maneuver steps at turns over 35 degrees and at street-name changes. Replace with a Google, Bing or Apple directions response by rewriting scripts/build_tour.py::route_leg and nothing else."
  },
@@ -77,11 +77,37 @@
     "height_m": 0,
     "vertical_datum": "NAVD88"
    },
-   "dwell_s": 55,
+   "dwell_s": 70,
    "on_arrive": [
     {
+     "type": "set_mode",
+     "mode": "map",
+     "map_span_m": 3200,
+     "duration_s": 2
+    },
+    {
      "type": "narrate",
-     "text": "We start where most people do: the old Fulton Ferry landing, directly under the Brooklyn Bridge. Before 1883 this was the only way across.",
+     "text": "DUMBO sits between two bridges on the Brooklyn shore of the East River. Here is the whole walk we are about to take.",
+     "duration_s": 8
+    },
+    {
+     "type": "map_focus",
+     "map_span_m": 700,
+     "duration_s": 4
+    },
+    {
+     "type": "narrate",
+     "text": "We start at the old Fulton Ferry landing, at the bottom left.",
+     "duration_s": 5
+    },
+    {
+     "type": "set_mode",
+     "mode": "walk",
+     "duration_s": 1
+    },
+    {
+     "type": "narrate",
+     "text": "Before the Brooklyn Bridge opened in 1883 this landing was the only way across. We are standing directly beneath the bridge that replaced it.",
      "duration_s": 11
     },
     {
@@ -1053,7 +1079,7 @@
  "totals": {
   "distance_m": 871.4,
   "walking_duration_s": 829.9,
-  "dwell_duration_s": 260,
-  "estimated_duration_s": 1089.9
+  "dwell_duration_s": 275,
+  "estimated_duration_s": 1104.9
  }
 }

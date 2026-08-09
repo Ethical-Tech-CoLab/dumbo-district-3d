@@ -34,7 +34,12 @@ import math
 from datetime import datetime, timezone
 from pathlib import Path
 
-from district_control import AGENT_ID, DistrictControl, point_in_ring
+from district_control import (
+    AGENT_ID,
+    DistrictControl,
+    distance_point_to_segment,
+    point_in_ring,
+)
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DATA = REPO_ROOT / "data"
@@ -914,6 +919,47 @@ def build_source_register(control: DistrictControl) -> dict:
                     "genus and is therefore graded C."
                 ),
             },
+            {
+                "source_id": "DSRC-011",
+                "title": "NYC Building Footprints, Lower Manhattan frontage",
+                "tier": "A",
+                "publisher": "NYC Office of Technology and Innovation, via NYC Open Data",
+                "url": "https://data.cityofnewyork.us/resource/5zhs-2jue.json",
+                "accessed": "2026-08-09",
+                "license": "NYC Open Data Terms of Use",
+                "attribution_required": True,
+                "attribution_text": "Building footprints: NYC Open Data (OTI)",
+                "native_crs": "EPSG:2263",
+                "vertical_datum": "NAVD88",
+                "units": "feet",
+                "positional_accuracy_m": 0.61,
+                "grants_confidence": "A",
+                "verified": True,
+                "notes": (
+                    "Same dataset as DSRC-001, queried across the river for the skyline visible "
+                    "from DUMBO. Delivered as silhouette blocks, so the rendered geometry is "
+                    "graded B even though the source is A. See DOQ-008."
+                ),
+            },
+            {
+                "source_id": "DSRC-012",
+                "title": "OpenStreetMap ferry routes and terminals",
+                "tier": "B",
+                "publisher": "OpenStreetMap contributors, via Overpass API",
+                "url": "https://overpass-api.de/api/interpreter",
+                "accessed": "2026-08-09",
+                "license": "ODbL-1.0",
+                "attribution_required": True,
+                "attribution_text": "© OpenStreetMap contributors",
+                "native_crs": "EPSG:4326",
+                "grants_confidence": "B",
+                "verified": True,
+                "notes": (
+                    "East River ferry route lines and landings, including the real Pier 11 to "
+                    "DUMBO/Fulton Ferry service. Vessels follow these lines; their speed and "
+                    "spacing are nominal, not a timetable. See DOQ-009."
+                ),
+            },
         ],
         "provenance": provenance(control),
     }
@@ -1084,6 +1130,34 @@ def build_ground_grid(control: DistrictControl, buildings: list[dict], index: di
         heights.append(line)
 
     flat = [v for line in heights for v in line]
+
+    # Land mask. The ground grid is interpolated from building samples, so beyond the shoreline it
+    # keeps extrapolating land out over the East River and buries the water surface. The district
+    # boundary already traces the shoreline, so cells outside it, plus a small apron so the kerb of
+    # the waterfront is not cut off, are marked as water and skipped when the terrain is meshed.
+    ring_enu = [control.geodetic_to_enu(lon, lat)[:2] for lon, lat in control.boundary_ring]
+    apron = cell * 1.5
+    land: list[list[int]] = []
+    land_cells = 0
+    for row in range(rows):
+        y = oy + row * cell
+        line_mask: list[int] = []
+        for col in range(cols):
+            x = ox + col * cell
+            inside = point_in_ring((x, y), ring_enu)
+            if not inside:
+                # Keep cells just outside the ring so the shoreline has a bank rather than a cliff
+                # exactly on the boundary line.
+                nearest = min(
+                    distance_point_to_segment((x, y), ring_enu[i], ring_enu[i + 1])
+                    for i in range(len(ring_enu) - 1)
+                )
+                inside = nearest <= apron
+            line_mask.append(1 if inside else 0)
+            if inside:
+                land_cells += 1
+        land.append(line_mask)
+
     return {
         "contract_version": CONTRACT_VERSION,
         "module_id": MODULE_ID,
@@ -1104,6 +1178,8 @@ def build_ground_grid(control: DistrictControl, buildings: list[dict], index: di
         "min_m": round(min(flat), 2),
         "max_m": round(max(flat), 2),
         "heights": heights,
+        "land": land,
+        "land_cells": land_cells,
         "provenance": provenance(control),
     }
 

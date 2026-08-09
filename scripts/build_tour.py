@@ -298,22 +298,41 @@ def family_of_four(control: DistrictControl, graph: Graph) -> dict:
             "stop_id": "a_fulton_ferry",
             "name": "A · Fulton Ferry Landing, under the Brooklyn Bridge",
             "lonlat": (-73.995089, 40.703347),
-            "dwell_s": 55,
+            "dwell_s": 70,
             "heading_deg": 25,
             "on_arrive": [
+                # Open on the map, framed wide enough to show the whole district and both bridges,
+                # then fly in to where the walk starts. This is the "start zoomed out, then zoom
+                # into the first stop" opening, expressed entirely in the tour script.
+                {"type": "set_mode", "mode": "map", "map_span_m": 3200, "duration_s": 2},
                 {
                     "type": "narrate",
                     "text": (
-                        "We start where most people do: the old Fulton Ferry landing, directly under "
-                        "the Brooklyn Bridge. Before 1883 this was the only way across."
+                        "DUMBO sits between two bridges on the Brooklyn shore of the East River. "
+                        "Here is the whole walk we are about to take."
+                    ),
+                    "duration_s": 8,
+                },
+                {"type": "map_focus", "map_span_m": 700, "duration_s": 4},
+                {
+                    "type": "narrate",
+                    "text": "We start at the old Fulton Ferry landing, at the bottom left.",
+                    "duration_s": 5,
+                },
+                {"type": "set_mode", "mode": "walk", "duration_s": 1},
+                {
+                    "type": "narrate",
+                    "text": (
+                        "Before the Brooklyn Bridge opened in 1883 this landing was the only way "
+                        "across. We are standing directly beneath the bridge that replaced it."
                     ),
                     "duration_s": 11,
                 },
                 {
                     "type": "narrate",
                     "text": (
-                        "Look east along the waterfront and you can see the whole of DUMBO, with the "
-                        "Manhattan Bridge closing off the far end."
+                        "Look east along the waterfront and you can see the whole of DUMBO, with "
+                        "the Manhattan Bridge closing off the far end."
                     ),
                     "duration_s": 8,
                 },

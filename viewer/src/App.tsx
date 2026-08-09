@@ -6,6 +6,7 @@ import {
   EventBus,
   Frame,
   LodSelector,
+  MapCamera,
   ModuleRegistry,
   TileStreamer,
   TourPlayer,
@@ -65,6 +66,7 @@ export default function App() {
 
   const [tours, setTours] = useState<TourSummary[]>([]);
   const [basemap, setBasemap] = useState<BasemapController | null>(null);
+  const [mapCamera, setMapCamera] = useState<MapCamera | null>(null);
   const [activeTour, setActiveTour] = useState<TourScript | null>(null);
   const [tourProgress, setTourProgress] = useState<KernelEvents['tour:progress'] | null>(null);
   const [narration, setNarration] = useState<string | null>(null);
@@ -72,6 +74,9 @@ export default function App() {
   const [photos, setPhotos] = useState<CapturedPhoto[]>([]);
   const [awaitingUser, setAwaitingUser] = useState(false);
   const [tourSpeed, setTourSpeed] = useState(1);
+  /** Transient ripple showing where a double-click go-to landed. */
+  const [goToFlash, setGoToFlash] = useState<{ x: number; y: number; at: number } | null>(null);
+  const lastTapRef = useRef<{ x: number; y: number; at: number } | null>(null);
 
   // Mutable engine state kept out of React so the frame loop never re-renders.
   const engine = useRef<{
@@ -124,6 +129,38 @@ export default function App() {
         const selector = new LodSelector(district.ladder);
         const streamer = new TileStreamer(district.tileIndex, selector);
 
+        // Map camera, framed on the whole district to start. A tour can fly it in from here.
+        const xs = district.tileIndex.tiles.flatMap((t) => [t.bbox.min[0], t.bbox.max[0]]);
+        const ys = district.tileIndex.tiles.flatMap((t) => [t.bbox.min[1], t.bbox.max[1]]);
+        const districtBounds: [number, number, number, number] = [
+          Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys),
+        ];
+        const districtSpan = Math.max(
+          districtBounds[2] - districtBounds[0],
+          districtBounds[3] - districtBounds[1],
+        );
+        const camera = new MapCamera(
+          {
+            center: [
+              (districtBounds[0] + districtBounds[2]) / 2,
+              (districtBounds[1] + districtBounds[3]) / 2,
+            ],
+            spanM: districtSpan * 1.05,
+          },
+          {
+            minSpanM: 60,
+            // Allow zooming out well past the district so the map can open on the wider harbour.
+            maxSpanM: districtSpan * 6,
+            bounds: [
+              districtBounds[0] - districtSpan,
+              districtBounds[1] - districtSpan,
+              districtBounds[2] + districtSpan,
+              districtBounds[3] + districtSpan,
+            ],
+          },
+        );
+        setMapCamera(camera);
+
         setStatus('Building scene…');
         const scene = new DistrictScene(canvas, {
           frame,
@@ -152,6 +189,8 @@ export default function App() {
           ['district/facades.json', (d: unknown) => scene.setFacades(d as never)],
           ['district/paving.json', (d: unknown) => scene.setPaving(d as never)],
           ['district/props.json', (d: unknown) => scene.setProps(d as never)],
+          ['district/horizon.json', (d: unknown) => scene.setHorizon(d as never)],
+          ['district/water.json', (d: unknown) => scene.setWater(d as never)],
         ] as const) {
           try {
             const response = await fetch(file);
@@ -230,6 +269,13 @@ export default function App() {
         bus.on('tour:finished', () => setAwaitingUser(false));
         bus.on('environment:changed', ({ timeOfDay }) => {
           if (timeOfDay) scene.setTimeOfDay(timeOfDay);
+        });
+        bus.on('map:goto', ({ center, spanM, durationS, easing }) => {
+          void camera.flyTo(
+            { center, spanM },
+            durationS,
+            easing as 'linear' | 'ease_in' | 'ease_out' | 'ease_in_out',
+          );
         });
         bus.on('mode:changed', ({ mode: next }) => {
           setMode(next);
@@ -339,6 +385,8 @@ export default function App() {
           const render = Frame.sceneToRender(scenePosition);
           scene.camera.position.set(render[0], render[1], render[2]);
 
+          scene.updateFarField(dt);
+
           const yaw = (headingDeg * Math.PI) / 180;
           const pitch = (pitchDeg * Math.PI) / 180;
           const lookScene: [number, number, number] = [
@@ -419,6 +467,69 @@ export default function App() {
       state.controls.requestLock();
     }
   }, []);
+
+  /**
+   * Double-click, or double-tap on touch, walks the party to that spot.
+   *
+   * Uses the pointer's own coordinates rather than the canvas centre, so you go where you pointed.
+   * `onDoubleClick` fires for synthesised double-taps on mobile browsers, so one handler covers
+   * both; the explicit touch fallback below catches the ones that do not synthesise it.
+   */
+  const goToPointer = useCallback((clientX: number, clientY: number, element: HTMLCanvasElement) => {
+    const state = engine.current;
+    if (!state) return;
+    const rect = element.getBoundingClientRect();
+    const ndcX = ((clientX - rect.left) / rect.width) * 2 - 1;
+    const ndcY = -((clientY - rect.top) / rect.height) * 2 + 1;
+    const ground = state.scene.pickGround(ndcX, ndcY);
+    if (!ground) return;
+    // Snap onto the walk network so you land somewhere a person could stand.
+    const snapped = state.router?.snap(ground[0], ground[1]) ?? ground;
+    state.controls.teleport([snapped[0], snapped[1], 0]);
+    setGoToFlash({ x: clientX - rect.left, y: clientY - rect.top, at: Date.now() });
+  }, []);
+
+  const handleCanvasDoubleClick = useCallback(
+    (event: React.MouseEvent<HTMLCanvasElement>) => {
+      event.preventDefault();
+      goToPointer(event.clientX, event.clientY, event.currentTarget);
+    },
+    [goToPointer],
+  );
+
+  /** Touch double-tap for browsers that do not synthesise a dblclick. */
+  const handleCanvasTouchEnd = useCallback(
+    (event: React.TouchEvent<HTMLCanvasElement>) => {
+      const touch = event.changedTouches[0];
+      if (!touch) return;
+      const now = Date.now();
+      const previous = lastTapRef.current;
+      lastTapRef.current = { x: touch.clientX, y: touch.clientY, at: now };
+      if (
+        previous &&
+        now - previous.at < 320 &&
+        Math.hypot(touch.clientX - previous.x, touch.clientY - previous.y) < 36
+      ) {
+        goToPointer(touch.clientX, touch.clientY, event.currentTarget);
+        lastTapRef.current = null;
+      }
+    },
+    [goToPointer],
+  );
+
+  /** Double-click on the map walks there too, and switches back to the walk view. */
+  const handleMapPick = useCallback(
+    (scene: [number, number]) => {
+      const state = engine.current;
+      if (!state) return;
+      const snapped = state.router?.snap(scene[0], scene[1]) ?? scene;
+      state.controls.teleport([snapped[0], snapped[1], 0]);
+      setMode('walk');
+      state.mode = 'walk';
+      state.streamer.reset();
+    },
+    [],
+  );
 
   const changeMode = useCallback((next: ViewerMode) => {
     const state = engine.current;
@@ -604,18 +715,29 @@ python scripts/propose_bridge_placement.py --write`}
       </header>
 
       <main className="stage">
-        <canvas ref={canvasRef} onClick={handleCanvasClick} />
+        <canvas
+          ref={canvasRef}
+          onClick={handleCanvasClick}
+          onDoubleClick={handleCanvasDoubleClick}
+          onTouchEnd={handleCanvasTouchEnd}
+        />
 
-        {mode === 'map' && engine.current && (
+        {goToFlash && Date.now() - goToFlash.at < 700 && (
+          <span className="goto-flash" style={{ left: goToFlash.x, top: goToFlash.y }} />
+        )}
+
+        {mode === 'map' && engine.current && mapCamera && (
           <MapView
             tileIndex={engine.current.district.tileIndex!}
             frame={engine.current.frame}
+            camera={mapCamera}
             position={diagnostics?.position ?? [0, 0, 0]}
             heading={diagnostics?.heading ?? 0}
             tour={activeTour}
             progressStopIndex={tourProgress?.stopIndex ?? null}
             basemap={basemap}
             onWarning={pushWarning}
+            onPickPosition={handleMapPick}
           />
         )}
 
@@ -643,7 +765,13 @@ python scripts/propose_bridge_placement.py --write`}
       </main>
 
       <aside className="right">
-        <MetadataPanel metadata={selected} />
+        <MetadataPanel
+          metadata={selected}
+          onClose={() => {
+            setSelected(null);
+            engine.current?.scene.setHighlight(null);
+          }}
+        />
         {warnings.length > 0 && (
           <section className="warnings">
             <h3>Integration notices</h3>

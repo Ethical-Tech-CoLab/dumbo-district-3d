@@ -207,10 +207,76 @@ kbd {
 .photo-pending { width: 100%; height: 92px; background: var(--panel-2); border-radius: 4px; }
 .photo-strip figcaption { margin-top: 3px; line-height: 1.3; }
 
+/* --------------------------------------------------------- collapsible UI */
+
+/* Every overlay competes with the scene it describes, so all of them collapse to a summary row. */
+.collapsible-summary { display: flex; align-items: center; gap: 4px; }
+.collapsible-toggle {
+  flex: 1;
+  display: flex; align-items: center; gap: 8px;
+  background: none; border: none; padding: 6px 2px;
+  text-align: left; cursor: pointer; color: var(--text); min-width: 0;
+}
+.collapsible-toggle:hover { border: none; color: var(--accent); }
+.collapsible-summary-content { flex: 1; min-width: 0; }
+.collapsible-actions { display: flex; gap: 4px; }
+.collapsible-body { margin-top: 4px; }
+
+.chevron {
+  width: 0; height: 0; flex: 0 0 auto;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  transition: transform 0.15s ease;
+}
+.chevron.up { border-bottom: 6px solid var(--muted); }
+.chevron.down { border-top: 6px solid var(--muted); }
+
+.icon-button {
+  padding: 2px 8px; font-size: 12px; line-height: 1.4;
+  background: transparent; border-color: transparent; color: var(--muted);
+}
+.icon-button:hover { color: var(--text); border-color: var(--line); }
+
+/* Collapsed overlays sink to a slim bar rather than disappearing, so the tour stays followable. */
+.tour-panel.is-collapsed, .photo-strip.is-collapsed { padding: 4px 10px; }
+
+.tour-summary { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+.tour-summary-title {
+  font-weight: 600; font-size: 13px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.tour-summary-status { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.metadata-summary { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.metadata-summary-title {
+  font-weight: 600; font-size: 14px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.metadata-panel { padding: 10px 14px; }
+.confidence-note { margin: 0 0 10px; }
+.chip.small { width: 20px; height: 20px; font-size: 11px; flex: 0 0 auto; }
+
+/* ------------------------------------------------------------- go-to flash */
+
+.goto-flash {
+  position: absolute;
+  width: 26px; height: 26px;
+  margin: -13px 0 0 -13px;
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: goto-ripple 0.7s ease-out forwards;
+}
+@keyframes goto-ripple {
+  from { transform: scale(0.3); opacity: 0.95; }
+  to   { transform: scale(2.4); opacity: 0; }
+}
+
 /* ---------------------------------------------------------------- map view */
 
 .map-view { position: absolute; inset: 0; background: #11151a; display: grid; }
-.map-view svg { width: 100%; height: 100%; }
+.map-view svg { width: 100%; height: 100%; cursor: grab; touch-action: none; }
+.map-view svg:active { cursor: grabbing; }
 .map-legend {
   position: absolute; left: 12px; bottom: 12px;
   display: flex; flex-direction: column; gap: 4px;
@@ -218,6 +284,16 @@ kbd {
 }
 .map-legend span { display: flex; align-items: center; gap: 7px; }
 .map-legend i { width: 13px; height: 13px; border-radius: 3px; display: inline-block; }
+
+.map-controls {
+  position: absolute; left: 12px; top: 12px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.map-controls button {
+  width: 32px; height: 32px; padding: 0;
+  font-size: 15px; line-height: 1;
+  background: rgba(13, 17, 23, 0.85);
+}
 
 .basemap-switcher {
   position: absolute;

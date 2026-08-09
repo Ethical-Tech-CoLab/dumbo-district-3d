@@ -379,6 +379,87 @@ def _touches_bbox(geom: object, bbox: tuple[float, float, float, float]) -> bool
     return False
 
 
+def fetch_horizon(control: DistrictControl) -> None:
+    """
+    DSRC-011. Building footprints across the East River, for the Manhattan skyline.
+
+    A view from a DUMBO street or the waterfront is dominated by Manhattan. Painting a photographic
+    backdrop would be fast and would be a lie: it would not move correctly with the camera and would
+    not be traceable to anything. These are the same authoritative footprints used for the district
+    itself, just far away and rendered as silhouettes.
+    """
+    print("[DSRC-011] Lower Manhattan skyline footprints")
+    # Lower Manhattan and the Two Bridges / Financial District frontage, which is what is actually
+    # visible across the river from DUMBO. Deliberately bounded: the whole island would be tens of
+    # thousands of buildings for geometry nobody can resolve at that range.
+    north, west, south, east = 40.7260, -74.0180, 40.7005, -73.9700
+    where = (
+        f"within_box(the_geom,{north},{west},{south},{east}) "
+        "AND height_roof > 20"
+    )
+    records = _socrata_paged(
+        "5zhs-2jue",
+        {"$where": where, "$select": "bin,the_geom,height_roof,ground_elevation,feature_code"},
+    )
+    print(f"    {len(records)} buildings over 20 ft across the river")
+    _write(
+        DATA / "horizon" / "manhattan-skyline.raw.json",
+        records,
+        query=where,
+        source_id="DSRC-011",
+        note=(
+            "Same authoritative dataset as the district (DSRC-001), bounded to the frontage visible "
+            "from DUMBO and filtered to buildings tall enough to read at that distance. Rendered as "
+            "silhouettes at LOD3, never selectable, never dimensionally citable at that range."
+        ),
+    )
+
+
+def fetch_ferry_routes(control: DistrictControl) -> None:
+    """DSRC-012. Ferry landings and routes, so vessels move along real lines rather than invented ones."""
+    print("[DSRC-012] Ferry landings and routes (OpenStreetMap)")
+    query = (
+        "[out:json][timeout:180];"
+        "("
+        'node["amenity"="ferry_terminal"](40.680,-74.045,40.745,-73.955);'
+        'way["amenity"="ferry_terminal"](40.680,-74.045,40.745,-73.955);'
+        'way["route"="ferry"](40.680,-74.045,40.745,-73.955);'
+        ");"
+        # `out geom;` alone. Combining it with `tags` suppresses geometry entirely, which returns
+        # correct-looking route names attached to empty paths.
+        "out geom;"
+    )
+    result = _overpass(query)
+    elements = []
+    for element in result.get("elements", []):
+        tags = element.get("tags") or {}
+        if not tags:
+            continue
+        entry = {
+            "osm_type": element["type"],
+            "osm_id": element["id"],
+            "tags": tags,
+        }
+        if element.get("geometry"):
+            entry["geometry"] = [
+                [float(p["lon"]), float(p["lat"])] for p in element["geometry"]
+            ]
+        lat = element.get("lat") or (element.get("center") or {}).get("lat")
+        lon = element.get("lon") or (element.get("center") or {}).get("lon")
+        if lat is not None and lon is not None:
+            entry["lon"] = float(lon)
+            entry["lat"] = float(lat)
+        elements.append(entry)
+    print(f"    {len(elements)} ferry features")
+    _write(
+        DATA / "streetscape" / "ferry.raw.json",
+        elements,
+        query=query,
+        source_id="DSRC-012",
+        note="OpenStreetMap contributors, ODbL. Ferry terminals and route lines in the East River.",
+    )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--all", action="store_true")
@@ -389,6 +470,8 @@ def main() -> int:
     parser.add_argument("--nta", action="store_true")
     parser.add_argument("--trees", action="store_true")
     parser.add_argument("--sidewalks", action="store_true")
+    parser.add_argument("--horizon", action="store_true")
+    parser.add_argument("--ferry", action="store_true")
     args = parser.parse_args()
 
     control = DistrictControl()
@@ -408,6 +491,10 @@ def main() -> int:
         jobs.append(fetch_nta)
     if args.all or args.trees:
         jobs.append(fetch_trees)
+    if args.all or args.horizon:
+        jobs.append(fetch_horizon)
+    if args.all or args.ferry:
+        jobs.append(fetch_ferry_routes)
     if args.all or args.sidewalks:
         jobs.append(fetch_sidewalks)
 

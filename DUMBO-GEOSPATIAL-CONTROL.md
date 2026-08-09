@@ -239,6 +239,8 @@ Any asset or camera height derived from this grid is graded `C` and carries `DOQ
 | DOQ-005 | The district boundary in section 2.1 was drawn to follow named streets and the shoreline by inspection, not traced from a cadastral source. | District extent | DSRC-004, NYC planimetrics shoreline | Open, immaterial. It defines project scope only and clips no geometry that another module owns. |
 | DOQ-006 | Paved surfaces are derived by widening OSM centrelines with typical half-widths by street class, rather than traced from planimetric sidewalk polygons. Kerb lines are therefore approximate, and junctions are overlapping quads rather than a resolved surface. | Roadway and sidewalk geometry | NYC planimetric sidewalk dataset | Open. Surfaces graded `C`. |
 | DOQ-007 | Facade appearance is inferred from PLUTO building class and construction year. It describes the *kind* of building, not the actual facade of that building. | Building appearance in walk mode | Street-level imagery, district photogrammetry | Open. Appearance graded `C`; it never affects geometry or dimensions. |
+| DOQ-008 | The Manhattan skyline is reduced to oriented silhouette blocks. Positions and heights are authoritative, but footprint shape is discarded, and buildings below a prominence threshold are omitted entirely. | Far-field appearance across the river | DSRC-011 | Open by design. Graded `B`; never selectable and never dimensionally citable at that range. |
+| DOQ-009 | Vessel movement is plausible traffic, not a timetable. Ferries follow real routes at a nominal speed; recreational craft are invented outright. | Water animation | NYC Ferry schedules, AIS vessel tracking | Open. Ferries graded `C`, recreational craft `D`. |
 
 ---
 

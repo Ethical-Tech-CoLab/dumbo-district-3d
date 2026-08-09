@@ -15,8 +15,10 @@ Interoperates with [`manhattan-bridge-3d`](../manhattan-bridge-3d) through
 - **4,346-node pedestrian network** from OpenStreetMap, used for walking and tour routing
 - **1,252 street trees** from the NYC Forestry census, instanced in 30 draw calls
 - **1,986 paved surfaces** with kerbs, and procedural facades from PLUTO class and year
+- **2,103 Manhattan skyline silhouettes** across the river, from the same authoritative footprints
+- **Water at mean high water**, with ferries on 49 real routes and seasonal recreational craft
 - **An interpolated ground surface**, because DUMBO climbs 23 m from the waterfront
-- **A first-person walk mode, a map mode with terrain/street/satellite basemaps, and tour playback**
+- **A first-person walk mode, a pannable map with terrain/street/satellite basemaps, and tour playback**
 - **446 KB** of tile payloads for the entire district
 
 ---
@@ -39,10 +41,13 @@ python scripts/propose_bridge_placement.py --write
 # 5. Build walk-mode scene dressing: trees, paving, facades
 python scripts/build_scene_dressing.py
 
-# 6. Generate the demonstration tours
+# 6. Build the far field: Manhattan skyline, water, ferries
+python scripts/build_far_field.py
+
+# 7. Generate the demonstration tours
 python scripts/build_tour.py
 
-# 7. Run it
+# 8. Run it
 cd viewer && npm install && npm run dev     # http://localhost:5178
 ```
 
@@ -100,6 +105,7 @@ scripts/
   build_boundaries.py      boundary, hero zone, tile grid
   build_district_assets.py buildings, tiles, ground, walk network, all documents
   build_scene_dressing.py  street trees, paving surfaces, facade appearance
+  build_far_field.py       Manhattan skyline, water surface, ferry routes
   propose_bridge_placement.py  provisional bridge georeference (OQ-009 / DOQ-001)
   build_tour.py            A* router that emits directions-shaped tour scripts
 data/                      raw fetched sources + .source.json audit sidecars
@@ -120,9 +126,14 @@ viewer/
 The district publishes `district-manifest.json`. It declares an optional dependency on
 `manhattan-bridge`. Twelve tiles list `urn:d3d:manhattan-bridge:bridge_proxy` in `foreign_assets`, so
 whenever a visitor can see the bridge, the bridge module's content is kept resident — capped at the
-`max_level` the bridge team declares. If their manifest is absent the viewer logs it, shows an
-integration notice, draws a labelled placeholder, and carries on. No bridge geometry is ever stored
-here.
+`max_level` the bridge team declares. The viewer loads their published proxy GLB and places it by the
+`placement` they publish. If their manifest is absent the viewer logs it, shows an integration
+notice, draws a labelled placeholder, and carries on.
+
+**No bridge geometry is stored here.** `viewer/public/modules/` is gitignored: it holds another
+module's published artifacts, copied in only to co-serve them during development. Committing them
+would put bridge geometry in this repository, which the standing obligation in
+[MILESTONES.md](MILESTONES.md) forbids. Fetch them from the owning module instead.
 
 ---
 

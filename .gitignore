@@ -15,7 +15,14 @@ data/footprints/*.raw.json
 data/pluto/*.raw.json
 data/streets/*.raw.json
 data/boundaries/*.raw.json
+data/streetscape/*.raw.json
+data/horizon/*.raw.json
 data/ingest.log
+
+# Another module's published artifacts, copied here only to co-serve them during development.
+# They are NOT ours: committing them would put bridge geometry in this repository, which the
+# standing obligation in MILESTONES.md forbids. Re-fetch them from the owning module instead.
+viewer/public/modules/
 
 # Editor / OS
 .vscode/

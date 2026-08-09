@@ -17,6 +17,8 @@ export interface GroundGridDocument {
   vertical_datum: string;
   confidence: string;
   heights: number[][];
+  /** 1 where the cell is land, 0 where it is water. Absent means all land. */
+  land?: number[][];
 }
 
 export class GroundGrid {
@@ -51,5 +53,12 @@ export class GroundGrid {
       h01 * (1 - tx) * ty +
       h11 * tx * ty
     );
+  }
+
+  /** Whether a grid cell is land. Water cells are omitted from the terrain mesh. */
+  isLand(col: number, row: number): boolean {
+    const land = this.doc.land;
+    if (!land) return true;
+    return (land[row]?.[col] ?? 0) === 1;
   }
 }
