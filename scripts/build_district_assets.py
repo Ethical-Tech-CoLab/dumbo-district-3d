@@ -894,6 +894,26 @@ def build_source_register(control: DistrictControl) -> dict:
                     "real remedy rather than a wish. Phase 2."
                 ),
             },
+            {
+                "source_id": "DSRC-009",
+                "title": "NYC Forestry Management System street trees",
+                "tier": "A",
+                "publisher": "NYC Parks, via NYC Open Data",
+                "url": "https://data.cityofnewyork.us/resource/hn5i-inap.json",
+                "accessed": "2026-08-09",
+                "license": "NYC Open Data Terms of Use",
+                "attribution_required": True,
+                "attribution_text": "Street trees: NYC Parks Forestry Management System",
+                "native_crs": "EPSG:4326",
+                "units": "inches",
+                "grants_confidence": "A",
+                "verified": True,
+                "notes": (
+                    "Position, species and trunk diameter (dbh, inches) per street tree. Positions "
+                    "and species are grade A; the rendered canopy is a procedural form for the "
+                    "genus and is therefore graded C."
+                ),
+            },
         ],
         "provenance": provenance(control),
     }
@@ -935,6 +955,7 @@ def build_manifest(control: DistrictControl, bridge_manifest_url: str) -> dict:
         "handoff": {"supported": False},
         "attribution": [
             "Building footprints and lot data: NYC Open Data (OTI, DCP)",
+            "Street trees: NYC Parks Forestry Management System",
             "© OpenStreetMap contributors, ODbL",
             "Tidal datums: NOAA CO-OPS station 8518750",
         ],

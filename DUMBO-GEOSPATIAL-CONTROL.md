@@ -237,6 +237,8 @@ Any asset or camera height derived from this grid is graded `C` and carries `DOQ
 | DOQ-003 | No surveyed terrain surface is registered. Ground height is interpolated from building base elevations (section 6) rather than from a DEM, so open ground away from buildings, and the real grade of individual streets, are approximations. | Terrain, walk mode ground height, tour camera height | DSRC-008 (NYC DEM), NYC LiDAR | Open, partially mitigated. Interpolated ground is graded `C`. |
 | DOQ-004 | The MHW to NAVD88 offset DCTL-010 is transferred from The Battery, about 3 km away, rather than computed locally with VDatum. | Vertical datum reconciliation | NOAA VDatum | Open, immaterial at current confidence. |
 | DOQ-005 | The district boundary in section 2.1 was drawn to follow named streets and the shoreline by inspection, not traced from a cadastral source. | District extent | DSRC-004, NYC planimetrics shoreline | Open, immaterial. It defines project scope only and clips no geometry that another module owns. |
+| DOQ-006 | Paved surfaces are derived by widening OSM centrelines with typical half-widths by street class, rather than traced from planimetric sidewalk polygons. Kerb lines are therefore approximate, and junctions are overlapping quads rather than a resolved surface. | Roadway and sidewalk geometry | NYC planimetric sidewalk dataset | Open. Surfaces graded `C`. |
+| DOQ-007 | Facade appearance is inferred from PLUTO building class and construction year. It describes the *kind* of building, not the actual facade of that building. | Building appearance in walk mode | Street-level imagery, district photogrammetry | Open. Appearance graded `C`; it never affects geometry or dimensions. |
 
 ---
 

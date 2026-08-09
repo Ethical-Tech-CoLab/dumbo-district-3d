@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
-import type { AssetMetadata, TourScript, ViewerMode } from '@d3d/contracts';
+import type { AssetMetadata, BasemapSet, TourScript, ViewerMode } from '@d3d/contracts';
 import {
+  BasemapController,
   EventBus,
   Frame,
   LodSelector,
@@ -63,6 +64,7 @@ export default function App() {
   const [diagnostics, setDiagnostics] = useState<Diagnostics | null>(null);
 
   const [tours, setTours] = useState<TourSummary[]>([]);
+  const [basemap, setBasemap] = useState<BasemapController | null>(null);
   const [activeTour, setActiveTour] = useState<TourScript | null>(null);
   const [tourProgress, setTourProgress] = useState<KernelEvents['tour:progress'] | null>(null);
   const [narration, setNarration] = useState<string | null>(null);
@@ -142,6 +144,21 @@ export default function App() {
           }
         } catch (groundError) {
           pushWarning(`Ground grid failed to load: ${String(groundError)}`);
+        }
+
+        // Scene dressing. Each piece is optional: the district renders without any of it, just
+        // more plainly. Facades must arrive before streaming so tiles build with them.
+        for (const [file, apply] of [
+          ['district/facades.json', (d: unknown) => scene.setFacades(d as never)],
+          ['district/paving.json', (d: unknown) => scene.setPaving(d as never)],
+          ['district/props.json', (d: unknown) => scene.setProps(d as never)],
+        ] as const) {
+          try {
+            const response = await fetch(file);
+            if (response.ok) apply(await response.json());
+          } catch (dressingError) {
+            pushWarning(`${file} unavailable: ${String(dressingError)}`);
+          }
         }
 
         // Boundary and street network give the ground legibility before any tile arrives.
@@ -246,6 +263,27 @@ export default function App() {
           if (response.ok) setTours((await response.json()) as TourSummary[]);
         } catch {
           /* tours are optional */
+        }
+
+        // ----------------------------------------------------------- basemap
+
+        try {
+          const response = await fetch('district/basemap.json');
+          if (response.ok) {
+            const set = (await response.json()) as BasemapSet;
+            // Credentials come from the build environment, never from the basemap document. Any
+            // VITE_BASEMAP_KEY_* variable present is offered to the controller, which then treats
+            // the layers naming it as usable.
+            const credentials: Record<string, string> = {};
+            for (const [key, value] of Object.entries(import.meta.env)) {
+              if (key.startsWith('VITE_BASEMAP_KEY_') && typeof value === 'string') {
+                credentials[key] = value;
+              }
+            }
+            setBasemap(new BasemapController(set, credentials));
+          }
+        } catch (basemapError) {
+          pushWarning(`Basemap configuration unavailable: ${String(basemapError)}`);
         }
 
         // -------------------------------------------------------- frame loop
@@ -576,6 +614,8 @@ python scripts/propose_bridge_placement.py --write`}
             heading={diagnostics?.heading ?? 0}
             tour={activeTour}
             progressStopIndex={tourProgress?.stopIndex ?? null}
+            basemap={basemap}
+            onWarning={pushWarning}
           />
         )}
 

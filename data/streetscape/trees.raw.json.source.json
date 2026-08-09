@@ -1,0 +1,10 @@
+{
+  "source_id": "DSRC-009",
+  "query": "within_box(location,40.706,-73.9985,40.6975,-73.98)",
+  "fetched_at": "2026-08-09T17:08:28+00:00",
+  "fetched_by": "dumbo-district-3d/scripts@1.0.0",
+  "bytes": 608530,
+  "sha256": "017db865608c2b2f9ec198451f74fe762bed9df78ca59880bf6015d7f5332ff8",
+  "record_count": 2271,
+  "note": "Forestry Management System street tree points. dbh is trunk diameter in inches, which drives per-tree canopy scale rather than every tree being identical."
+}

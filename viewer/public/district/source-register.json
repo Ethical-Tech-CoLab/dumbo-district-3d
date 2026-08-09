@@ -118,16 +118,32 @@
    "grants_confidence": "A",
    "verified": false,
    "notes": "NOT YET INGESTED. Registered so DOQ-003, the missing terrain surface, names a real remedy rather than a wish. Phase 2."
+  },
+  {
+   "source_id": "DSRC-009",
+   "title": "NYC Forestry Management System street trees",
+   "tier": "A",
+   "publisher": "NYC Parks, via NYC Open Data",
+   "url": "https://data.cityofnewyork.us/resource/hn5i-inap.json",
+   "accessed": "2026-08-09",
+   "license": "NYC Open Data Terms of Use",
+   "attribution_required": true,
+   "attribution_text": "Street trees: NYC Parks Forestry Management System",
+   "native_crs": "EPSG:4326",
+   "units": "inches",
+   "grants_confidence": "A",
+   "verified": true,
+   "notes": "Position, species and trunk diameter (dbh, inches) per street tree. Positions and species are grade A; the rendered canopy is a procedural form for the genus and is therefore graded C."
   }
  ],
  "provenance": {
   "module_id": "dumbo-district",
   "generated_by": "dumbo-district-3d/scripts@1.0.0",
-  "generated_at": "2026-08-09T16:22:20+00:00",
+  "generated_at": "2026-08-09T17:18:24+00:00",
   "source_documents": [
    {
     "path": "DUMBO-GEOSPATIAL-CONTROL.md",
-    "sha256": "16248a6cae4a94ebf940ec73277c02460056434c50f2bcd1dd257464af1e5105"
+    "sha256": "8198094ff9dfb950a4d5a77f356f7960c079d8c55574b216959db4a00047bf32"
    }
   ]
  }

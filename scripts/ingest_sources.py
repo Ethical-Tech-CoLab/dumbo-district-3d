@@ -309,6 +309,76 @@ def fetch_nta(control: DistrictControl) -> None:
     )
 
 
+def fetch_trees(control: DistrictControl) -> None:
+    """DSRC-009. NYC Forestry street tree points, used to place street trees in walk mode."""
+    print("[DSRC-009] NYC Forestry street trees")
+    west, south, east, north = control.bbox
+    where = f"within_box(location,{north},{west},{south},{east})"
+    records = _socrata_paged(
+        "hn5i-inap",
+        {
+            "$where": where,
+            "$select": "objectid,dbh,tpstructure,tpcondition,genusspecies,location",
+        },
+    )
+    print(f"    {len(records)} trees in the query envelope")
+    _write(
+        DATA / "streetscape" / "trees.raw.json",
+        records,
+        query=where,
+        source_id="DSRC-009",
+        note=(
+            "Forestry Management System street tree points. dbh is trunk diameter in inches, which "
+            "drives per-tree canopy scale rather than every tree being identical."
+        ),
+    )
+
+
+def fetch_sidewalks(control: DistrictControl) -> None:
+    """DSRC-010. NYC planimetric sidewalk polygons, used to pave the walk view."""
+    print("[DSRC-010] NYC sidewalk polygons")
+    west, south, east, north = control.bbox
+    where = f"intersects(the_geom,'POLYGON(({west} {south},{east} {south},{east} {north},{west} {north},{west} {south}))')"
+    try:
+        records = _socrata_paged("vfx9-tbb6", {"$where": where}, page=2000)
+    except Exception:
+        # Some Socrata deployments reject `intersects` on this dataset; fall back to a bbox filter
+        # on the computed centroid-ish envelope and clip locally.
+        print("    intersects() rejected, falling back to unfiltered page scan")
+        records = _socrata_paged("vfx9-tbb6", {}, page=2000)
+        records = [r for r in records if _touches_bbox(r.get("the_geom"), control.bbox)]
+    print(f"    {len(records)} sidewalk polygons")
+    _write(
+        DATA / "streetscape" / "sidewalks.raw.json",
+        records,
+        query=where,
+        source_id="DSRC-010",
+        note="NYC planimetric sidewalk polygons. Paves the walk view instead of a flat grey plane.",
+    )
+
+
+def _touches_bbox(geom: object, bbox: tuple[float, float, float, float]) -> bool:
+    if not isinstance(geom, dict):
+        return False
+    west, south, east, north = bbox
+    polygons = (
+        geom.get("coordinates", [])
+        if geom.get("type") == "MultiPolygon"
+        else [geom.get("coordinates", [])]
+    )
+    for polygon in polygons:
+        if not polygon:
+            continue
+        for point in polygon[0]:
+            try:
+                lon, lat = float(point[0]), float(point[1])
+            except (TypeError, ValueError, IndexError):
+                continue
+            if west <= lon <= east and south <= lat <= north:
+                return True
+    return False
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--all", action="store_true")
@@ -317,6 +387,8 @@ def main() -> int:
     parser.add_argument("--streets", action="store_true")
     parser.add_argument("--landmarks", action="store_true")
     parser.add_argument("--nta", action="store_true")
+    parser.add_argument("--trees", action="store_true")
+    parser.add_argument("--sidewalks", action="store_true")
     args = parser.parse_args()
 
     control = DistrictControl()
@@ -334,6 +406,10 @@ def main() -> int:
         jobs.append(fetch_landmarks)
     if args.all or args.nta:
         jobs.append(fetch_nta)
+    if args.all or args.trees:
+        jobs.append(fetch_trees)
+    if args.all or args.sidewalks:
+        jobs.append(fetch_sidewalks)
 
     if not jobs:
         parser.error("choose at least one source, or --all")

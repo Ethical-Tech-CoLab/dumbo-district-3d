@@ -20,6 +20,15 @@ import {
 } from '@d3d/viewer-kernel';
 
 import type { GroundGrid } from './GroundGrid';
+import {
+  buildPaving,
+  buildProps,
+  facadeBandFactor,
+  parseColor,
+  type FacadeDocument,
+  type PavingDocument,
+} from './SceneDressing';
+import type { ScenePropSet } from '@d3d/contracts';
 
 export interface TileBuilding {
   id: string;
@@ -58,7 +67,6 @@ function hashColor(id: string): number {
   for (let i = 0; i < id.length; i++) hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
   return PALETTE[hash % PALETTE.length];
 }
-
 interface ResidentTile {
   group: THREE.Group;
   level: number;
@@ -92,6 +100,10 @@ export class DistrictScene {
   private bridgePlaceholder: THREE.Group | null = null;
   private ground: GroundGrid | null = null;
   private groundMesh: THREE.Mesh | null = null;
+  private pavingGroup: THREE.Group | null = null;
+  private propsGroup: THREE.Group | null = null;
+  private facades: FacadeDocument | null = null;
+  private propStats = { instances: 0, drawCalls: 0 };
 
   constructor(canvas: HTMLCanvasElement, options: SceneOptions) {
     this.options = options;
@@ -193,6 +205,38 @@ export class DistrictScene {
     water.position.set(0, 0.59, 0);
     water.renderOrder = -1;
     this.scene.add(water);
+  }
+
+  // --------------------------------------------------------------- dressing
+
+  /** Paved roadway and sidewalk surfaces. Replaces bare lines with something walkable. */
+  setPaving(doc: PavingDocument): void {
+    if (this.pavingGroup) this.scene.remove(this.pavingGroup);
+    this.pavingGroup = buildPaving(doc, (x, y) => this.groundHeightAt(x, y));
+    this.scene.add(this.pavingGroup);
+  }
+
+  /** Instanced street furniture and vegetation. */
+  setProps(set: ScenePropSet): void {
+    if (this.propsGroup) this.scene.remove(this.propsGroup);
+    const result = buildProps(set, (x, y) => this.groundHeightAt(x, y));
+    this.propsGroup = result.group;
+    this.propStats = { instances: result.instanceCount, drawCalls: result.drawCalls };
+    this.scene.add(this.propsGroup);
+  }
+
+  /**
+   * Per-building facade appearance. Applied when tiles are built, so it must be supplied before
+   * streaming starts; any tiles already resident are dropped so they pick it up.
+   */
+  setFacades(doc: FacadeDocument): void {
+    this.facades = doc;
+    for (const tileId of [...this.resident.keys()]) this.unloadTile(tileId);
+    this.options.streamer.reset();
+  }
+
+  get propDiagnostics(): { instances: number; drawCalls: number } {
+    return this.propStats;
   }
 
   /** Draw the district boundary as a ground line so the walkable extent is legible. */
@@ -339,10 +383,12 @@ export class DistrictScene {
 
       const tint = this.confidenceOverlay
         ? CONFIDENCE_COLOR[building.c] ?? 0x888888
-        : hashColor(building.id);
+        : this.facadeColor(building);
 
+      const style = this.confidenceOverlay ? undefined : this.facades?.styles[building.id];
       const baseZ = building.base;
-      const topZ = building.base + Math.max(building.h, 1.5);
+      const height = Math.max(building.h, 1.5);
+      const topZ = building.base + height;
 
       // Walls. Scene (x, y, z) -> render (x, z, -y).
       for (let i = 0; i < ring.length; i++) {
@@ -360,17 +406,33 @@ export class DistrictScene {
         const nx = dy / len;
         const nz = dx / len;
 
-        const quad = [
-          [ax, baseZ, ay], [bx, baseZ, by], [bx, topZ, by],
-          [ax, baseZ, ay], [bx, topZ, by], [ax, topZ, ay],
-        ];
         // Shade walls slightly by orientation so massing reads without textures.
         const shade = 0.78 + 0.22 * Math.abs(nx);
-        color.setHex(tint).multiplyScalar(shade);
-        for (const [vx, vy, vy2] of quad) {
-          positions.push(vx, vy, -vy2);
-          normals.push(nx, 0, nz);
-          colors.push(color.r, color.g, color.b);
+
+        // Split each wall into horizontal courses so procedural window bands have somewhere to
+        // live. Two courses per storey, capped: enough to resolve a window band and the spandrel
+        // above it, cheap enough for a whole district. Without this a wall is two triangles and
+        // cannot show banding at all.
+        const courses = style ? Math.max(4, Math.min(28, Math.round(height / 1.75))) : 1;
+
+        for (let c = 0; c < courses; c++) {
+          const f0 = c / courses;
+          const f1 = (c + 1) / courses;
+          const z0 = baseZ + height * f0;
+          const z1 = baseZ + height * f1;
+
+          const band = facadeBandFactor((f0 + f1) / 2, style, height);
+          color.setHex(tint).multiplyScalar(shade * band);
+
+          const quad = [
+            [ax, z0, ay], [bx, z0, by], [bx, z1, by],
+            [ax, z0, ay], [bx, z1, by], [ax, z1, ay],
+          ];
+          for (const [vx, vy, vy2] of quad) {
+            positions.push(vx, vy, -vy2);
+            normals.push(nx, 0, nz);
+            colors.push(color.r, color.g, color.b);
+          }
         }
       }
 
@@ -419,6 +481,15 @@ export class DistrictScene {
 
     this.tileRoot.add(group);
     return { group, level, buildings };
+  }
+
+  /**
+   * Facade colour for a building: the sourced style when one exists, otherwise a stable hash of the
+   * ID so the district still varies before facades.json is built.
+   */
+  private facadeColor(building: TileBuilding): number {
+    const style = this.facades?.styles[building.id];
+    return style ? parseColor(style.color, hashColor(building.id)) : hashColor(building.id);
   }
 
   // ----------------------------------------------------------------- picking

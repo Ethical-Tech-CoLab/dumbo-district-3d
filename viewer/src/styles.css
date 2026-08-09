@@ -219,6 +219,33 @@ kbd {
 .map-legend span { display: flex; align-items: center; gap: 7px; }
 .map-legend i { width: 13px; height: 13px; border-radius: 3px; display: inline-block; }
 
+.basemap-switcher {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 4px;
+  background: rgba(13, 17, 23, 0.82);
+  padding: 5px;
+  border-radius: 7px;
+  border: 1px solid var(--line);
+}
+.basemap-switcher button { font-size: 12px; padding: 4px 10px; }
+
+/* Attribution for the active basemap. Every major tile provider requires this to be visible
+   whenever their imagery is on screen, so it is not optional chrome. */
+.map-attribution {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  background: rgba(13, 17, 23, 0.85);
+  color: var(--muted);
+  padding: 5px 10px;
+  border-radius: 5px;
+  max-width: 60%;
+  text-align: right;
+}
+
 /* ------------------------------------------------------------- right panel */
 
 .right {

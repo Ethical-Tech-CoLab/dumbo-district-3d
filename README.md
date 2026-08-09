@@ -13,8 +13,10 @@ Interoperates with [`manhattan-bridge-3d`](../manhattan-bridge-3d) through
 - **381 buildings**, every one grade A, from NYC Building Footprints joined to PLUTO
 - **112 tiles** across four LOD levels, streamed by screen-space error
 - **4,346-node pedestrian network** from OpenStreetMap, used for walking and tour routing
+- **1,252 street trees** from the NYC Forestry census, instanced in 30 draw calls
+- **1,986 paved surfaces** with kerbs, and procedural facades from PLUTO class and year
 - **An interpolated ground surface**, because DUMBO climbs 23 m from the waterfront
-- **A first-person walk mode, a map mode, and scripted tour playback**
+- **A first-person walk mode, a map mode with terrain/street/satellite basemaps, and tour playback**
 - **446 KB** of tile payloads for the entire district
 
 ---
@@ -34,10 +36,13 @@ python scripts/build_district_assets.py
 # 4. Derive a provisional Manhattan Bridge placement and a placeholder manifest
 python scripts/propose_bridge_placement.py --write
 
-# 5. Generate the demonstration tours
+# 5. Build walk-mode scene dressing: trees, paving, facades
+python scripts/build_scene_dressing.py
+
+# 6. Generate the demonstration tours
 python scripts/build_tour.py
 
-# 6. Run it
+# 7. Run it
 cd viewer && npm install && npm run dev     # http://localhost:5178
 ```
 
@@ -58,6 +63,7 @@ Press **▶ DUMBO in an hour — a family of four** to watch a four-stop walking
 | [DUMBO-LOD-STRATEGY.md](DUMBO-LOD-STRATEGY.md) | How geometry is spent, and why the ladder is shared. |
 | [DUMBO-MAP-VIEWER-INTEGRATION.md](DUMBO-MAP-VIEWER-INTEGRATION.md) | Viewer architecture. |
 | [TOUR-DIRECTOR.md](TOUR-DIRECTOR.md) | Driving the viewer from external walking instructions. |
+| [MILESTONES.md](MILESTONES.md) | **What comes next, and why in that order.** |
 | [BRIDGE-TEAM-COORDINATION.md](BRIDGE-TEAM-COORDINATION.md) | **What the Manhattan Bridge team needs to do.** |
 | [BRIDGE-TEAM-PROMPT.md](BRIDGE-TEAM-PROMPT.md) | The same, as a drop-in agent prompt with exact URL structure. |
 | [IMPLEMENTATION-REPORT.md](IMPLEMENTATION-REPORT.md) | Phase 1 report. |
@@ -93,13 +99,16 @@ scripts/
   ingest_sources.py        NYC Open Data + Overpass, with audit sidecars
   build_boundaries.py      boundary, hero zone, tile grid
   build_district_assets.py buildings, tiles, ground, walk network, all documents
+  build_scene_dressing.py  street trees, paving surfaces, facade appearance
   propose_bridge_placement.py  provisional bridge georeference (OQ-009 / DOQ-001)
   build_tour.py            A* router that emits directions-shaped tour scripts
 data/                      raw fetched sources + .source.json audit sidecars
 viewer/
   src/                     the shell: three.js, walk controls, router, components
   public/district/         published: manifest, georeference, ladder, registry,
-                           tile index, source register, tiles, ground, walk network
+                           tile index, source register, tiles, ground, walk network,
+                           basemap layers, props, paving, facades
+  public/frames/           byte-identical copy of the canonical shared frame
   public/tours/            demonstration tour scripts
   public/modules/          placeholder bridge manifest (delete when they publish)
 ```

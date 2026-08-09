@@ -1530,11 +1530,11 @@
  "provenance": {
   "module_id": "dumbo-district",
   "generated_by": "dumbo-district-3d/scripts@1.0.0",
-  "generated_at": "2026-08-09T16:22:20+00:00",
+  "generated_at": "2026-08-09T17:18:24+00:00",
   "source_documents": [
    {
     "path": "DUMBO-GEOSPATIAL-CONTROL.md",
-    "sha256": "16248a6cae4a94ebf940ec73277c02460056434c50f2bcd1dd257464af1e5105"
+    "sha256": "8198094ff9dfb950a4d5a77f356f7960c079d8c55574b216959db4a00047bf32"
    }
   ]
  }
