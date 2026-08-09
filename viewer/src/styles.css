@@ -292,14 +292,24 @@ kbd {
 .map-legend span { display: flex; align-items: center; gap: 7px; }
 .map-legend i { width: 13px; height: 13px; border-radius: 3px; display: inline-block; }
 
+/* Right-hand side, below the basemap switcher. They used to sit top-left, exactly underneath the
+   diagnostics readout, which painted over them: the zoom buttons had always been half-hidden and
+   the compass made it obvious. Right-hand zoom controls are also what every other map does. */
 .map-controls {
-  position: absolute; left: 12px; top: 12px;
+  position: absolute; right: 12px; top: 56px;
   display: flex; flex-direction: column; gap: 4px;
+  align-items: flex-end;
 }
 .map-controls button {
   width: 32px; height: 32px; padding: 0;
   font-size: 15px; line-height: 1;
   background: rgba(13, 17, 23, 0.85);
+}
+/* The compass is a dial, not an icon button, so it opts out of the square sizing above. */
+.map-controls button.compass {
+  width: auto; height: auto;
+  padding: 4px 4px 3px;
+  margin-bottom: 4px;
 }
 
 .basemap-switcher {
@@ -337,7 +347,47 @@ kbd {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
+
+/* Closing the inspector gives its 340px back to the scene, leaving a strip to reopen from. */
+.app.sidebar-closed { grid-template-columns: 1fr 30px; }
+.app.sidebar-closed .right { overflow: hidden; }
+
+.sidebar-toggle {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 10px;
+  background: var(--panel);
+  border: none;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 13px;
+  cursor: pointer;
+  text-align: left;
+}
+.sidebar-toggle:hover { color: var(--text); }
+.app.sidebar-closed .sidebar-toggle {
+  height: 100%;
+  align-items: flex-start;
+  padding: 10px 6px;
+  border-bottom: none;
+}
+/* Rotate the label so the closed strip still says what it is. */
+.app.sidebar-closed .sidebar-toggle-label {
+  writing-mode: vertical-rl;
+  margin-top: 8px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+.app.sidebar-closed .sidebar-toggle { flex-direction: column; }
+.right-body { display: flex; flex-direction: column; flex: 1; min-height: 0; }
 
 .panel { padding: 14px 16px; border-bottom: 1px solid var(--line); }
 .panel h2 { margin: 0 0 10px; font-size: 15px; }
@@ -386,3 +436,23 @@ kbd {
   border: 1px solid rgba(255,255,255,0.25); border-radius: 2px;
   vertical-align: middle;
 }
+
+/* ----------------------------------------------------------------- compass */
+
+.compass {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 4px 2px 3px;
+  background: rgba(13, 17, 23, 0.82);
+  border: 1px solid var(--line); border-radius: 6px;
+  color: var(--text); cursor: pointer;
+}
+.compass:hover { border-color: var(--muted); }
+.compass svg { width: 46px; height: 46px; display: block; }
+.compass-dial { fill: rgba(255,255,255,0.04); stroke: var(--line); stroke-width: 2; }
+.compass-cardinal { fill: var(--muted); font-size: 15px; font-weight: 600; }
+.compass-north { fill: #e8674f; font-size: 16px; font-weight: 700; }
+.compass-tick { stroke: var(--line); stroke-width: 2; }
+.compass-needle { fill: #e8674f; }
+.compass-needle-tail { fill: #7d8590; }
+.compass-hub { fill: #0d1117; stroke: var(--line); stroke-width: 1.5; }
+.compass-label { font-size: 10px; color: var(--muted); letter-spacing: 0.03em; }

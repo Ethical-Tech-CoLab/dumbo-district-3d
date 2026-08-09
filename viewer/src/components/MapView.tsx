@@ -7,6 +7,7 @@ import {
   toSceneVec,
   type TileQuad,
 } from '@d3d/viewer-kernel';
+import Compass from './Compass';
 
 interface Props {
   tileIndex: TileIndex;
@@ -298,6 +299,10 @@ export default function MapView({
       </svg>
 
       <div className="map-controls">
+        <Compass
+          headingDeg={heading}
+          onRecentre={() => { void camera.flyTo({ center: [position[0], position[1]] }, 0.6); }}
+        />
         <button onClick={() => { camera.zoomBy(0.6); setView(camera.current); }} title="Zoom in">＋</button>
         <button onClick={() => { camera.zoomBy(1 / 0.6); setView(camera.current); }} title="Zoom out">－</button>
         <button

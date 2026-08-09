@@ -102,6 +102,26 @@ export default function App() {
   const pendingClick = useRef<number | null>(null);
   /** Photographic appearance evidence for the selected building, if it has any. */
   const [selectedEvidence, setSelectedEvidence] = useState<FacadeEvidence | null>(null);
+  /**
+   * Whether the right-hand inspector is open. Remembered, because on a laptop it takes a third of
+   * the window and someone who wants to look at the district rather than read about it should not
+   * have to close it on every visit.
+   */
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('d3d.panel.inspector') !== '0';
+    } catch {
+      return true;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('d3d.panel.inspector', sidebarOpen ? '1' : '0');
+    } catch {
+      /* storage may be unavailable; the panel still works, it just forgets */
+    }
+  }, [sidebarOpen]);
 
   // Mutable engine state kept out of React so the frame loop never re-renders.
   const engine = useRef<{
@@ -792,7 +812,7 @@ python scripts/propose_bridge_placement.py --write`}
   }
 
   return (
-    <div className="app">
+    <div className={`app ${sidebarOpen ? '' : 'sidebar-closed'}`}>
       <header className="topbar">
         <div className="brand">
           <strong>DUMBO District</strong>
@@ -878,16 +898,27 @@ python scripts/propose_bridge_placement.py --write`}
         {photos.length > 0 && <PhotoStrip photos={photos} />}
       </main>
 
-      <aside className="right">
-        <MetadataPanel
-          metadata={selected}
-          evidence={selectedEvidence}
-          onClose={() => {
-            setSelected(null);
-            setSelectedEvidence(null);
-            engine.current?.scene.setHighlight(null);
-          }}
-        />
+      <aside className={`right ${sidebarOpen ? '' : 'is-closed'}`}>
+        <button
+          className="sidebar-toggle"
+          onClick={() => setSidebarOpen((open) => !open)}
+          aria-expanded={sidebarOpen}
+          title={sidebarOpen ? 'Close the inspector' : 'Open the inspector'}
+        >
+          {sidebarOpen ? '›' : '‹'}
+          <span className="sidebar-toggle-label">Inspect</span>
+        </button>
+        {sidebarOpen && (
+          <div className="right-body">
+            <MetadataPanel
+              metadata={selected}
+              evidence={selectedEvidence}
+              onClose={() => {
+                setSelected(null);
+                setSelectedEvidence(null);
+                engine.current?.scene.setHighlight(null);
+              }}
+            />
         {Object.keys(notices).length > 0 && (
           <section className="warnings">
             <h3>Integration notices</h3>
@@ -908,11 +939,13 @@ python scripts/propose_bridge_placement.py --write`}
             </ul>
           </section>
         )}
-        <footer className="attribution">
-          {attributions.map((line) => (
-            <div key={line}>{line}</div>
-          ))}
-        </footer>
+            <footer className="attribution">
+              {attributions.map((line) => (
+                <div key={line}>{line}</div>
+              ))}
+            </footer>
+          </div>
+        )}
       </aside>
     </div>
   );
