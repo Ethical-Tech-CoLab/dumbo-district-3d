@@ -1138,6 +1138,26 @@ def build_source_register(control: DistrictControl) -> dict:
                     "which was never a shoreline. See DOQ-005."
                 ),
             },
+            {
+                "source_id": "DSRC-015",
+                "title": "Openly-licensed photographs of DUMBO",
+                "tier": "C",
+                "publisher": "Wikimedia Commons contributors",
+                "url": "https://commons.wikimedia.org/",
+                "accessed": "2026-08-09",
+                "license": "Mixed: CC0-1.0, public domain, CC-BY-2.0/3.0/4.0, CC-BY-SA-2.0/3.0/4.0",
+                "attribution_required": True,
+                "attribution_text": "Photographs: Wikimedia Commons contributors, see photo-survey.json",
+                "grants_confidence": "B",
+                "verified": True,
+                "notes": (
+                    "First found-imagery campaign, 336 images. Every one carries an explicit reuse "
+                    "licence recorded with its credit line; anything without one is rejected rather "
+                    "than assumed. Share-alike images are marked derive_appearance: colours are "
+                    "measured from them, the images themselves are never vendored into this "
+                    "repository. Photographs never grant A. See DOQ-007 and PHOTO-SURVEY.md."
+                ),
+            },
         ],
         "provenance": provenance(control),
     }

@@ -177,7 +177,7 @@ class DistrictControl:
             "DCTL-001", "DCTL-002", "DCTL-003", "DCTL-004", "DCTL-005",
             "DCTL-010", "DCTL-020", "DCTL-021", "DCTL-022", "DCTL-023",
             "DCTL-030", "DCTL-040", "DCTL-041", "DCTL-042", "DCTL-043",
-            "DCTL-050", "DCTL-051", "DCTL-052", "DCTL-053", "DCTL-054",
+            "DCTL-050", "DCTL-051", "DCTL-052", "DCTL-053", "DCTL-054", "DCTL-055",
             "DCTL-060", "DCTL-061", "DCTL-062", "DCTL-063",
             "DCTL-070", "DCTL-071", "DCTL-072", "DCTL-073",
             "DCTL-074", "DCTL-075", "DCTL-076",

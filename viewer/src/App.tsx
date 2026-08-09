@@ -18,9 +18,10 @@ import {
 import { DistrictScene, type TileBuilding } from './DistrictScene';
 import { FrameLoop } from './FrameLoop';
 import { GroundGrid, type GroundGridDocument } from './GroundGrid';
+import { applyObservedPalette } from './SceneDressing';
 import { WalkControls } from './WalkControls';
 import { WalkRouter, type WalkNetwork } from './WalkRouter';
-import MetadataPanel from './components/MetadataPanel';
+import MetadataPanel, { type FacadeEvidence } from './components/MetadataPanel';
 import TourPanel from './components/TourPanel';
 import Hud from './components/Hud';
 import MapView from './components/MapView';
@@ -33,6 +34,13 @@ const TOUR_INDEX = 'tours/index.json';
 const EYE_HEIGHT_M = 1.65;
 const WALK_PACE_MPS = 1.3;
 const MAX_PACE_MPS = 2.2;
+/** DCTL-055. Shift-to-hurry ceiling, deliberately above the free-walk clamp. */
+const SPRINT_PACE_MPS = 6.6;
+/**
+ * How long a single click waits to see whether it is really the first half of a double click.
+ * Long enough to catch a deliberate double click, short enough that selection still feels immediate.
+ */
+const DOUBLE_CLICK_GRACE_MS = 260;
 
 interface TourSummary {
   id: string;
@@ -90,6 +98,10 @@ export default function App() {
   /** Transient ripple showing where a double-click go-to landed. */
   const [goToFlash, setGoToFlash] = useState<{ x: number; y: number; at: number } | null>(null);
   const lastTapRef = useRef<{ x: number; y: number; at: number } | null>(null);
+  /** Pending single-click selection, cancelled if a double click follows. */
+  const pendingClick = useRef<number | null>(null);
+  /** Photographic appearance evidence for the selected building, if it has any. */
+  const [selectedEvidence, setSelectedEvidence] = useState<FacadeEvidence | null>(null);
 
   // Mutable engine state kept out of React so the frame loop never re-renders.
   const engine = useRef<{
@@ -224,6 +236,21 @@ export default function App() {
 
         // Scene dressing. Each piece is optional: the district renders without any of it, just
         // more plainly. Facades must arrive before streaming so tiles build with them.
+        // The observed palette is loaded first: it re-tints the surface colours that the paving
+        // pass then bakes into its geometry, so arriving after it would have no effect.
+        let paletteCredits: string[] = [];
+        try {
+          const response = await fetch('district/photo-palette.json');
+          if (response.ok) {
+            const credits = applyObservedPalette(await response.json());
+            // The corpus is hundreds of photographs; the footer can carry a few. The full credit
+            // list ships in photo-survey.json and is shown per building when one is selected.
+            paletteCredits = credits.slice(0, 2).map((line) => `Surface colours measured from: ${line}`);
+          }
+        } catch {
+          /* no corpus yet; the built-in surface colours stand */
+        }
+
         for (const [file, apply] of [
           ['district/facades.json', (d: unknown) => scene.setFacades(d as never)],
           ['district/paving.json', (d: unknown) => scene.setPaving(d as never)],
@@ -269,11 +296,11 @@ export default function App() {
         const controls = new WalkControls(
           canvas,
           { position: [start[0], start[1], 0], headingDeg: 20, pitchDeg: 4, moving: false },
-          { maxSpeed: MAX_PACE_MPS, walkSpeed: WALK_PACE_MPS },
+          { maxSpeed: MAX_PACE_MPS, sprintSpeed: SPRINT_PACE_MPS, walkSpeed: WALK_PACE_MPS },
         );
 
         scene.setTimeOfDay('16:30');
-        setAttributions(registry.attributions());
+        setAttributions([...registry.attributions(), ...paletteCredits]);
 
         engine.current = {
           scene, frame, bus, registry, district, selector, streamer, controls,
@@ -494,19 +521,44 @@ export default function App() {
 
   // --------------------------------------------------------------- handlers
 
+  /**
+   * Single click selects a building.
+   *
+   * Deliberately does three things it did not before. It ignores the click that ends a drag, so
+   * panning never selects by accident. It no longer grabs pointer lock, because dragging is now the
+   * primary way to look around and stealing the cursor on every click was hostile. And it defers
+   * briefly, so a double-click can cancel it: double-click means "walk there" and should not also
+   * leave a building selected, which was the awkward part.
+   */
   const handleCanvasClick = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
     const state = engine.current;
     if (!state) return;
+    if (state.controls.consumeDragClick()) return;
+
     const rect = event.currentTarget.getBoundingClientRect();
     const ndcX = ((event.clientX - rect.left) / rect.width) * 2 - 1;
     const ndcY = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-    const hit = state.scene.pick(ndcX, ndcY);
-    if (hit) {
-      setSelected(state.scene.toAssetMetadata(hit.metadata));
-      state.scene.setHighlight(hit.id);
-    } else if (!state.player?.isPlaying) {
-      state.controls.requestLock();
-    }
+
+    if (pendingClick.current) window.clearTimeout(pendingClick.current);
+    pendingClick.current = window.setTimeout(() => {
+      pendingClick.current = null;
+      const hit = state.scene.pick(ndcX, ndcY);
+      if (hit) {
+        setSelected(state.scene.toAssetMetadata(hit.metadata));
+        state.scene.setHighlight(hit.id);
+        const style = state.scene.facadeStyle(hit.id);
+        setSelectedEvidence(
+          style?.basis === 'observed'
+            ? {
+                color: style.color,
+                observed_grade: style.observed_grade,
+                colour_source: style.colour_source,
+                attribution_text: style.attribution_text,
+              }
+            : null,
+        );
+      }
+    }, DOUBLE_CLICK_GRACE_MS);
   }, []);
 
   /**
@@ -533,16 +585,33 @@ export default function App() {
   const handleCanvasDoubleClick = useCallback(
     (event: React.MouseEvent<HTMLCanvasElement>) => {
       event.preventDefault();
+      // Cancel the pending single click: a double-click moves you, and moving you should not also
+      // select whatever you happened to aim at.
+      if (pendingClick.current) {
+        window.clearTimeout(pendingClick.current);
+        pendingClick.current = null;
+      }
       goToPointer(event.clientX, event.clientY, event.currentTarget);
     },
     [goToPointer],
   );
 
-  /** Touch double-tap for browsers that do not synthesise a dblclick. */
+  /**
+   * Touch double-tap for browsers that do not synthesise a dblclick.
+   *
+   * Ignores anything that was a multi-touch gesture or a drag: lifting the last of two fingers
+   * after a pinch used to register as a tap, and a second pinch shortly after would then teleport
+   * the walker across the district.
+   */
   const handleCanvasTouchEnd = useCallback(
     (event: React.TouchEvent<HTMLCanvasElement>) => {
+      const state = engine.current;
       const touch = event.changedTouches[0];
-      if (!touch) return;
+      if (!touch || event.touches.length > 0) return;
+      if (state?.controls.consumeDragClick()) {
+        lastTapRef.current = null;
+        return;
+      }
       const now = Date.now();
       const previous = lastTapRef.current;
       lastTapRef.current = { x: touch.clientX, y: touch.clientY, at: now };
@@ -551,6 +620,10 @@ export default function App() {
         now - previous.at < 320 &&
         Math.hypot(touch.clientX - previous.x, touch.clientY - previous.y) < 36
       ) {
+        if (pendingClick.current) {
+          window.clearTimeout(pendingClick.current);
+          pendingClick.current = null;
+        }
         goToPointer(touch.clientX, touch.clientY, event.currentTarget);
         lastTapRef.current = null;
       }
@@ -808,8 +881,10 @@ python scripts/propose_bridge_placement.py --write`}
       <aside className="right">
         <MetadataPanel
           metadata={selected}
+          evidence={selectedEvidence}
           onClose={() => {
             setSelected(null);
+            setSelectedEvidence(null);
             engine.current?.scene.setHighlight(null);
           }}
         />

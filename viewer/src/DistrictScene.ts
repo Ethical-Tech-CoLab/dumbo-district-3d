@@ -28,6 +28,7 @@ import {
   facadeBandFactor,
   parseColor,
   type FacadeDocument,
+  type FacadeStyle,
   type PavingDocument,
 } from './SceneDressing';
 import type { ScenePropSet } from '@d3d/contracts';
@@ -274,6 +275,11 @@ export class DistrictScene {
 
   get propDiagnostics(): { instances: number; drawCalls: number } {
     return this.propStats;
+  }
+
+  /** The facade style for a building, so the shell can show where its appearance came from. */
+  facadeStyle(localId: string): FacadeStyle | null {
+    return this.facades?.styles?.[localId] ?? null;
   }
 
   /** Draw the district boundary as a ground line so the walkable extent is legible. */

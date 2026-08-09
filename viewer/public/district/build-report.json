@@ -1,9 +1,9 @@
 {
- "generated_at": "2026-08-09T20:00:18+00:00",
+ "generated_at": "2026-08-09T21:26:51+00:00",
  "generated_by": "dumbo-district-3d/scripts@1.0.0",
  "control_document": {
   "path": "DUMBO-GEOSPATIAL-CONTROL.md",
-  "sha256": "647184b0c8d520e4c7501af54bfc57b6f07931390283126ab4bc30aea94c363d"
+  "sha256": "9e43784757ddf627a923dfb977f9d41d83e181603b99b9c25b2430a9c970383c"
  },
  "buildings": 392,
  "height_sources": {

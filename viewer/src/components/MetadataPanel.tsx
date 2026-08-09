@@ -22,6 +22,7 @@ const LABELS: Record<string, string> = {
   bbl: 'BBL',
   geom_source: 'Geometry capture',
   height_basis: 'Height basis',
+  ground_elevation_basis: 'Ground elevation from',
 };
 
 const UNITS: Record<string, string> = {
@@ -32,12 +33,21 @@ const UNITS: Record<string, string> = {
   lot_area_m2: ' m²',
 };
 
+/** Appearance a building took from a photograph rather than from its class and age. */
+export interface FacadeEvidence {
+  color: string;
+  observed_grade?: string;
+  colour_source?: string;
+  attribution_text?: string;
+}
+
 interface Props {
   metadata: AssetMetadata | null;
+  evidence?: FacadeEvidence | null;
   onClose?: () => void;
 }
 
-export default function MetadataPanel({ metadata, onClose }: Props) {
+export default function MetadataPanel({ metadata, evidence, onClose }: Props) {
   if (!metadata) {
     return (
       <section className="panel">
@@ -48,8 +58,7 @@ export default function MetadataPanel({ metadata, onClose }: Props) {
         </p>
         <p className="muted small">
           Double-click anywhere in the scene to walk there.
-        </p>
-      </section>
+        </p>      </section>
     );
   }
 
@@ -133,6 +142,42 @@ export default function MetadataPanel({ metadata, onClose }: Props) {
           <dd>{metadata.review_status}</dd>
         </div>
       </dl>
+
+      {evidence ? (
+        <>
+          <h3>Photographic evidence</h3>
+          <p className="small">
+            This building&rsquo;s appearance is taken from a photograph rather than inferred from its
+            class and age, and is held against the procedural pass.
+          </p>
+          <dl className="kv">
+            <div>
+              <dt>Grade</dt>
+              <dd>{evidence.observed_grade ?? '—'}</dd>
+            </div>
+            <div>
+              <dt>Colour</dt>
+              <dd>
+                <span className="swatch" style={{ background: evidence.color }} />
+                <span className="mono small"> {evidence.color}</span>
+              </dd>
+            </div>
+            {evidence.colour_source ? (
+              <div>
+                <dt>Measured</dt>
+                <dd className="small">
+                  {evidence.colour_source === 'measured_from_this_photograph'
+                    ? 'from this photograph'
+                    : 'from the district corpus'}
+                </dd>
+              </div>
+            ) : null}
+          </dl>
+          {evidence.attribution_text ? (
+            <p className="small muted">{evidence.attribution_text}</p>
+          ) : null}
+        </>
+      ) : null}
     </CollapsiblePanel>
   );
 }

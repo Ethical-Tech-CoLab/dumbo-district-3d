@@ -85,7 +85,41 @@ Remaining, and deliberately still open: `DSRC-008`, NYC's own 1 ft DEM, would be
 than a correction. It stays registered so the gap between what we have and the best available stays
 visible.
 
-### M3.2 — Run the photo campaign — **now highest priority**
+### M3.2 — Run the photo campaign — **first pass done, 2026-08-09**
+
+A first corpus exists: **336 openly-licensed photographs** of DUMBO, 185 geolocated, 156 good enough
+to grant grade B, all validating against the `photo-survey` contract that had been written a
+milestone earlier with nothing to put in it.
+
+What it produced:
+
+- **67 facades are now observed rather than inferred**, and marked so the procedural pass can never
+  silently re-guess them. 12 of those take their colour from a photograph of that specific building.
+- **Measured surface colours**: brick `#755140` from 47 photographs, paving `#686766` from 88. The
+  viewer re-tints its road, kerb and plaza surfaces towards the measured value, so the district
+  reads as its own granite sett and warm brick rather than as generic grey city.
+- Selecting a photographed building shows a *Photographic evidence* block with the grade, the
+  measured colour and the credit line.
+
+Two decisions worth keeping:
+
+**Licence-first, no vendoring.** Only images already published under a reuse-permitting licence, with
+the licence recorded per record and anything unrecognised rejected rather than assumed. Share-alike
+images are `derive_appearance`: colours are measured from them, the images themselves never enter
+this repository — the same rule already applied to another module's geometry.
+
+**Gate the material, do not average the frame.** The first palette attempt took the dominant colour
+of a crop and came out uniformly grey, because the most common colour in a DUMBO street photograph is
+sky, bridge steel or river. Asking a narrower question — *where this photograph shows brick, what
+colour is the brick* — and treating coverage as the evidence that brick is present at all, produced
+believable warehouse red on the first try.
+
+Still open: no bearing, so a photograph is attached to every building within its accuracy radius and
+marked `partial` rather than claiming one facade. A keyword screen removes interiors and objects that
+proximity would otherwise attach to a wall. Openverse is rate-limited without an API key, so this
+pass is Wikimedia Commons only; adding Flickr breadth is the obvious next increment.
+
+### M3.2b — Volunteer capture campaign
 
 The contract and volunteer guide exist; the corpus does not. This is the highest-value item after
 terrain, because it retires two open questions at once and is the only one that scales with
@@ -128,7 +162,7 @@ waterfront tour stops.
 
 | | |
 |---|---|
-| **M4.1 Roof forms from LiDAR** | Flat roofs dominate LOD0's declared 0.2 m error. M3.1 ingested a bare-earth DEM, which by definition has buildings removed; this needs the first-return or point-cloud product instead. |
+| **M4.1 Roof forms from LiDAR** | Flat roofs dominate LOD0's declared 0.2 m error, and DUMBO's water towers and bulkheads are its most recognisable roofline. M3.1 ingested a *bare-earth* DEM, which by definition has buildings removed, so this needs a different product. Investigated: USGS 3DEP publishes bare earth only; NYC's own 3-D Building Model for Brooklyn CD2 is a 92 MB Rhino `.3dm`, which no standard-library parser can read. The live route is CityGML LOD2, which is XML and therefore parseable — `georocket/new-york-city-model-enhanced` republishes the DOITT model that way in ~50 MB data areas. Next step is confirming which data area covers DUMBO and what licence the republication carries. |
 | **M4.2 Facade textures from the photo corpus** | Only after M3.2 has enough rectified, licensed images. Deriving attributes comes first; textures are a heavier step with redistribution consequences. |
 | **M4.3 Named landmark models** | Jane's Carousel, the Archway, Empire Stores — the objects tours point at. The prop contract already supports it: set `url` on a prototype. Small, high-visibility, independent. |
 | **M4.4 District photogrammetry** | Deliberately last. Must be aligned to a control surface; doing it before M3.1 means doing it twice. |

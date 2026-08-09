@@ -263,6 +263,42 @@ exists to scope the project and was drawn by inspection (`DOQ-005`); it was neve
 using it as one meant the terrain either drowned the waterfront or paved the river depending on
 which way the apron erred.
 
+### DSRC-015 — Openly-licensed photographs of DUMBO · Tier C · grants B
+
+| | |
+|---|---|
+| Publisher | Wikimedia Commons contributors |
+| Accessed | 2026-08-09 |
+| License | **Mixed, all reuse-permitting** — CC0-1.0, public domain, CC BY 2.0/3.0/4.0, CC BY-SA 2.0/3.0/4.0 |
+| Attribution | **Required per image** — credit lines are carried in `photo-survey.json` |
+| Verified | Yes |
+
+The first found-imagery campaign: **336 photographs**, 185 of them geolocated, 156 good enough to
+grant grade B.
+
+Every image was already published under a licence that permits reuse. Nothing was scraped from a
+tourism site, a listing agent or a social feed, because an image whose licence is unknown cannot be
+used here however good it looks — fetching it would create a liability, not an asset. The ingest
+checks each licence against an allowlist and **rejects anything it does not recognise**, so a new or
+oddly spelled variant fails closed.
+
+What each licence permits is recorded per record rather than assumed in bulk:
+
+| Licence | `usage` | Meaning |
+|---|---|---|
+| CC0, public domain, CC BY | `redistribute` | The image may be served to users, with its credit line. |
+| CC BY-SA | `derive_appearance` | Colours and dimensions may be **measured**; the image is not republished by us. |
+
+Share-alike is deliberately held at `derive_appearance`. Measuring the dominant brick colour of a
+wall extracts a *fact*, and facts carry no copyright, so nothing downstream inherits the ShareAlike
+obligation. Republishing the photographs would be permitted too, but only under the same licence,
+and quietly mixing that obligation into an otherwise MIT repository is very hard to unpick later.
+Reference it, measure it, do not vendor it. **No third-party image bytes are committed here** — the
+same rule this project already applies to another module's geometry.
+
+Photographs never grant A; that is the contract's rule, not a local one. Grade B requires an image
+that is locatable, datable and large enough to read a material from. See `DOQ-007`.
+
 ---
 
 ## 3. Definition sources

@@ -47,11 +47,33 @@ python scripts/build_far_field.py
 # 7. Generate the demonstration tours
 python scripts/build_tour.py
 
-# 8. Run it
+# 8. Optional: the openly-licensed photo corpus, and the colours measured from it
+python scripts/ingest_photos.py
+python scripts/build_photo_corpus.py
+python scripts/build_scene_dressing.py --facades   # re-run so observed facades take effect
+
+# 9. Run it
 cd viewer && npm install && npm run dev     # http://localhost:5178
 ```
 
-Python 3.12, standard library only. Node 20+ for the viewer.
+### Controls
+
+| | Mouse / trackpad | Touch |
+|---|---|---|
+| Move | drag | one finger drag, or two-finger drag |
+| Look around | right-drag | three fingers, twist |
+| Zoom | wheel | pinch |
+| Go to a place | double-click | double-tap |
+| Select a building | single click | tap |
+| Walk | `W` `A` `S` `D`, `shift` to hurry | — |
+
+Dragging never selects, and a double-click moves you without also selecting whatever you aimed at:
+the click that ends a drag is swallowed, and a single click waits briefly to see whether a second
+one is coming.
+
+Python 3.12, standard library only for the core build. `scripts/build_photo_corpus.py` will use
+Pillow to measure colours from the photo corpus if it is installed, and simply skips that step if it
+is not. Node 20+ for the viewer.
 
 The terrain step samples 29,025 points from the USGS 3DEP elevation service in 30 batched requests,
 which is the slowest part of the ingest. If it is skipped the build still succeeds: the ground falls

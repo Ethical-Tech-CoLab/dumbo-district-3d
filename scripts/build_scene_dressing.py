@@ -19,6 +19,7 @@ Sources:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 from datetime import datetime, timezone
@@ -419,27 +420,107 @@ def build_facades(control: DistrictControl) -> dict:
             "color": base_color,
             "glazing": round(min(0.7, max(0.02, glazing)), 3),
             "era": era,
+            "basis": "inferred",
             **({"floors": int(floors)} if floors else {}),
         }
 
+    observed = apply_observed_appearance(facades)
+
     print(f"    {len(facades)} facades; families {dict(sorted(histogram.items(), key=lambda kv: -kv[1])[:5])}")
+    if observed:
+        print(f"    {observed} facades observed from photographs and locked against the procedural pass")
 
     return {
         "contract_version": CONTRACT_VERSION,
         "module_id": MODULE_ID,
         "frame_id": FRAME_ID,
-        "source_refs": ["DSRC-001", "DSRC-002"],
+        "source_refs": ["DSRC-001", "DSRC-002"] + (["DSRC-015"] if observed else []),
         "confidence": "C",
+        "observed_count": observed,
         "open_questions": ["DOQ-007"],
         "notes": (
             "Facade appearance derived from PLUTO building class and construction year. The inputs "
             "are grade A; the mapping from class to material and glazing ratio is a convention, so "
             "the appearance is graded C. It describes the KIND of building, not its actual facade. "
-            "Replace with street-level imagery or photogrammetry to promote."
+            "Buildings carrying photographic evidence are marked basis=observed, take their colour "
+            "from that photograph, and are never reassigned by the procedural pass."
         ),
         "styles": facades,
         "provenance": provenance(control),
     }
+
+
+def apply_observed_appearance(facades: dict[str, dict]) -> int:
+    """Override inferred appearance wherever a photograph actually shows the building.
+
+    This is the point of the campaign. The procedural pass is a reasonable guess from a building's
+    class and age, and it is *supposed* to be overwritten as soon as anything real turns up. A
+    building that has been photographed must never be silently re-guessed on the next build, so its
+    entry is marked `basis: "observed"` and carries the credit line for the image it came from.
+    Anything reading these styles can treat `observed` as a lock.
+
+    Absent a corpus this is a no-op and the district looks exactly as it did before, which is what
+    lets the campaign be run incrementally rather than all at once.
+    """
+    survey_path = OUT / "photo-survey.json"
+    palette_path = OUT / "photo-palette.json"
+    if not survey_path.exists():
+        return 0
+    survey = json.loads(survey_path.read_text(encoding="utf-8"))
+    palette = (json.loads(palette_path.read_text(encoding="utf-8"))
+               if palette_path.exists() else {"surfaces": {}})
+
+    brick = palette.get("surfaces", {}).get("brick") or {}
+    # Colour measured from each individual photograph, so a building can wear the tone read off a
+    # picture of itself rather than a district average.
+    measured_by_observation = {s["observation_id"]: s["hex"]
+                               for s in brick.get("samples", []) if s.get("observation_id")}
+    fallback_tones = [s["hex"] for s in brick.get("samples", [])] or (
+        [brick["mean_hex"]] if brick.get("mean_hex") else []
+    )
+
+    # Best evidence per building: prefer the closest, then the highest grade.
+    best: dict[str, tuple[float, str, dict]] = {}
+    grade_rank = {"A": 0, "B": 1, "C": 2, "D": 3}
+    for observation in survey.get("observations", []):
+        grade = (observation.get("review") or {}).get("grants_confidence", "C")
+        for subject in observation.get("observes", []):
+            if not any(a in ("facade_material", "facade_colour", "window_pattern")
+                       for a in subject.get("aspect", [])):
+                continue
+            local_id = subject["asset_id"].rsplit(":", 1)[-1]
+            key = (subject.get("distance_m", 999.0), grade)
+            current = best.get(local_id)
+            if current is None or (key[0], grade_rank.get(key[1], 3)) < (current[0], grade_rank.get(current[1], 3)):
+                best[local_id] = (key[0], grade, observation)
+
+    changed = 0
+    from_own_photo = 0
+    for local_id, (distance, grade, observation) in best.items():
+        style = facades.get(local_id)
+        if style is None:
+            continue
+        style["basis"] = "observed"
+        style["observed_grade"] = grade
+        style["observation_id"] = observation["observation_id"]
+        style["attribution_text"] = observation.get("attribution_text")
+        style["observed_distance_m"] = distance
+
+        own = measured_by_observation.get(observation["observation_id"])
+        if own:
+            style["color"] = own
+            style["colour_source"] = "measured_from_this_photograph"
+            from_own_photo += 1
+        elif fallback_tones:
+            # Deterministic so the same building keeps the same tone between builds, and so the
+            # district does not reshuffle its colours every time the corpus grows.
+            index = int(hashlib.sha256(local_id.encode()).hexdigest(), 16) % len(fallback_tones)
+            style["color"] = fallback_tones[index]
+            style["colour_source"] = "measured_from_district_corpus"
+        changed += 1
+    if from_own_photo:
+        print(f"    {from_own_photo} of those took their colour from a photograph of that building")
+    return changed
 
 
 # ---------------------------------------------------------------------- main

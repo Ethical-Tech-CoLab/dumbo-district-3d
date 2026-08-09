@@ -178,6 +178,7 @@ Used by walk mode and by the tour player when a tour does not specify its own pa
 | DCTL-052 | walk_pace_default | 1.30 | m/s | DEF-005 | B | Unhurried adult pace. |
 | DCTL-053 | walk_pace_family | 1.05 | m/s | DEF-005 | B | Group containing children, sightseeing rather than commuting. |
 | DCTL-054 | walk_pace_max | 2.20 | m/s | DEF-005 | B | Clamp for free-fly walking, so the streaming manager is never outrun. |
+| DCTL-055 | walk_pace_sprint | 6.60 | m/s | DEF-005 | B | Clamp while shift is held. Three times the old ceiling, and deliberately faster than a person runs: covering the district quickly is a navigation need, not a claim about pedestrians. Safe to raise now only because a tile that fails to arrive is retried with backoff rather than leaving a permanent hole, and because the streamer prefetches along the heading. |
 
 ---
 

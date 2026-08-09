@@ -15,8 +15,9 @@ export default function Hud({ diagnostics, instruction, narration, ready }: Prop
 
       {ready && !instruction && !narration && (
         <div className="help muted small">
-          click to look around · <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> to walk ·
-          <kbd>shift</kbd> to hurry · <kbd>esc</kbd> to release the pointer
+          drag to move · right-drag to look · scroll to zoom ·{' '}
+          <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> to walk · <kbd>shift</kbd> to hurry ·
+          double-click to go there
         </div>
       )}
 

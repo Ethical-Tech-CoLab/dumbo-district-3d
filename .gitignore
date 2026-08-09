@@ -18,6 +18,13 @@ data/boundaries/*.raw.json
 data/streetscape/*.raw.json
 data/horizon/*.raw.json
 data/terrain/*.raw.json
+data/photos/*.raw.json
+# Cached thumbnails, fetched only to measure colours from. Third-party images are never committed:
+# the corpus references them by URL and records their licence, it does not vendor them.
+data/photos/cache/
+# 92 MB Rhino .3dm, kept out of the tree: no standard-library parser can read it, so it is a dead
+# end retained only in the M4.1 notes.
+data/roofs/
 data/ingest.log
 
 # Another module's published artifacts, copied here only to co-serve them during development.

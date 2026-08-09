@@ -31,6 +31,17 @@ export interface FacadeStyle {
   glazing: number;
   era: string;
   floors?: number;
+  /**
+   * "inferred" when the appearance came from building class and age, "observed" when a photograph
+   * of the building supplied it. Observed styles are held against the procedural pass rather than
+   * being regenerated, so a real facade is never silently replaced by a guess.
+   */
+  basis?: 'inferred' | 'observed';
+  observed_grade?: string;
+  observation_id?: string;
+  attribution_text?: string;
+  observed_distance_m?: number;
+  colour_source?: string;
 }
 
 export interface FacadeDocument {
@@ -45,6 +56,53 @@ const SURFACE_STYLE: Record<string, { color: number; height: number }> = {
   cycleway: { color: 0x4a4340, height: 0.05 },
   steps: { color: 0x827d76, height: 0.16 },
 };
+
+/** A colour measured from photographs of the district, per surface material. */
+export interface ObservedPalette {
+  available?: boolean;
+  surfaces?: Record<string, { mean_hex?: string; observations?: number; credits?: string[] }>;
+}
+
+/**
+ * Re-tint the built-in surface colours towards what photographs of DUMBO actually show.
+ *
+ * The built-in values are a designer's guess and look like any grey city. The measured ones come
+ * from the campaign corpus, so the road reads as the district's granite sett and asphalt rather than
+ * as generic tarmac. Applied as a partial blend rather than a replacement: a single measured mean
+ * carries real uncertainty, and the relative contrast between roadway, kerb and plaza was chosen so
+ * a walker can read edges, which is worth preserving.
+ */
+export function applyObservedPalette(palette: ObservedPalette | null, strength = 0.75): string[] {
+  const paving = palette?.surfaces?.paving;
+  if (!palette?.available || !paving?.mean_hex) return [];
+  const measured = new THREE.Color(paving.mean_hex);
+  for (const kind of ['roadway', 'sidewalk', 'plaza', 'cycleway', 'steps']) {
+    const style = SURFACE_STYLE[kind];
+    if (!style) continue;
+    const blended = new THREE.Color(style.color).lerp(measured, strength * relativeWeight(kind));
+    style.color = blended.getHex();
+  }
+  return paving.credits ?? [];
+}
+
+/**
+ * How far each surface moves towards the measured colour.
+ *
+ * The corpus measures the road surface, which is what most of a street photograph's lower third is.
+ * Kerbs and steps are usually lighter concrete and are not what was sampled, so they follow only
+ * part of the way rather than being flattened to the same tone as the carriageway.
+ */
+function relativeWeight(kind: string): number {
+  switch (kind) {
+    case 'roadway':
+    case 'cycleway':
+      return 1.0;
+    case 'plaza':
+      return 0.6;
+    default:
+      return 0.35;
+  }
+}
 
 export function buildPaving(doc: PavingDocument, groundAt: (x: number, y: number) => number): THREE.Group {
   const group = new THREE.Group();
