@@ -32,7 +32,7 @@ import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
-from district_control import AGENT_ID, DistrictControl
+from district_control import AGENT_ID, DistrictControl, point_in_ring
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DATA = REPO_ROOT / "data"
@@ -280,6 +280,11 @@ NOT_EXTERIOR = (
     "sculpture detail", "installation", "performance", "concert", "wedding", "protest",
     "manhole", "bicycle", "dog", "cat", "car ", "limousine", "truck", "bus ", "boat",
     "ferry", "helicopter", "fireworks", "sunset over", "skyline from", "panorama of manhattan",
+    # Indoor events and workspaces. Added after an office interior filed as "FrogDesign Ling.jpg"
+    # reached a warehouse facade: rooms with large windows defeat the sky test below, because a
+    # window is also bright and blue.
+    "studio", "workshop", "meetup", "conference", "seminar", "class ", "desk", "office interior",
+    "apartment", "showroom", "exhibit", "arts center", "arts centre",
 )
 
 # Titles that positively indicate a street-level exterior view worth trusting a little more.
@@ -295,6 +300,41 @@ def is_exterior_subject(observation: dict) -> bool:
     return not any(bad in title for bad in NOT_EXTERIOR)
 
 
+def looks_outdoor(image_mod, path: Path) -> float | None:
+    """Fraction of the top of the frame that reads as sky. Recorded, but NOT used to reject.
+
+    The intent was to tell interiors from exteriors, since a street-level photograph of a building
+    almost always has sky across the top and a room does not. Measured against this corpus, it does
+    not separate them: interiors scored 0.16 to 0.79 and exteriors 0.51 to 1.00, because rooms with
+    large windows are bright and blue at the top of frame too. Any threshold that caught the office
+    interior would also have thrown away good street views.
+
+    It is kept because it is a real measurement worth carrying on the record, and because publishing
+    the number is more useful than a threshold quietly tuned until this particular sample passed.
+    Deciding interior from exterior needs a human, which is exactly what `review.status` says.
+    """
+    try:
+        with image_mod.open(path) as raw:
+            image = raw.convert("RGB")
+            width, height = image.size
+            strip = image.crop((0, 0, width, max(8, int(height * 0.08))))
+            strip.thumbnail((200, 60))
+            pixels = list(strip.convert("RGB").tobytes())
+    except Exception:  # noqa: BLE001
+        return None
+
+    total = len(pixels) // 3
+    if total < 60:
+        return None
+    sky = 0
+    for i in range(0, total * 3, 3):
+        r, g, b = pixels[i], pixels[i + 1], pixels[i + 2]
+        _, lightness, saturation = colorsys.rgb_to_hls(r / 255, g / 255, b / 255)
+        if lightness > 0.52 and (b >= r or saturation < 0.14):
+            sky += 1
+    return round(sky / total, 3)
+
+
 def attach_to_buildings(control: DistrictControl, observations: list[dict],
                         buildings: list[dict], radius_m: float) -> tuple[int, int]:
     """Link each located observation to the buildings it plausibly shows.
@@ -306,16 +346,38 @@ def attach_to_buildings(control: DistrictControl, observations: list[dict],
     """
     attached = 0
     screened = 0
+    image_mod = try_pillow()
+    rings = [(b, [(p[0], p[1]) for p in b["ring"]] + [(b["ring"][0][0], b["ring"][0][1])])
+             for b in buildings]
     for observation in observations:
         if observation["position_source"] == "unknown":
             continue
-        if not is_exterior_subject(observation):
-            screened += 1
-            observation["notes"] = (observation.get("notes") or "") + \
-                "; screened out of facade evidence: subject is not a building exterior"
-            continue
         lon, lat = observation["position"]["lon"], observation["position"]["lat"]
         x, y, _ = control.geodetic_to_enu(lon, lat)
+
+        reason = None
+        if not is_exterior_subject(observation):
+            reason = "subject is not a building exterior"
+        if reason:
+            screened += 1
+            observation["notes"] = (observation.get("notes") or "") + \
+                f"; screened out of facade evidence: {reason}"
+            continue
+
+        if image_mod is not None:
+            path = fetch_thumbnail(observation.get("thumbnail_url") or "")
+            if path is not None:
+                sky = looks_outdoor(image_mod, path)
+                if sky is not None:
+                    observation["quality"]["sky_fraction"] = sky
+
+        # A coordinate that falls inside a footprint is treated as naming its SUBJECT, not as proof
+        # that the photographer was indoors. Commons records the location a picture is *about* at
+        # least as often as where the camera stood, and on this corpus the two are indistinguishable.
+        # So a hit means "this photograph is of that building", which is the strongest attribution
+        # available without a compass bearing.
+        subject = next((b for b, ring in rings if point_in_ring((x, y), ring)), None)
+
         near: list[tuple[float, dict]] = []
         for building in buildings:
             bx, by = building["centroid"]
@@ -328,13 +390,23 @@ def attach_to_buildings(control: DistrictControl, observations: list[dict],
                             "storefront", "awning", "signage", "roofline", "entrance")]
         if not aspects:
             continue
-        for distance, building in near[:4]:
+
+        if subject is not None:
+            # Named subject: one building, stated clearly, rather than a spray of neighbours.
             observation["observes"].append({
-                "asset_id": f"urn:d3d:{MODULE_ID}:{building['local_id']}",
+                "asset_id": f"urn:d3d:{MODULE_ID}:{subject['local_id']}",
                 "aspect": aspects,
-                "visibility": "partial",
-                "distance_m": round(distance, 1),
+                "visibility": "clear",
+                "distance_m": 0.0,
             })
+        else:
+            for distance, building in near[:4]:
+                observation["observes"].append({
+                    "asset_id": f"urn:d3d:{MODULE_ID}:{building['local_id']}",
+                    "aspect": aspects,
+                    "visibility": "partial",
+                    "distance_m": round(distance, 1),
+                })
         if observation["observes"]:
             attached += 1
     return attached, screened

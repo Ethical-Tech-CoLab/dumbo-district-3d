@@ -8,9 +8,9 @@
  "surfaces": {
   "paving": {
    "label": "cobblestone, granite sett and asphalt",
-   "observations": 88,
-   "mean_hex": "#686766",
-   "mean_coverage": 0.441,
+   "observations": 103,
+   "mean_hex": "#676765",
+   "mean_coverage": 0.437,
    "samples": [
     {
      "observation_id": "obs-district-streetscape-ccbd3f6800",
@@ -421,26 +421,26 @@
     "'East River Ferry' Brooklyn (NY) April 2016 (26873292141).jpg by Ron Cogswell from Arlington, Virginia, USA, CC-BY-2.0, via Wikimedia Commons",
     "'Premier Rentals' Brooklyn (NY) April 2016 (26873291921).jpg by Ron Cogswell from Arlington, Virginia, USA, CC-BY-2.0, via Wikimedia Commons",
     "'Welcome to Brooklyn' -- The Brooklyn Bridge (NY) April 2016 (26847039662).jpg by Ron Cogswell from Arlington, Virginia, USA, CC-BY-2.0, via Wikimedia Commons",
+    "110 York Street (16630059491).jpg by Billie Grace Ward from New York, USA, CC-BY-2.0, via Wikimedia Commons",
     "12698-EV -1 250714 CPS (24073097089).jpg by Chris Sampson, CC-BY-2.0, via Wikimedia Commons",
     "1989 Nissan Pao - 03.jpg by Oleg Yunakov, CC-BY-SA-4.0, via Wikimedia Commons",
     "2024-06-15 08 48 49 View east along Interstate 278 (Brooklyn-Queens Expressway) from the Brooklyn Bridge in Brooklyn, New York City, New York.jpg by Famartin, CC-BY-SA-4.0, via Wikimedia Commons",
     "2024-06-15 09 34 57 View west along Interstate 278 (Brooklyn-Queens Expressway) from the Manhattan Bridge in Brooklyn, New York City, New York.jpg by Famartin, CC-BY-SA-4.0, via Wikimedia Commons",
+    "2024-06-15 09 35 38 View west along Interstate 278 (Brooklyn-Queens Expressway) from the Manhattan Bridge in Brooklyn, New York City, New York.jpg by Famartin, CC-BY-SA-4.0, via Wikimedia Commons",
     "2024-11-17-Manhattan Bridge Dumbo-0407.jpg by Superbass, CC-BY-SA-4.0, via Wikimedia Commons",
     "500px photo (203162663).jpeg by Ian Spence, CC-BY-3.0, via Wikimedia Commons",
     "60 Water Street (2022).jpg by ThibautRe, CC-BY-SA-4.0, via Wikimedia Commons",
     "A Day In New York 14th May 2015- Rally to Save NYC (17038430063).jpg by The All-Nite Images from NY, NY, USA, CC-BY-SA-2.0, via Wikimedia Commons",
+    "A Day In New York 14th May 2015- Rally to Save NYC (17632286996).jpg by The All-Nite Images from NY, NY, USA, CC-BY-SA-2.0, via Wikimedia Commons",
     "A Day In New York 14th May 2015- Rally to Save NYC (17658620675).jpg by The All-Nite Images from NY, NY, USA, CC-BY-SA-2.0, via Wikimedia Commons",
-    "A Day In New York 14th May 2015- Rally to Save NYC (17658734551).jpg by The All-Nite Images from NY, NY, USA, CC-BY-SA-2.0, via Wikimedia Commons",
-    "A frame to match the subject - Flickr - Auslandsoesterreicherflickraccountinhaber.jpg by Auslandsoesterreicherflickraccountinhaber from NY, NY, CC-BY-2.0, via Wikimedia Commons",
-    "A28 Choice March (6664407839) (2).jpg by Tommy Miles from NYC, CC-BY-SA-2.0, via Wikimedia Commons",
-    "A28 Choice March (6664407839).jpg by Tommy Miles from NYC, CC-BY-SA-2.0, via Wikimedia Commons"
+    "A Day In New York 14th May 2015- Rally to Save NYC (17658734551).jpg by The All-Nite Images from NY, NY, USA, CC-BY-SA-2.0, via Wikimedia Commons"
    ]
   },
   "brick": {
    "label": "brick and terracotta masonry",
-   "observations": 47,
-   "mean_hex": "#755140",
-   "mean_coverage": 0.185,
+   "observations": 50,
+   "mean_hex": "#744f3f",
+   "mean_coverage": 0.189,
    "samples": [
     {
      "observation_id": "obs-district-streetscape-dec7010fb0",
@@ -663,19 +663,34 @@
      "coverage": 0.194
     },
     {
-     "observation_id": "obs-district-streetscape-6bc1f08f3f",
-     "hex": "#907a5f",
-     "coverage": 0.123
+     "observation_id": "obs-district-streetscape-7bf33f8cec",
+     "hex": "#785436",
+     "coverage": 0.398
     },
     {
-     "observation_id": "obs-carousel-07defcacd3",
-     "hex": "#907664",
-     "coverage": 0.121
+     "observation_id": "obs-district-streetscape-0cf58be99b",
+     "hex": "#7a543e",
+     "coverage": 0.228
     },
     {
-     "observation_id": "obs-carousel-4b81ea67e8",
-     "hex": "#6a594c",
-     "coverage": 0.149
+     "observation_id": "obs-district-streetscape-61d6e3758e",
+     "hex": "#80563e",
+     "coverage": 0.097
+    },
+    {
+     "observation_id": "obs-district-streetscape-52ca8c2892",
+     "hex": "#943d3a",
+     "coverage": 0.061
+    },
+    {
+     "observation_id": "obs-district-streetscape-6d05f1e4d5",
+     "hex": "#4b4136",
+     "coverage": 0.214
+    },
+    {
+     "observation_id": "obs-district-streetscape-705ba5f3e5",
+     "hex": "#81584f",
+     "coverage": 0.151
     }
    ],
    "range_hex": [
@@ -688,15 +703,15 @@
     "A Day In New York 14th May 2015- Rally to Save NYC (17038430063).jpg by The All-Nite Images from NY, NY, USA, CC-BY-SA-2.0, via Wikimedia Commons",
     "A Day In New York 14th May 2015- Rally to Save NYC (17471187290).jpg by The All-Nite Images from NY, NY, USA, CC-BY-SA-2.0, via Wikimedia Commons",
     "Amazon Prime E-Assisted vehicle in Brooklyn, NY.jpg by Nielsoncaetanosalmeron, CC-BY-4.0, via Wikimedia Commons",
+    "Artist Studio James Cospito, Brooklyn Art Project HQ Dumbo Arts Center Art Under the Bridge Festival 2009 20090926.10D.54616.P1.L2 SML (3967329241).jpg by See-ming Lee from Hong Kong SAR, China, CC-BY-SA-2.0, via Wikimedia Commons",
+    "Artist Studio Ruza Bagaric Dumbo Arts Center Art Under the Bridge Festival 2009 20090926.10D.54595.P1.L1 SML (3962925533).jpg by See-ming Lee from Hong Kong SAR, China, CC-BY-SA-2.0, via Wikimedia Commons",
     "BB snowy walkway jeh.jpg by Jim.henderson, CC0-1.0, via Wikimedia Commons",
-    "Brooklyn Bridge and the Lower Manhattan skyline from Pebble Beach, New York.jpg by Christian David, CC-BY-SA-4.0, via Wikimedia Commons",
     "Brooklyn Bridge promenade, New York City, 20231005 0933 2156.jpg by Jakub Ha\u0142un, CC-BY-SA-4.0, via Wikimedia Commons",
-    "Brooklyn Bridge und Lower Manhattan.jpg by Kai Pilger, CC-BY-SA-4.0, via Wikimedia Commons",
-    "DUMBO (96047423).jpg by BriYYZ from Toronto, Canada, CC-BY-SA-2.0, via Wikimedia Commons",
     "Emergency telephone NYC 1.jpg by Superbass, CC-BY-SA-3.0, via Wikimedia Commons",
     "Empire State framed by the Manhattan Bridge July 2009.jpg by Michael Neil O'Donnell, CC-BY-SA-2.0, via Wikimedia Commons",
     "FrogDesign Ling.jpg by Ling Zhong, CC-BY-SA-4.0, via Wikimedia Commons",
     "Fulton FerryDUMBO Pictures014.jpg by I.M. Rich at English Wikipedia, CC-BY-SA-3.0, via Wikimedia Commons",
+    "James Cospito's Moleskine Stash, Brooklyn Art Project HQ Dumbo Arts Center Art Under the Bridge Festival 2009 20090926.10D.54637.P1.L2.C23 SML (3969235612).jpg by See-ming Lee from Hong Kong SAR, China, CC-BY-SA-2.0, via Wikimedia Commons",
     "Knit bike booty BB jeh.jpg by Jim.henderson, CC0-1.0, via Wikimedia Commons",
     "Manhattan Bridge (6214857365).jpg by Tony Hisgett from Birmingham, UK, CC-BY-2.0, via Wikimedia Commons"
    ]
@@ -705,6 +720,6 @@
  "provenance": {
   "module_id": "dumbo-district",
   "generated_by": "dumbo-district-3d/scripts@1.0.0 (dumbo-district-3d/scripts@1.0.0)",
-  "generated_at": "2026-08-09T21:27:55+00:00"
+  "generated_at": "2026-08-09T23:13:56+00:00"
  }
 }
