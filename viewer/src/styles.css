@@ -351,6 +351,8 @@ kbd {
 .warnings { padding: 14px 16px; border-bottom: 1px solid var(--line); }
 .warnings h3 { margin: 0 0 8px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--warn); }
 .warnings ul { margin: 0; padding-left: 17px; color: var(--muted); font-size: 12px; display: flex; flex-direction: column; gap: 7px; }
+.warnings li { position: relative; padding-right: 20px; }
+.notice-dismiss { position: absolute; top: -2px; right: -4px; padding: 0 4px; font-size: 11px; }
 
 .attribution {
   margin-top: auto;

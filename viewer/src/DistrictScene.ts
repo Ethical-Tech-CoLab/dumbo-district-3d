@@ -341,8 +341,6 @@ export class DistrictScene {
     for (const decision of update.added) {
       const key = `${decision.tile.tile_id}@${decision.level}`;
       if (this.inFlight.has(key)) continue;
-      const current = this.resident.get(decision.tile.tile_id);
-      if (current && current.level === decision.level) continue;
       this.inFlight.add(key);
       void this.loadTile(decision.tile, decision.level).finally(() => this.inFlight.delete(key));
     }
@@ -360,18 +358,31 @@ export class DistrictScene {
 
   private async loadTile(tile: Tile, level: number): Promise<void> {
     const content = tile.content.find((c) => c.level === level);
-    if (!content) return;
+    if (!content) {
+      // The index claims a level this tile does not ship. Tell the streamer, or it will keep
+      // asking forever.
+      this.options.streamer.markFailed(tile.tile_id);
+      this.options.bus.emit('warning', {
+        code: 'tile.level_missing',
+        message: `tile ${tile.tile_id} has no payload for level ${level}`,
+      });
+      return;
+    }
     const url = this.options.registry.urlFor(this.options.district, content.url, 'tiles');
     try {
       const response = await fetch(url);
-      if (!response.ok) throw new Error(`${response.status}`);
+      if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
       const payload = (await response.json()) as TilePayload;
       this.unloadTile(tile.tile_id);
       this.resident.set(tile.tile_id, this.buildTileGroup(payload, level));
+      // Only now is the tile genuinely present. The streamer records nothing until this point,
+      // so a failed fetch cannot leave a hole it believes is filled.
+      this.options.streamer.markLoaded(tile.tile_id, level);
     } catch (error) {
+      this.options.streamer.markFailed(tile.tile_id);
       this.options.bus.emit('warning', {
         code: 'tile.load_failed',
-        message: `tile ${tile.tile_id} level ${level} failed to load`,
+        message: `tile ${tile.tile_id} level ${level} failed to load; will retry`,
         detail: error instanceof Error ? error.message : error,
       });
     }

@@ -397,12 +397,52 @@ def distance_point_to_segment(
     return math.hypot(px - (ax + t * dx), py - (ay + t * dy))
 
 
+def _check_sources() -> int:
+    """Every source the build actually used must be described in the human-readable register.
+
+    The generated register is what the build consumed; the markdown is what a reader is told. When
+    those drift, the project is quietly claiming a provenance discipline it is no longer keeping —
+    which is worse than having no register at all. So this is a build gate, not a lint.
+    """
+    import json
+    import re
+
+    root = Path(__file__).resolve().parent.parent
+    generated = root / "viewer" / "public" / "district" / "source-register.json"
+    prose = root / "DUMBO-SOURCE-REGISTER.md"
+    if not generated.exists():
+        print(f"SKIP: {generated.name} not built yet")
+        return 0
+
+    shipped = {s["source_id"] for s in json.loads(generated.read_text("utf-8"))["sources"]}
+    documented = set(re.findall(r"^### (DSRC-\d+)", prose.read_text("utf-8"), re.M))
+
+    undocumented = sorted(shipped - documented)
+    phantom = sorted(documented - shipped)
+    print(f"sources shipped  : {len(shipped)}")
+    print(f"sources documented: {len(documented)}")
+    if undocumented:
+        print(f"FAIL: used by the build but absent from the register: {', '.join(undocumented)}")
+    for sid in phantom:
+        # Registering a source before ingesting it is deliberate: it makes a gap visible.
+        print(f"note: {sid} is documented but not yet ingested")
+    if undocumented:
+        return 1
+    print("OK: every shipped source is documented")
+    return 0
+
+
 def _main() -> int:
     import argparse
     import json
 
     parser = argparse.ArgumentParser(description="Inspect the DUMBO geospatial control document.")
     parser.add_argument("--check-frame", action="store_true", help="Report tangent-plane error.")
+    parser.add_argument(
+        "--check-sources",
+        action="store_true",
+        help="Verify every source in the generated register is documented in the markdown register.",
+    )
     parser.add_argument("--json", action="store_true", help="Dump all controls as JSON.")
     args = parser.parse_args()
 
@@ -427,6 +467,11 @@ def _main() -> int:
             print("FAIL: measured flat-plane drop exceeds the declared DCTL-005 value")
             return 1
         print("OK: frame is within its declared bounds")
+
+    if args.check_sources:
+        rc = _check_sources()
+        if rc:
+            return rc
 
     if args.json:
         print(json.dumps(

@@ -51,6 +51,9 @@ export interface Diagnostics {
   budgetPx: number;
 }
 
+/** Codes that describe a condition which can recover on its own, and so should not persist. */
+const TRANSIENT_CODES = new Set(['tile.load_failed', 'tile.level_missing', 'foreign.proxy_failed']);
+
 export default function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [status, setStatus] = useState('Loading district manifest…');
@@ -61,7 +64,17 @@ export default function App() {
   const [selected, setSelected] = useState<AssetMetadata | null>(null);
   const [overlay, setOverlay] = useState(false);
   const [attributions, setAttributions] = useState<string[]>([]);
-  const [warnings, setWarnings] = useState<string[]>([]);
+  /**
+   * Notices, grouped by code.
+   *
+   * Grouping matters: a brief outage can fail twenty tiles, and twenty near-identical lines will
+   * bury the one notice that actually needs reading, such as a basemap licence restriction. Each
+   * code collapses to a single entry with a count, and transient codes clear themselves once the
+   * underlying condition recovers.
+   */
+  const [notices, setNotices] = useState<
+    Record<string, { message: string; count: number; transient: boolean }>
+  >({});
   const [diagnostics, setDiagnostics] = useState<Diagnostics | null>(null);
 
   const [tours, setTours] = useState<TourSummary[]>([]);
@@ -93,9 +106,34 @@ export default function App() {
     mode: ViewerMode;
   } | null>(null);
 
-  const pushWarning = useCallback((message: string) => {
-    setWarnings((previous) => (previous.includes(message) ? previous : [...previous, message]));
+  const pushNotice = useCallback((code: string, message: string) => {
+    setNotices((previous) => {
+      const existing = previous[code];
+      return {
+        ...previous,
+        [code]: {
+          message,
+          count: (existing?.count ?? 0) + 1,
+          transient: TRANSIENT_CODES.has(code),
+        },
+      };
+    });
   }, []);
+
+  const clearNotice = useCallback((code: string) => {
+    setNotices((previous) => {
+      if (!previous[code]) return previous;
+      const next = { ...previous };
+      delete next[code];
+      return next;
+    });
+  }, []);
+
+  /** Warnings without a code, e.g. from callers that only have a message. */
+  const pushWarning = useCallback(
+    (message: string) => pushNotice(message.slice(0, 48), message),
+    [pushNotice],
+  );
 
   // ------------------------------------------------------------------- boot
 
@@ -112,12 +150,13 @@ export default function App() {
         const registry = new ModuleRegistry({ bus });
 
         bus.on('module:missing', ({ moduleId, reason }) => {
-          pushWarning(
+          pushNotice(
+            `module.missing.${moduleId}`,
             `Optional module '${moduleId}' is unavailable (${reason}). ` +
               'The district still renders; anything that module owns will not.',
           );
         });
-        bus.on('warning', ({ message }) => pushWarning(message));
+        bus.on('warning', ({ code, message }) => pushNotice(code ?? message.slice(0, 48), message));
 
         setStatus('Loading district manifest…');
         const district = await registry.load(DISTRICT_MANIFEST);
@@ -406,6 +445,8 @@ export default function App() {
               ? (state.player.plannedRoute(500, 50) as [number, number, number][])
               : undefined;
             void scene.updateStreaming(scenePosition, forward, state.mode, planned);
+            // Once nothing is waiting on a retry, the transient tile notice has resolved itself.
+            if (state.streamer.retrying === 0) clearNotice('tile.load_failed');
           }
 
           scene.render();
@@ -772,12 +813,22 @@ python scripts/propose_bridge_placement.py --write`}
             engine.current?.scene.setHighlight(null);
           }}
         />
-        {warnings.length > 0 && (
+        {Object.keys(notices).length > 0 && (
           <section className="warnings">
             <h3>Integration notices</h3>
             <ul>
-              {warnings.map((warning) => (
-                <li key={warning}>{warning}</li>
+              {Object.entries(notices).map(([code, notice]) => (
+                <li key={code}>
+                  {notice.message}
+                  {notice.count > 1 && <span className="muted"> ×{notice.count}</span>}
+                  <button
+                    className="icon-button notice-dismiss"
+                    onClick={() => clearNotice(code)}
+                    title="Dismiss"
+                  >
+                    ✕
+                  </button>
+                </li>
               ))}
             </ul>
           </section>

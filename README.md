@@ -93,6 +93,17 @@ flat-plane drop at DCTL-004 : 1.257 m (declared 1.260 m)
 OK: frame is within its declared bounds
 ```
 
+The same script gates the provenance chain, because a register that quietly falls behind the build is
+worse than none at all:
+
+```bash
+python scripts/district_control.py --check-sources
+```
+
+It fails if the build consumed a source that `DUMBO-SOURCE-REGISTER.md` does not describe, and notes
+sources registered ahead of ingestion — which is deliberate, and how `DOQ-003` names a real remedy
+instead of a wish.
+
 ---
 
 ## Layout
@@ -147,6 +158,7 @@ node tools/validate.mjs --schema tour-script ../dumbo-district-3d/viewer/public/
 
 # Control document and frame
 python scripts/district_control.py --check-frame
+python scripts/district_control.py --check-sources
 
 # Viewer
 cd viewer && npm run build

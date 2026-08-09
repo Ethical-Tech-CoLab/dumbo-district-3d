@@ -152,6 +152,67 @@ but it is not a survey, and it is never used as control geometry.
 Registered deliberately while unused, so that `DOQ-003` names a real remedy rather than a wish. When
 ingested it replaces the interpolated ground surface and promotes it from C to A.
 
+### DSRC-009 — NYC Forestry Management System street trees · Tier A · grants A
+
+| | |
+|---|---|
+| Publisher | NYC Parks, via NYC Open Data |
+| Accessed | 2026-08-09 |
+| License | NYC Open Data Terms of Use |
+| Attribution | **Required** — "Street trees: NYC Parks Forestry Management System" |
+| Native CRS | EPSG:4326 · dbh in inches |
+| Verified | Yes |
+
+1,252 street trees inside the district, each with position, species and trunk diameter. Position and
+species are grade A. The **rendered canopy is graded C**: it is a procedural form chosen per genus and
+scaled by dbh, not a measured crown. A real tree in the right place with an approximated shape — which
+is exactly the distinction the grade is there to record.
+
+### DSRC-010 — NYC planimetric sidewalk polygons · Tier A · grants A · NOT YET INGESTED
+
+| | |
+|---|---|
+| Publisher | NYC Office of Technology and Innovation, via NYC Open Data |
+| License | NYC Open Data Terms of Use |
+| Verified | **No — not yet fetched** |
+
+`scripts/ingest_sources.py::fetch_sidewalks` is written and targets dataset `vfx9-tbb6`, but the
+paving currently shipped is derived from the walk network rather than from these polygons. Registered
+so the gap is visible: paved surfaces are grade C until this is ingested.
+
+### DSRC-011 — NYC Building Footprints, Lower Manhattan frontage · Tier A · grants A
+
+| | |
+|---|---|
+| Publisher | NYC Office of Technology and Innovation, via NYC Open Data |
+| Accessed | 2026-08-09 |
+| License | NYC Open Data Terms of Use |
+| Native CRS | EPSG:2263 · NAVD88 · feet |
+| Verified | Yes |
+
+The same dataset as DSRC-001, queried across the river for the skyline visible from DUMBO. Delivered
+as extruded silhouette blocks, so the **rendered geometry is graded B** even though the source is A.
+See `DOQ-008`.
+
+The query box overlaps the district, so the builder subtracts every block whose centroid falls inside
+the district boundary and every block within 700 m of it. Without that subtraction 226 buildings were
+drawn twice — once as real surveyed geometry and again as pale far-field blocks floating on top of
+them. See the anti-duplication rule in the shared `GOVERNANCE.md`.
+
+### DSRC-012 — OpenStreetMap ferry routes and terminals · Tier B · grants B
+
+| | |
+|---|---|
+| Publisher | OpenStreetMap contributors, via Overpass API |
+| Accessed | 2026-08-09 |
+| License | **ODbL-1.0** |
+| Attribution | **Required, unconditional** — "© OpenStreetMap contributors" |
+| Verified | Yes |
+
+East River ferry route lines and landings, including the real Pier 11 ↔ DUMBO/Fulton Ferry service.
+Vessels follow these true route lines; their **speed and spacing are nominal, not a timetable**, and
+seasonal small craft are decorative grade D. See `DOQ-009`.
+
 ---
 
 ## 3. Definition sources
@@ -170,10 +231,15 @@ Collected by `ModuleRegistry.attributions()` and rendered unconditionally in the
 
 ```
 Building footprints and lot data: NYC Open Data (OTI, DCP)
+Street trees: NYC Parks Forestry Management System
 © OpenStreetMap contributors, ODbL
 Tidal datums: NOAA CO-OPS station 8518750
-Manhattan Bridge model: manhattan-bridge-3d
+Manhattan Bridge digital twin: manhattan-bridge-3d, Ethical Tech CoLab, CC BY 4.0
 ```
+
+Basemap layers add their own line while a layer is selected, because those terms are the provider's
+and apply only when their tiles are on screen. See `BASEMAP-LAYERS.md` in
+`digital-3d-shared-contracts`.
 
 ---
 
@@ -183,11 +249,15 @@ Every fetch writes a sidecar next to its payload recording the exact query, time
 SHA-256:
 
 ```
+data/boundaries/nta-bk0202.raw.json          + .source.json
 data/footprints/footprints.raw.json          + .source.json
+data/horizon/manhattan-skyline.raw.json      + .source.json
 data/pluto/pluto.raw.json                    + .source.json
 data/streets/osm-ways.raw.json               + .source.json
 data/streets/osm-landmarks.raw.json          + .source.json
-data/boundaries/nta-bk0202.raw.json          + .source.json
+data/streets/osm-manhattan-bridge.raw.json   + .source.json
+data/streetscape/trees.raw.json              + .source.json
+data/streetscape/ferry.raw.json              + .source.json
 ```
 
 Re-run `python scripts/ingest_sources.py --all` to refresh. The sidecars are what make this register

@@ -28,7 +28,7 @@ import math
 from datetime import datetime, timezone
 from pathlib import Path
 
-from district_control import AGENT_ID, DistrictControl
+from district_control import AGENT_ID, DistrictControl, point_in_ring
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DATA = REPO_ROOT / "data"
@@ -85,15 +85,26 @@ def build_horizon(control: DistrictControl) -> dict:
     and position matter. So each is collapsed to an oriented box footprint, which is roughly a
     sixteenth of the data and renders as a single merged mesh.
 
-    Buildings are also thinned by prominence: at that range a 25 m building behind a 200 m one
-    contributes nothing but triangles.
+    Two exclusions matter as much as the reduction:
+
+    * **Anything inside the district boundary is dropped.** The query envelope necessarily overlaps
+      DUMBO, and those buildings are already rendered properly, with metadata and confidence, by the
+      district itself. Drawing them a second time as flat unlit silhouettes puts pale boxes on top
+      of real geometry. This is the same anti-duplication rule the modules apply to each other,
+      applied inside one module.
+    * **Anything closer than a minimum distance is dropped.** A silhouette is only an honest
+      representation at range; near the camera it reads as a mistake.
     """
     records = load(DATA / "horizon" / "manhattan-skyline.raw.json")
     valid_radius = control.value_m("DCTL-004")
+    ring = control.boundary_ring
+    min_distance = 700.0
 
     blocks: list[dict] = []
     skipped_far = 0
     skipped_small = 0
+    skipped_owned = 0
+    skipped_near = 0
 
     for record in records:
         geom = record.get("the_geom") or {}
@@ -116,13 +127,27 @@ def build_horizon(control: DistrictControl) -> dict:
         base_m = ground_ft * FT
 
         points = []
+        lon_sum = 0.0
+        lat_sum = 0.0
         for point in ring_lonlat:
-            x, y, _ = control.geodetic_to_enu(float(point[0]), float(point[1]))
+            lon, lat = float(point[0]), float(point[1])
+            lon_sum += lon
+            lat_sum += lat
+            x, y, _ = control.geodetic_to_enu(lon, lat)
             points.append((x, y))
+
+        centroid_lonlat = (lon_sum / len(ring_lonlat), lat_sum / len(ring_lonlat))
+        if point_in_ring(centroid_lonlat, ring):
+            skipped_owned += 1
+            continue
 
         cx = sum(p[0] for p in points) / len(points)
         cy = sum(p[1] for p in points) / len(points)
         distance = math.hypot(cx, cy)
+
+        if distance < min_distance:
+            skipped_near += 1
+            continue
 
         if distance > valid_radius:
             # Outside the frame's declared validity radius; placing geometry there would be a
@@ -155,7 +180,11 @@ def build_horizon(control: DistrictControl) -> dict:
     # Far to near, so the renderer can merge them in depth order.
     blocks.sort(key=lambda b: -(b["c"][0] ** 2 + b["c"][1] ** 2))
 
-    print(f"    {len(blocks)} skyline blocks ({skipped_small} below prominence, {skipped_far} beyond frame)")
+    print(
+        f"    {len(blocks)} skyline blocks "
+        f"({skipped_owned} owned by the district, {skipped_near} too near, "
+        f"{skipped_small} below prominence, {skipped_far} beyond frame)"
+    )
 
     return {
         "contract_version": CONTRACT_VERSION,

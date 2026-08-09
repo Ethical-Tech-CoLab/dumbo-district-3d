@@ -55,7 +55,7 @@ export default function CollapsiblePanel({
           aria-expanded={!collapsed}
           title={collapsed ? 'Expand' : 'Collapse'}
         >
-          <span className={`chevron ${collapsed ? 'down' : 'up'}`} aria-hidden="true" />
+          <span className={`chevron ${collapsed ? 'up' : 'down'}`} aria-hidden="true" />
           <span className="collapsible-summary-content">{summary}</span>
         </button>
         {actions && <div className="collapsible-actions">{actions}</div>}
