@@ -26,13 +26,13 @@ Interoperates with [`manhattan-bridge-3d`](../manhattan-bridge-3d) through
 ## Quick start
 
 ```bash
-# 1. Fetch the sources  (NYC Open Data + Overpass; a few minutes)
+# 1. Fetch the sources  (NYC Open Data + Overpass + USGS 3DEP; a few minutes)
 python scripts/ingest_sources.py --all
 
 # 2. Build boundary, hero zone and tile grid
 python scripts/build_boundaries.py
 
-# 3. Build buildings, tiles, ground, walk network and all published documents
+# 3. Build buildings, tiles, terrain, walk network and all published documents
 python scripts/build_district_assets.py
 
 # 4. Derive a provisional Manhattan Bridge placement and a placeholder manifest
@@ -52,6 +52,11 @@ cd viewer && npm install && npm run dev     # http://localhost:5178
 ```
 
 Python 3.12, standard library only. Node 20+ for the viewer.
+
+The terrain step samples 29,025 points from the USGS 3DEP elevation service in 30 batched requests,
+which is the slowest part of the ingest. If it is skipped the build still succeeds: the ground falls
+back to interpolation from building base elevations and is graded `C` rather than `A`, and says so
+in `ground-grid.json`.
 
 Press **▶ DUMBO in an hour — a family of four** to watch a four-stop walking tour drive itself.
 

@@ -180,6 +180,7 @@ class DistrictControl:
             "DCTL-050", "DCTL-051", "DCTL-052", "DCTL-053", "DCTL-054",
             "DCTL-060", "DCTL-061", "DCTL-062", "DCTL-063",
             "DCTL-070", "DCTL-071", "DCTL-072", "DCTL-073",
+            "DCTL-074", "DCTL-075", "DCTL-076",
         ]
         missing = [cid for cid in required if cid not in self.controls]
         if missing:
@@ -245,6 +246,26 @@ class DistrictControl:
         if ring[0] != ring[-1]:
             ring.append(ring[0])
         return ring
+
+    @property
+    def tile_extent(self) -> tuple[float, float, float, float]:
+        """(origin_x, origin_y, span_x, span_y) of the tile grid, in scene ENU metres.
+
+        The tile scheme, the ground grid and the DEM sampling grid must agree exactly or the terrain
+        lands offset from the buildings standing on it. Deriving it here, from the control document,
+        means every generator gets the same answer without one of them having to read another's
+        output — and without the definition being copied into three files that can drift apart.
+        """
+        tile_size = self.value_m("DCTL-040")
+        ring = [self.geodetic_to_enu(lon, lat)[:2] for lon, lat in self.boundary_ring]
+        xs = [p[0] for p in ring]
+        ys = [p[1] for p in ring]
+        # One tile of padding so context tiles exist around the edge.
+        min_x = (min(xs) // tile_size - 1) * tile_size
+        min_y = (min(ys) // tile_size - 1) * tile_size
+        max_x = (max(xs) // tile_size + 2) * tile_size
+        max_y = (max(ys) // tile_size + 2) * tile_size
+        return (min_x, min_y, max_x - min_x, max_y - min_y)
 
     # WGS84 ellipsoid. Declared here rather than in the markdown because it is a
     # universal constant, not a project decision.

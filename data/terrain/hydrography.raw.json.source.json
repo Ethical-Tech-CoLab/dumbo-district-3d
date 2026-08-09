@@ -1,0 +1,10 @@
+{
+  "source_id": "DSRC-014",
+  "query": "intersects(the_geom,'POLYGON((-74.001023 40.696155,-73.976977 40.696155,-73.976977 40.707538,-74.001023 40.707538,-74.001023 40.696155))')",
+  "fetched_at": "2026-08-09T19:33:16+00:00",
+  "fetched_by": "dumbo-district-3d/scripts@1.0.0",
+  "bytes": 372930,
+  "sha256": "fe97502aa0d0b8cd28fa5448cff9a41bf2ebf66538a26b82fff11de930127b9a",
+  "record_count": 8,
+  "note": "Water body polygons covering the ground grid extent, including the East River. Used as the land/water mask for the terrain mesh instead of the district boundary."
+}

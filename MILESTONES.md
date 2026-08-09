@@ -53,20 +53,39 @@ obligation below forbids. Co-serving is a deployment convenience; ownership is u
 
 ## Next — accuracy
 
-### M3.1 — Terrain from NYC DEM and LiDAR — **highest priority**
+### M3.1 — Terrain from a real DEM — **done, 2026-08-09**
 
-Retires `DOQ-003`, still the largest inferred component in the model.
+`DOQ-003` closed. Ground is sampled from the **USGS 3DEP 1 m bare-earth DEM** (`DSRC-013`) on an 8 m
+grid — four times finer than the 32 m the interpolation could justify — in NAVD88 metres, needing no
+transformation. Land and water now come from the city's own hydrography (`DSRC-014`) instead of the
+project's scope boundary. Ground is graded `A`.
 
-Ground height is interpolated from building base elevations. Those samples are grade A; the surface
-between them is grade C, and everything touching the ground inherits it: the walking camera, every
-tree, every paving quad, every tour stop, and now the land mask that decides where the river starts.
+Verified rather than assumed. Every build cross-checks the DEM against `ground_elevation` from an
+independent agency's survey, on two statistics that fail differently: **bias** +0.03 m (catches a
+wrong datum) and **p95** 1.51 m (catches a misregistered grid). A north-south transect reproduces
+DUMBO's real shape — river at −1.6 m, flat waterfront terrace at ~2.5 m, then a clean climb to the
+23 m Brooklyn Heights plateau — which the old surface, interpolated between building bases, could
+not represent at all.
 
-- Ingest `DSRC-008`, registered since Phase 1 so the remedy has a name.
-- Replace `build_ground_grid`, keeping the output contract so nothing downstream changes.
-- Derive the land mask from the DEM's own water surface rather than from the district boundary.
-- Promote ground from `C` to `A` and close `DOQ-003`.
+Adding an independent source paid for itself twice over by exposing two defects that were invisible
+while the model only checked itself:
 
-### M3.2 — Run the photo campaign
+- **Seven buildings were standing at z = 0**, up to 18.7 m below their own street. The footprint
+  dataset encodes an unknown ground elevation as zero, and the old ground surface was interpolated
+  from those same values — so the error was baked into the very surface that would have revealed it.
+  They now take their base from the DEM and say so in their metadata.
+- **63.5% of footprint centroids were wrong**, the worst by 595 m. Shoelace moments computed in raw
+  lon/lat cancel catastrophically: each cross product is a difference of two numbers near 3,011
+  whose true value is ~1e-9, which discards about twelve of sixteen significant digits. Centroids
+  drive the district clip and tile assignment, so this had been quietly deciding which buildings
+  exist and which tile streams them. Fixed by shifting to a local origin; the district gained 11
+  buildings that had been wrongly excluded.
+
+Remaining, and deliberately still open: `DSRC-008`, NYC's own 1 ft DEM, would be a refinement rather
+than a correction. It stays registered so the gap between what we have and the best available stays
+visible.
+
+### M3.2 — Run the photo campaign — **now highest priority**
 
 The contract and volunteer guide exist; the corpus does not. This is the highest-value item after
 terrain, because it retires two open questions at once and is the only one that scales with
@@ -109,7 +128,7 @@ waterfront tour stops.
 
 | | |
 |---|---|
-| **M4.1 Roof forms from LiDAR** | Flat roofs dominate LOD0's declared 0.2 m error. Depends on M3.1's ingest. |
+| **M4.1 Roof forms from LiDAR** | Flat roofs dominate LOD0's declared 0.2 m error. M3.1 ingested a bare-earth DEM, which by definition has buildings removed; this needs the first-return or point-cloud product instead. |
 | **M4.2 Facade textures from the photo corpus** | Only after M3.2 has enough rectified, licensed images. Deriving attributes comes first; textures are a heavier step with redistribution consequences. |
 | **M4.3 Named landmark models** | Jane's Carousel, the Archway, Empire Stores — the objects tours point at. The prop contract already supports it: set `url` on a prototype. Small, high-visibility, independent. |
 | **M4.4 District photogrammetry** | Deliberately last. Must be aligned to a control surface; doing it before M3.1 means doing it twice. |

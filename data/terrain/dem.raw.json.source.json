@@ -1,0 +1,10 @@
+{
+  "source_id": "DSRC-013",
+  "query": "getSamples 225x129 @ 8m, bilinear, EPSG:4326",
+  "fetched_at": "2026-08-09T19:34:35+00:00",
+  "fetched_by": "dumbo-district-3d/scripts@1.0.0",
+  "bytes": 267510,
+  "sha256": "8537e736b4cdb7e6961d5520333d1cfdd3284eaa8f3146454a4690accc5ed3b6",
+  "record_count": null,
+  "note": "Bare-earth elevations in NAVD88 metres, sampled on the district ground grid. Values are null where 3DEP has no data. Row-major from origin_xy_m, +x east, +y north."
+}

@@ -1,21 +1,24 @@
 {
- "generated_at": "2026-08-09T18:24:27+00:00",
+ "generated_at": "2026-08-09T20:00:18+00:00",
  "generated_by": "dumbo-district-3d/scripts@1.0.0",
  "control_document": {
   "path": "DUMBO-GEOSPATIAL-CONTROL.md",
-  "sha256": "e357b5304f2c107abcc8a176286584b429850f8ca72438cda65bf3b750fa5e5b"
+  "sha256": "647184b0c8d520e4c7501af54bfc57b6f07931390283126ab4bc30aea94c363d"
  },
- "buildings": 381,
+ "buildings": 392,
  "height_sources": {
-  "height_from_dataset": 381,
+  "height_from_dataset": 392,
   "height_from_floors": 0,
   "height_fallback": 0,
-  "pluto_joined": 375,
-  "skipped_no_geometry": 0
+  "pluto_joined": 386,
+  "skipped_no_geometry": 0,
+  "ground_from_dataset": 385,
+  "ground_from_dem": 7,
+  "ground_unknown": 0
  },
  "tiles": {
   "total": 112,
-  "with_content": 49,
+  "with_content": 45,
   "by_zone": {
    "context": 49,
    "walkable": 31,
@@ -23,23 +26,23 @@
   }
  },
  "confidence_histogram": {
-  "A": 381
+  "A": 392
  },
  "payloads": {
-  "count": 123,
-  "bytes": 456264
+  "count": 113,
+  "bytes": 475642
  },
  "walk_network": {
   "nodes": 4346,
   "edges": 5131
  },
  "ground_grid": {
-  "cols": 57,
-  "rows": 33,
-  "cell_m": 32.0,
-  "min_m": 0.0,
-  "max_m": 22.55,
-  "confidence": "C"
+  "cols": 225,
+  "rows": 129,
+  "cell_m": 8.0,
+  "min_m": -1.86,
+  "max_m": 26.03,
+  "confidence": "A"
  },
  "landmarks": 29,
  "open_questions_touched": [

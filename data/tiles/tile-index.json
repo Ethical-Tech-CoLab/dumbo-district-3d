@@ -3052,11 +3052,11 @@
  "provenance": {
   "module_id": "dumbo-district",
   "generated_by": "dumbo-district-3d/scripts@1.0.0",
-  "generated_at": "2026-08-09T15:00:51+00:00",
+  "generated_at": "2026-08-09T19:48:21+00:00",
   "source_documents": [
    {
     "path": "DUMBO-GEOSPATIAL-CONTROL.md",
-    "sha256": "bed5f75bbb605dbd0a7872d1fa7e7678fae14ca9fb583249016a00e02322bd66"
+    "sha256": "647184b0c8d520e4c7501af54bfc57b6f07931390283126ab4bc30aea94c363d"
    }
   ]
  }

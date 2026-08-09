@@ -62,7 +62,7 @@
     "name": "DUMBO district project boundary",
     "module_id": "dumbo-district",
     "definition": "DUMBO-GEOSPATIAL-CONTROL.md section 2.1",
-    "control_sha256": "bed5f75bbb605dbd0a7872d1fa7e7678fae14ca9fb583249016a00e02322bd66",
+    "control_sha256": "647184b0c8d520e4c7501af54bfc57b6f07931390283126ab4bc30aea94c363d",
     "confidence": "A",
     "note": "Project scope definition, not an administrative boundary. NYC NTA BK0202 is recorded as context in DSRC-004 and is deliberately not used.",
     "vertices": [

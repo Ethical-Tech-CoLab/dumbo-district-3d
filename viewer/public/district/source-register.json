@@ -76,6 +76,8 @@
    "url": "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations/8518750/datums.json",
    "accessed": "2026-08-09",
    "license": "Public domain (US Government work)",
+   "attribution_required": false,
+   "attribution_text": "Tidal datums: NOAA CO-OPS station 8518750",
    "vertical_datum": "MHW",
    "units": "meters",
    "grants_confidence": "A",
@@ -167,16 +169,49 @@
    "grants_confidence": "B",
    "verified": true,
    "notes": "East River ferry route lines and landings, including the real Pier 11 to DUMBO/Fulton Ferry service. Vessels follow these lines; their speed and spacing are nominal, not a timetable. See DOQ-009."
+  },
+  {
+   "source_id": "DSRC-013",
+   "title": "USGS 3DEP 1 m bare-earth digital elevation model",
+   "tier": "A",
+   "publisher": "U.S. Geological Survey, 3D Elevation Program",
+   "url": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer",
+   "accessed": "2026-08-09",
+   "license": "Public domain (U.S. Government work)",
+   "attribution_required": true,
+   "attribution_text": "Elevation: USGS 3D Elevation Program (3DEP)",
+   "native_crs": "EPSG:4326 query, EPSG:3857 service",
+   "vertical_datum": "NAVD88",
+   "units": "m",
+   "positional_accuracy_m": 1.0,
+   "grants_confidence": "A",
+   "verified": true,
+   "notes": "Bare-earth terrain sampled on the district ground grid at 8 m spacing from a 1 m source raster. Buildings are already removed, so this is the pavement rather than the roofline. Cross-checked every build against building ground_elevation from DSRC-003; the build fails if they disagree beyond DCTL-075. Retires DOQ-003."
+  },
+  {
+   "source_id": "DSRC-014",
+   "title": "NYC Planimetric Database: Hydrography",
+   "tier": "A",
+   "publisher": "NYC Office of Technology and Innovation, via NYC Open Data",
+   "url": "https://data.cityofnewyork.us/resource/pjs3-c3z5.json",
+   "accessed": "2026-08-09",
+   "license": "NYC Open Data Terms of Use",
+   "attribution_required": true,
+   "attribution_text": "Hydrography: NYC Open Data (OTI)",
+   "native_crs": "EPSG:4326",
+   "grants_confidence": "A",
+   "verified": true,
+   "notes": "Water body polygons including the East River and Navy Yard Basin. Supplies the land/water mask for the terrain mesh, replacing the district scope boundary which was never a shoreline. See DOQ-005."
   }
  ],
  "provenance": {
   "module_id": "dumbo-district",
   "generated_by": "dumbo-district-3d/scripts@1.0.0",
-  "generated_at": "2026-08-09T18:24:27+00:00",
+  "generated_at": "2026-08-09T20:00:18+00:00",
   "source_documents": [
    {
     "path": "DUMBO-GEOSPATIAL-CONTROL.md",
-    "sha256": "e357b5304f2c107abcc8a176286584b429850f8ca72438cda65bf3b750fa5e5b"
+    "sha256": "647184b0c8d520e4c7501af54bfc57b6f07931390283126ab4bc30aea94c363d"
    }
   ]
  }

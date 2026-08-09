@@ -212,19 +212,85 @@ DUMBO is not flat. Building base elevations across the district run from 0 m at 
 put a walking camera roughly twelve metres underground through most of the district, which is a far
 larger error than anything else in this model.
 
-No DEM has been ingested yet (`DSRC-008`, `DOQ-003`). In the meantime the ground is interpolated from
-the one authoritative elevation sample this project already holds: `ground_elevation` on each building
-footprint, which `DSRC-003` defines as the lowest elevation at that building's ground level in NAVD88.
-Those are grade `A` point samples; the surface interpolated between them is not, and is graded `C`.
+The ground surface is sampled from `DSRC-013`, the USGS 3DEP 1 m **bare-earth** DEM, on the grid
+below. Bare earth is the right product: buildings are already removed from it, so what is sampled is
+the pavement a walker stands on rather than the roof above them. Elevations arrive in NAVD88 metres,
+which is this project's vertical datum, so no transformation is applied and none can be got wrong.
+
+This retires the interpolated surface that stood in until now, and with it `DOQ-003`. The old method
+blended `ground_elevation` from each building footprint with inverse-distance weighting: grade `A`
+point samples with a grade `C` surface stretched between them. It knew nothing about the street
+itself, and nothing at all about open ground away from buildings — which in a waterfront district
+with a park along its whole northern edge is a large fraction of where a visitor actually walks.
+
+The interpolation is **retained as a fallback**. If `data/terrain/dem.raw.json` is absent, the build
+still produces a ground surface by the old method and grades it `C` again. A clone that has not run
+the ingest step still builds and still runs; it just tells the truth about what it is standing on.
 
 | Control ID | Key | Value | Unit | Source IDs | Confidence | Notes |
 |---|---|---:|---|---|---|---|
-| DCTL-070 | ground_grid_cell | 32 | m | DEF-007 | A | Cell size of the interpolated ground height grid. |
-| DCTL-071 | ground_idw_radius | 260 | m | DEF-007 | A | Search radius for inverse-distance weighting of building base elevations. |
-| DCTL-072 | ground_idw_neighbours | 8 | count | DEF-007 | A | Number of nearest samples blended per cell. |
-| DCTL-073 | ground_idw_power | 2 | ratio | DEF-007 | A | Inverse-distance exponent. |
+| DCTL-070 | ground_grid_cell | 8 | m | DEF-007 | A | Cell size of the ground height grid. Four times finer than the 32 m used while the surface was interpolated, because a 1 m DEM can carry it and street grade is visible at this spacing. |
+| DCTL-071 | ground_idw_radius | 260 | m | DEF-007 | A | Fallback only. Search radius for inverse-distance weighting of building base elevations. |
+| DCTL-072 | ground_idw_neighbours | 8 | count | DEF-007 | A | Fallback only. Number of nearest samples blended per cell. |
+| DCTL-073 | ground_idw_power | 2 | ratio | DEF-007 | A | Fallback only. Inverse-distance exponent. |
+| DCTL-074 | dem_resolution | 1 | m | DSRC-013 | A | Native ground sample distance of the 3DEP source raster. |
+| DCTL-075 | dem_bias_max | 0.35 | m | DEF-007 | A | Largest tolerated **signed median** difference between DEM samples and building `ground_elevation`. The systematic-error limit. See section 6.1. |
+| DCTL-076 | dem_spread_max | 3.00 | m | DEF-007 | A | Largest tolerated **95th percentile absolute** difference. The registration limit. Necessarily looser than the bias limit, because the two quantities are not identical. See section 6.1. |
 
-Any asset or camera height derived from this grid is graded `C` and carries `DOQ-003`.
+Ground height derived from the DEM is graded `A`. If the fallback is used, it is graded `C` and
+carries `DOQ-003`.
+
+### 6.1 Why the DEM is trusted
+
+The DEM is not taken on faith. Every build cross-checks it against `ground_elevation` from the
+building footprint dataset (`DSRC-003`), which is an independent grade `A` measurement of the same
+physical quantity, derived from a different survey by a different agency.
+
+Two statistics are checked, because a wrong datum and a wrong grid registration fail differently and
+a single threshold would conflate them:
+
+- **Bias** — the signed median difference, currently **+0.03 m** against a limit of ±0.35 m. A datum
+  slip moves every sample the same way, so mistaking MHW for NAVD88 would appear here as a 0.59 m
+  offset (`DCTL-010`) and would fail the build. A feet-for-metres error would be off by a factor of
+  3.28 and fail enormously. This one number guards both.
+- **Spread** — the 95th percentile absolute difference, currently **1.62 m** against a limit of
+  3.00 m. Misregistration scatters rather than shifts: a grid offset by one block would drag samples
+  onto the wrong side of DUMBO's slope, fanning out the disagreement while the median barely moved.
+
+The spread limit is deliberately looser than the bias limit, because the two quantities are not
+quite the same thing. `ground_elevation` is defined as the *lowest* elevation at a building's ground
+level, while the DEM is sampled at the building's centroid; a large building on a slope will
+legitimately sit below its own centroid sample. Of 374 comparable buildings, 2.4% differ by more
+than 2 m and 1.3% by more than 3 m, which is consistent with that definitional difference rather
+than with error.
+
+Buildings whose base elevation was itself taken from the DEM are excluded from the comparison. A
+value cannot corroborate itself.
+
+### 6.2 Buildings with no registered ground elevation
+
+The footprint dataset encodes an unknown `ground_elevation` as zero rather than null. Seven of the
+381 buildings carry that sentinel, and because DUMBO rises to 23 m, taking it at face value planted
+them up to **18.7 m below the street they stand on**.
+
+This was invisible before. The old ground surface was interpolated from these same values, so the
+error was baked into the very surface that would have been used to check it — a self-referential
+check cannot see a defect in its own reference. Adding an independent source is what exposed it.
+
+Such buildings now take their base elevation from the DEM, and record
+`ground_elevation_basis: "dem"` so the substitution is visible in the viewer's own metadata panel
+rather than hidden in a build log. If no DEM is available they fall back to zero as before, are
+graded down, and carry `DOQ-003`.
+
+### 6.3 Land and water
+
+Cells are classified as land or water from `DSRC-014`, the city's own hydrography polygons.
+
+Before, the land mask was the district boundary polygon. That polygon exists to define project scope
+and was drawn by inspection (`DOQ-005`); it was never a shoreline. Using it as one meant the terrain
+either drowned the waterfront or paved over the river depending on which way the apron erred, and
+the piers of Brooklyn Bridge Park — genuinely land standing in water — could not be represented at
+all. Land and water is now a sourced distinction rather than a consequence of a scoping decision.
 
 ---
 
@@ -234,9 +300,9 @@ Any asset or camera height derived from this grid is graded `C` and carries `DOQ
 |---|---|---|---|---|
 | DOQ-001 | Real-world georeference of the Manhattan Bridge model. `manhattan-bridge-3d` OQ-009 leaves the bridge axis azimuth and geodetic anchor unregistered. This repository publishes a **provisional** placement so the bridge can be seen from a DUMBO street; it is explicitly not survey truth. | Bridge placement in the district scene | manhattan-bridge-3d SRC-001, SRC-003; DSRC-007 | Open. Awaiting ratification by the bridge team. |
 | DOQ-002 | Buildings whose `height_roof` is zero or null are reconstructed from PLUTO floor counts using DCTL-062. | Building heights | DSRC-001, DSRC-002 | Open, bounded. Affected buildings are graded `C` and listed in the build report. |
-| DOQ-003 | No surveyed terrain surface is registered. Ground height is interpolated from building base elevations (section 6) rather than from a DEM, so open ground away from buildings, and the real grade of individual streets, are approximations. | Terrain, walk mode ground height, tour camera height | DSRC-008 (NYC DEM), NYC LiDAR | Open, partially mitigated. Interpolated ground is graded `C`. |
+| DOQ-003 | No surveyed terrain surface was registered; ground height was interpolated from building base elevations rather than measured. | Terrain, walk mode ground height, tour camera height | DSRC-013 (USGS 3DEP 1 m bare earth) | **Closed** 2026-08-09. Ground is now sampled from a 1 m bare-earth DEM in NAVD88 and graded `A`, cross-checked every build against building `ground_elevation` (section 6.1). Residual: 3DEP at 1 m rather than NYC's own 1 ft DEM (`DSRC-008`), which would be a refinement, not a correction. |
 | DOQ-004 | The MHW to NAVD88 offset DCTL-010 is transferred from The Battery, about 3 km away, rather than computed locally with VDatum. | Vertical datum reconciliation | NOAA VDatum | Open, immaterial at current confidence. |
-| DOQ-005 | The district boundary in section 2.1 was drawn to follow named streets and the shoreline by inspection, not traced from a cadastral source. | District extent | DSRC-004, NYC planimetrics shoreline | Open, immaterial. It defines project scope only and clips no geometry that another module owns. |
+| DOQ-005 | The district boundary in section 2.1 was drawn to follow named streets and the shoreline by inspection, not traced from a cadastral source. | District extent | DSRC-004, NYC planimetrics shoreline | Open, immaterial. It defines project scope only, clips no geometry that another module owns, and no longer doubles as the shoreline now that `DSRC-014` supplies the land/water mask. |
 | DOQ-006 | Paved surfaces are derived by widening OSM centrelines with typical half-widths by street class, rather than traced from planimetric sidewalk polygons. Kerb lines are therefore approximate, and junctions are overlapping quads rather than a resolved surface. | Roadway and sidewalk geometry | NYC planimetric sidewalk dataset | Open. Surfaces graded `C`. |
 | DOQ-007 | Facade appearance is inferred from PLUTO building class and construction year. It describes the *kind* of building, not the actual facade of that building. | Building appearance in walk mode | Street-level imagery, district photogrammetry | Open. Appearance graded `C`; it never affects geometry or dimensions. |
 | DOQ-008 | The Manhattan skyline is reduced to oriented silhouette blocks. Positions and heights are authoritative, but footprint shape is discarded, and buildings below a prominence threshold are omitted entirely. | Far-field appearance across the river | DSRC-011 | Open by design. Graded `B`; never selectable and never dimensionally citable at that range. |

@@ -110,17 +110,15 @@ def build_tile_grid(control: DistrictControl) -> dict:
     half = control.value_m("DCTL-030")
 
     ring_enu = [control.geodetic_to_enu(lon, lat)[:2] for lon, lat in control.boundary_ring]
-    xs = [p[0] for p in ring_enu]
-    ys = [p[1] for p in ring_enu]
 
-    # Pad by one tile so context tiles exist around the edge.
-    min_x = (min(xs) // tile_size - 1) * tile_size
-    min_y = (min(ys) // tile_size - 1) * tile_size
-    max_x = (max(xs) // tile_size + 2) * tile_size
-    max_y = (max(ys) // tile_size + 2) * tile_size
+    # Derived in DistrictControl so the DEM sampling grid and the ground grid land on exactly the
+    # same lattice as the tiles.
+    min_x, min_y, span_x, span_y = control.tile_extent
+    max_x = min_x + span_x
+    max_y = min_y + span_y
 
-    cols = int(round((max_x - min_x) / tile_size))
-    rows = int(round((max_y - min_y) / tile_size))
+    cols = int(round(span_x / tile_size))
+    rows = int(round(span_y / tile_size))
 
     hero_segments = [
         (

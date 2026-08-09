@@ -17,6 +17,7 @@ data/streets/*.raw.json
 data/boundaries/*.raw.json
 data/streetscape/*.raw.json
 data/horizon/*.raw.json
+data/terrain/*.raw.json
 data/ingest.log
 
 # Another module's published artifacts, copied here only to co-serve them during development.

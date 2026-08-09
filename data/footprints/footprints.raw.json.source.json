@@ -1,10 +1,10 @@
 {
   "source_id": "DSRC-001",
   "query": "within_box(the_geom,40.706,-73.9985,40.6975,-73.98)",
-  "fetched_at": "2026-08-09T14:43:15+00:00",
+  "fetched_at": "2026-08-09T19:48:05+00:00",
   "fetched_by": "dumbo-district-3d/scripts@1.0.0",
-  "bytes": 560914,
-  "sha256": "4eaddceee3ffd9f03b6fea261ae77a8bec86eecd686ef40d7a1a731610602b04",
-  "record_count": 381,
+  "bytes": 570691,
+  "sha256": "7b522a814d805637f7992937096b4fb2b0b98ed66680726559de5489ca42cab9",
+  "record_count": 392,
   "note": "Clipped to the DUMBO-GEOSPATIAL-CONTROL.md boundary ring by footprint centroid."
 }

@@ -141,16 +141,18 @@ ODbL attribution is mandatory. The viewer displays it unconditionally, whether o
 geometry is currently on screen. Community mapping is graded B: it is consistent and well maintained,
 but it is not a survey, and it is never used as control geometry.
 
-### DSRC-008 — NYC digital elevation model and LiDAR · Tier A · grants A · NOT YET INGESTED
+### DSRC-008 — NYC digital elevation model and LiDAR · Tier A · grants A · NOT INGESTED
 
 | | |
 |---|---|
 | Publisher | NYC Office of Technology and Innovation |
 | License | NYC Open Data Terms of Use |
-| Verified | **No — not yet fetched** |
+| Verified | **No — not fetched** |
 
-Registered deliberately while unused, so that `DOQ-003` names a real remedy rather than a wish. When
-ingested it replaces the interpolated ground surface and promotes it from C to A.
+Superseded in practice by `DSRC-013`, which supplies terrain at 1 m from a public-domain national
+programme and is samplable over HTTP without downloading a raster. NYC's own DEM is 1 ft and would
+be a **refinement, not a correction**; it stays registered so that the difference between what we
+have and the best available is visible rather than forgotten.
 
 ### DSRC-009 — NYC Forestry Management System street trees · Tier A · grants A
 
@@ -213,6 +215,54 @@ East River ferry route lines and landings, including the real Pier 11 ↔ DUMBO/
 Vessels follow these true route lines; their **speed and spacing are nominal, not a timetable**, and
 seasonal small craft are decorative grade D. See `DOQ-009`.
 
+### DSRC-013 — USGS 3DEP 1 m bare-earth DEM · Tier A · grants A
+
+| | |
+|---|---|
+| Publisher | U.S. Geological Survey, 3D Elevation Program |
+| Accessed | 2026-08-09 |
+| License | **Public domain** (U.S. Government work) |
+| Attribution | Not legally required; given anyway — "Elevation: USGS 3D Elevation Program (3DEP)" |
+| Native CRS | EPSG:3857 service, queried in EPSG:4326 |
+| Vertical datum | **NAVD88**, metres |
+| Verified | Yes |
+
+The terrain surface. Sampled through the ImageServer's `getSamples` operation on the exact 8 m ground
+grid — 29,025 points in 30 batched requests — rather than downloaded, because the national raster is
+far too large to hold and we need only this district.
+
+**Bare earth** is the correct product here: buildings are already removed from it, so what is sampled
+is the pavement a walker stands on, not the roof above them. Elevations arrive in NAVD88 metres,
+which is already this project's vertical datum, so nothing is transformed and nothing can be got
+wrong in transforming it.
+
+Verified empirically as well as by specification: every build compares these samples against
+`ground_elevation` from `DSRC-003`, an independent grade A measurement of the same quantity by a
+different agency. Current agreement is a **bias of +0.03 m** and a **p95 of 1.51 m** across 385
+buildings. See `DUMBO-GEOSPATIAL-CONTROL.md` §6.1 for why those two numbers, and not one, are the
+right guard.
+
+Retires `DOQ-003`.
+
+### DSRC-014 — NYC Planimetric Database: Hydrography · Tier A · grants A
+
+| | |
+|---|---|
+| Publisher | NYC Office of Technology and Innovation, via NYC Open Data |
+| Accessed | 2026-08-09 |
+| License | NYC Open Data Terms of Use |
+| Attribution | **Required** — "Hydrography: NYC Open Data (OTI)" |
+| Native CRS | EPSG:4326 |
+| Verified | Yes |
+
+Water body polygons — the East River and the Navy Yard Basin — rasterised onto the ground grid to
+decide land from water. 7,532 of 29,025 cells are water.
+
+This replaces the district boundary polygon, which had been doing the job by default. That polygon
+exists to scope the project and was drawn by inspection (`DOQ-005`); it was never a shoreline, and
+using it as one meant the terrain either drowned the waterfront or paved the river depending on
+which way the apron erred.
+
 ---
 
 ## 3. Definition sources
@@ -227,15 +277,24 @@ measurement.
 
 ## 4. Attribution the viewer must display
 
-Collected by `ModuleRegistry.attributions()` and rendered unconditionally in the viewer footer:
+Collected by `ModuleRegistry.attributions()` and rendered unconditionally in the viewer footer.
+The list is **generated from this register**, not hand-maintained — a hand-kept list falls behind the
+moment a source is added, which is how street trees, elevation and hydrography came to be used
+without being credited:
 
 ```
-Building footprints and lot data: NYC Open Data (OTI, DCP)
-Street trees: NYC Parks Forestry Management System
-© OpenStreetMap contributors, ODbL
+Building footprints: NYC Open Data (OTI)
+Lot attributes: NYC Department of City Planning (PLUTO)
 Tidal datums: NOAA CO-OPS station 8518750
-Manhattan Bridge digital twin: manhattan-bridge-3d, Ethical Tech CoLab, CC BY 4.0
+© OpenStreetMap contributors
+Street trees: NYC Parks Forestry Management System
+Elevation: USGS 3D Elevation Program (3DEP)
+Hydrography: NYC Open Data (OTI)
 ```
+
+Any source carrying an `attribution_text` is credited, not only those where attribution is legally
+required. The USGS and NOAA works are public domain and oblige nothing; naming who measured the
+ground you are standing on costs a line of text.
 
 Basemap layers add their own line while a layer is selected, because those terms are the provider's
 and apply only when their tiles are on screen. See `BASEMAP-LAYERS.md` in
@@ -258,6 +317,8 @@ data/streets/osm-landmarks.raw.json          + .source.json
 data/streets/osm-manhattan-bridge.raw.json   + .source.json
 data/streetscape/trees.raw.json              + .source.json
 data/streetscape/ferry.raw.json              + .source.json
+data/terrain/dem.raw.json                    + .source.json
+data/terrain/hydrography.raw.json            + .source.json
 ```
 
 Re-run `python scripts/ingest_sources.py --all` to refresh. The sidecars are what make this register

@@ -10,6 +10,8 @@ Sources and their register IDs are documented in DUMBO-SOURCE-REGISTER.md:
   DSRC-002  NYC MapPLUTO                   (Socrata 64uk-42ks)
   DSRC-004  NYC Neighborhood Tabulation Areas (Socrata 9nt8-h7nd), context only
   DSRC-007  OpenStreetMap via Overpass     (streets, footways, landmarks)
+  DSRC-013  USGS 3DEP 1 m bare-earth DEM   (ImageServer getSamples)
+  DSRC-014  NYC Planimetric Hydrography    (Socrata pjs3-c3z5)
 
 Usage:
     python scripts/ingest_sources.py --all
@@ -21,6 +23,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import ssl
 import sys
 import time
@@ -41,6 +44,9 @@ OVERPASS_ENDPOINTS = [
     "https://overpass.kumi.systems/api/interpreter",
     "https://overpass.osm.ch/api/interpreter",
 ]
+DEP_SERVICE = (
+    "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer"
+)
 USER_AGENT = f"dumbo-district-3d ({AGENT_ID})"
 
 
@@ -158,10 +164,21 @@ def _centroid(polygons: list) -> tuple[float, float] | None:
     """
     Area-weighted centroid of a set of polygon rings in lon/lat.
 
-    Uses the standard shoelace moments. `area2` accumulates twice the signed area, so the centroid is
-    the moment sum divided by three times that. Interior rings are ignored: a building's holes do not
-    move its centroid enough to matter for a point-in-district test.
+    Uses the standard shoelace moments, but about a local origin rather than about (0, 0).
+
+    That detail is the whole function. A building footprint in New York has coordinates near
+    (-73.99, 40.70), so each shoelace cross product `x1*y2 - x2*y1` is a difference of two numbers
+    close to 3,011 whose true value is around 1e-9. Double precision carries about 16 significant
+    digits, so subtracting them discards roughly twelve of them, and the surviving noise is then
+    divided by an area that is itself the sum of those same cancelled terms. The result is not
+    slightly wrong, it is unrelated: measured against the raw dataset, 63% of DUMBO's footprints
+    produced a centroid outside their own bounding box, one of them by 595 metres.
+
+    Subtracting the first vertex first makes every coordinate a small offset, the cancellation
+    disappears, and the moments are computed at full precision. Interior rings are ignored: a
+    building's holes do not move its centroid enough to matter for a point-in-district test.
     """
+    origin: tuple[float, float] | None = None
     area2 = 0.0
     mx = my = 0.0
     for polygon in polygons:
@@ -170,16 +187,20 @@ def _centroid(polygons: list) -> tuple[float, float] | None:
         ring = polygon[0]
         if len(ring) < 4:
             continue
+        if origin is None:
+            origin = (float(ring[0][0]), float(ring[0][1]))
         for i in range(len(ring) - 1):
-            x1, y1 = float(ring[i][0]), float(ring[i][1])
-            x2, y2 = float(ring[i + 1][0]), float(ring[i + 1][1])
+            x1 = float(ring[i][0]) - origin[0]
+            y1 = float(ring[i][1]) - origin[1]
+            x2 = float(ring[i + 1][0]) - origin[0]
+            y2 = float(ring[i + 1][1]) - origin[1]
             cross = x1 * y2 - x2 * y1
             area2 += cross
             mx += (x1 + x2) * cross
             my += (y1 + y2) * cross
-    if area2 == 0.0:
+    if origin is None or area2 == 0.0:
         return None
-    return (mx / (3.0 * area2), my / (3.0 * area2))
+    return (mx / (3.0 * area2) + origin[0], my / (3.0 * area2) + origin[1])
 
 
 def fetch_pluto(control: DistrictControl) -> None:
@@ -334,6 +355,151 @@ def fetch_trees(control: DistrictControl) -> None:
     )
 
 
+def fetch_dem(control: DistrictControl) -> None:
+    """DSRC-013. USGS 3DEP 1 m bare-earth elevation, sampled over the district grid.
+
+    This is the source that retires DOQ-003. Until now the ground was interpolated from building
+    base elevations: grade A samples with a grade C surface stretched between them, which says
+    nothing about the street itself, and nothing at all about open ground away from buildings.
+
+    3DEP is sampled rather than downloaded. The national raster is far too large to hold, but the
+    ImageServer will return elevations for a batch of points in one request, so we ask for exactly
+    the grid the terrain mesh uses and keep only that. Bare earth is what we want: buildings are
+    already removed, so this is the pavement, not the roofline.
+    """
+    print("[DSRC-013] USGS 3DEP 1 m bare-earth DEM")
+    cell = control.value_m("DCTL-070")
+    ox, oy, cols, rows = _ground_grid_extent(control, cell)
+    print(f"    sampling {cols} x {rows} = {cols * rows} points at {cell:g} m spacing")
+
+    points: list[list[float]] = []
+    for row in range(rows):
+        y = oy + row * cell
+        for col in range(cols):
+            lon, lat = control.enu_to_geodetic(ox + col * cell, y, 0.0)[:2]
+            points.append([round(lon, 8), round(lat, 8)])
+
+    values = _sample_3dep(points)
+    missing = sum(1 for v in values if v is None)
+    present = [v for v in values if v is not None]
+    if not present:
+        raise RuntimeError("3DEP returned no usable samples")
+    print(f"    {len(present)} samples, {missing} no-data, "
+          f"range {min(present):.2f} .. {max(present):.2f} m")
+
+    _write(
+        DATA / "terrain" / "dem.raw.json",
+        {
+            "service": DEP_SERVICE,
+            "cell_m": cell,
+            "origin_xy_m": [ox, oy],
+            "cols": cols,
+            "rows": rows,
+            "frame_id": "nyc-harbor-enu",
+            "vertical_datum": "NAVD88",
+            "units": "m",
+            "interpolation": "RSP_BilinearInterpolation",
+            "values": values,
+        },
+        query=f"getSamples {cols}x{rows} @ {cell:g}m, bilinear, EPSG:4326",
+        source_id="DSRC-013",
+        note=(
+            "Bare-earth elevations in NAVD88 metres, sampled on the district ground grid. Values are "
+            "null where 3DEP has no data. Row-major from origin_xy_m, +x east, +y north."
+        ),
+    )
+
+
+def _ground_grid_extent(control: DistrictControl, cell: float) -> tuple[float, float, int, int]:
+    """The ground grid covers the tile scheme exactly, so DEM and terrain stay in lockstep."""
+    ox, oy, span_x, span_y = control.tile_extent
+    cols = int(math.ceil(span_x / cell)) + 1
+    rows = int(math.ceil(span_y / cell)) + 1
+    return ox, oy, cols, rows
+
+
+def _sample_3dep(points: list[list[float]], batch: int = 1000) -> list[float | None]:
+    """Sample the 3DEP ImageServer in batches.
+
+    The service caps a single request at 1000 points and rejects long GET URLs outright, so this
+    posts the geometry. Order is preserved, and a batch that comes back short is padded with nulls
+    rather than silently shifting every later value into the wrong cell.
+    """
+    out: list[float | None] = []
+    total = (len(points) + batch - 1) // batch
+    for index in range(0, len(points), batch):
+        chunk = points[index:index + batch]
+        payload = urllib.parse.urlencode({
+            "geometry": json.dumps({"points": chunk, "spatialReference": {"wkid": 4326}}),
+            "geometryType": "esriGeometryMultipoint",
+            "returnFirstValueOnly": "true",
+            "interpolation": "RSP_BilinearInterpolation",
+            "f": "json",
+        }).encode()
+        raw = _http(f"{DEP_SERVICE}/getSamples", data=payload)
+        data = json.loads(raw)
+        if "error" in data:
+            raise RuntimeError(f"3DEP error: {data['error']}")
+        samples = data.get("samples", [])
+        values: list[float | None] = []
+        for sample in samples:
+            try:
+                values.append(round(float(sample["value"]), 3))
+            except (KeyError, TypeError, ValueError):
+                values.append(None)
+        if len(values) != len(chunk):
+            print(f"    batch {index // batch + 1}/{total}: expected {len(chunk)}, "
+                  f"got {len(values)}; padding", file=sys.stderr)
+            values.extend([None] * (len(chunk) - len(values)))
+        out.extend(values[:len(chunk)])
+        print(f"    batch {index // batch + 1}/{total} ok")
+        time.sleep(0.3)
+    return out
+
+
+def fetch_hydrography(control: DistrictControl) -> None:
+    """DSRC-014. NYC planimetric hydrography, used to decide land from water.
+
+    The land mask was previously the district boundary polygon, which was drawn by inspection to
+    define project scope (DOQ-005) and was never meant to carry the shoreline. Using it as one meant
+    the terrain either drowned the waterfront or paved the river depending on which way the apron
+    erred. This is the city's own water polygon, so land and water become a sourced distinction.
+    """
+    print("[DSRC-014] NYC planimetric hydrography")
+    west, south, east, north = _grid_bbox(control)
+    poly = (f"POLYGON(({west} {south},{east} {south},{east} {north},"
+            f"{west} {north},{west} {south}))")
+    where = f"intersects(the_geom,'{poly}')"
+    records = _socrata_paged("pjs3-c3z5", {"$where": where}, page=500)
+    named = sorted({r.get("name") for r in records if r.get("name") not in (None, "unset")})
+    print(f"    {len(records)} water polygons; named: {', '.join(named) or 'none'}")
+    _write(
+        DATA / "terrain" / "hydrography.raw.json",
+        records,
+        query=where,
+        source_id="DSRC-014",
+        note=(
+            "Water body polygons covering the ground grid extent, including the East River. Used as "
+            "the land/water mask for the terrain mesh instead of the district boundary."
+        ),
+    )
+
+
+def _grid_bbox(control: DistrictControl) -> tuple[float, float, float, float]:
+    """Geodetic envelope of the ground grid, with a margin so the mask covers every edge cell."""
+    ox, oy, span_x, span_y = control.tile_extent
+    margin = 120.0
+    corners = [
+        control.enu_to_geodetic(ox - margin, oy - margin, 0.0)[:2],
+        control.enu_to_geodetic(ox + span_x + margin, oy - margin, 0.0)[:2],
+        control.enu_to_geodetic(ox + span_x + margin, oy + span_y + margin, 0.0)[:2],
+        control.enu_to_geodetic(ox - margin, oy + span_y + margin, 0.0)[:2],
+    ]
+    lons = [c[0] for c in corners]
+    lats = [c[1] for c in corners]
+    return (round(min(lons), 6), round(min(lats), 6), round(max(lons), 6), round(max(lats), 6))
+
+
 def fetch_sidewalks(control: DistrictControl) -> None:
     """DSRC-010. NYC planimetric sidewalk polygons, used to pave the walk view."""
     print("[DSRC-010] NYC sidewalk polygons")
@@ -472,6 +638,8 @@ def main() -> int:
     parser.add_argument("--sidewalks", action="store_true")
     parser.add_argument("--horizon", action="store_true")
     parser.add_argument("--ferry", action="store_true")
+    parser.add_argument("--dem", action="store_true")
+    parser.add_argument("--hydrography", action="store_true")
     args = parser.parse_args()
 
     control = DistrictControl()
@@ -497,6 +665,10 @@ def main() -> int:
         jobs.append(fetch_ferry_routes)
     if args.all or args.sidewalks:
         jobs.append(fetch_sidewalks)
+    if args.all or args.hydrography:
+        jobs.append(fetch_hydrography)
+    if args.all or args.dem:
+        jobs.append(fetch_dem)
 
     if not jobs:
         parser.error("choose at least one source, or --all")

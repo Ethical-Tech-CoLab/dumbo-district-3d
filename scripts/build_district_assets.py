@@ -130,6 +130,28 @@ def ring_area(points: list[tuple[float, float]]) -> float:
     return total / 2.0
 
 
+def polygon_centroid(points: list[tuple[float, float]]) -> tuple[float, float]:
+    """Area-weighted centroid of an open ring already in local ENU metres.
+
+    Safe to compute directly here only because the coordinates are local: the same shoelace moments
+    in raw lon/lat cancel catastrophically and produce centroids hundreds of metres away. Falls back
+    to the vertex mean for a degenerate ring, which at least stays inside the footprint.
+    """
+    area2 = 0.0
+    mx = my = 0.0
+    n = len(points)
+    for i in range(n):
+        x1, y1 = points[i]
+        x2, y2 = points[(i + 1) % n]
+        cross = x1 * y2 - x2 * y1
+        area2 += cross
+        mx += (x1 + x2) * cross
+        my += (y1 + y2) * cross
+    if abs(area2) < 1e-9:
+        return (sum(p[0] for p in points) / n, sum(p[1] for p in points) / n)
+    return (mx / (3.0 * area2), my / (3.0 * area2))
+
+
 def oriented_box(points: list[tuple[float, float]]) -> list[tuple[float, float]]:
     """
     Minimum-area rectangle by rotating-calipers over edge directions.
@@ -166,7 +188,97 @@ def load_json(path: Path) -> object:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def build_buildings(control: DistrictControl) -> tuple[list[dict], dict]:
+class Dem:
+    """The ingested bare-earth DEM, if there is one.
+
+    Held as an object rather than a bare array because two very different consumers need it: the
+    terrain mesh, and the handful of buildings whose own dataset does not say what elevation they
+    stand at. Both must sample exactly the same surface.
+    """
+
+    def __init__(self, doc: dict, grid: list[list[float]]) -> None:
+        self.cell = doc["cell_m"]
+        self.ox, self.oy = doc["origin_xy_m"]
+        self.cols = doc["cols"]
+        self.rows = doc["rows"]
+        self.grid = grid
+
+    @classmethod
+    def load(cls, control: DistrictControl) -> "Dem | None":
+        """Read the DEM, insisting it describes exactly the grid we are about to build.
+
+        A DEM that silently disagreed about spacing or origin would place the terrain a block away
+        from the buildings standing on it, sloping the wrong way, with nothing in the output to say
+        so. A mismatch is therefore a hard error telling the operator to re-run the ingest, never a
+        quiet fallback.
+        """
+        path = DATA / "terrain" / "dem.raw.json"
+        if not path.exists():
+            return None
+        raw = json.loads(path.read_text(encoding="utf-8"))
+
+        cell = control.value_m("DCTL-070")
+        ox, oy, span_x, span_y = control.tile_extent
+        cols = int(math.ceil(span_x / cell)) + 1
+        rows = int(math.ceil(span_y / cell)) + 1
+
+        expected = (cell, [ox, oy], cols, rows)
+        actual = (raw.get("cell_m"), raw.get("origin_xy_m"), raw.get("cols"), raw.get("rows"))
+        if expected != actual:
+            raise SystemExit(
+                f"DEM grid {actual} does not match the ground grid {expected}. "
+                "Re-run: python scripts/ingest_sources.py --dem"
+            )
+        if raw.get("vertical_datum") != "NAVD88":
+            raise SystemExit(f"DEM vertical datum is {raw.get('vertical_datum')!r}, expected NAVD88")
+
+        values = raw["values"]
+        if len(values) != cols * rows:
+            raise SystemExit(f"DEM has {len(values)} values, expected {cols * rows}")
+
+        grid = [values[r * cols:(r + 1) * cols] for r in range(rows)]
+        holes = _fill_nodata(grid, cols, rows)
+        if holes:
+            print(f"    DEM: filled {holes} no-data cells from neighbours")
+        rounded = [[round(float(v), 2) for v in line] for line in grid]
+        return cls(raw, rounded)
+
+    def at(self, x: float, y: float) -> float | None:
+        """Nearest-cell elevation, or None outside the grid."""
+        col = int(round((x - self.ox) / self.cell))
+        row = int(round((y - self.oy) / self.cell))
+        if 0 <= col < self.cols and 0 <= row < self.rows:
+            return self.grid[row][col]
+        return None
+
+
+def _fill_nodata(grid: list[list[float | None]], cols: int, rows: int) -> int:
+    """Replace nulls with the mean of their known neighbours, repeating until the holes close."""
+    holes = [(r, c) for r in range(rows) for c in range(cols) if grid[r][c] is None]
+    if not holes:
+        return 0
+    total = len(holes)
+    for _ in range(12):
+        if not holes:
+            break
+        remaining = []
+        for r, c in holes:
+            known = [
+                grid[r + dr][c + dc]
+                for dr, dc in ((-1, 0), (1, 0), (0, -1), (0, 1))
+                if 0 <= r + dr < rows and 0 <= c + dc < cols and grid[r + dr][c + dc] is not None
+            ]
+            if known:
+                grid[r][c] = sum(known) / len(known)
+            else:
+                remaining.append((r, c))
+        holes = remaining
+    for r, c in holes:
+        grid[r][c] = 0.0
+    return total
+
+
+def build_buildings(control: DistrictControl, dem: "Dem | None" = None) -> tuple[list[dict], dict]:
     footprints = load_json(DATA / "footprints" / "footprints.raw.json")
     pluto_rows = load_json(DATA / "pluto" / "pluto.raw.json")
 
@@ -186,7 +298,11 @@ def build_buildings(control: DistrictControl) -> tuple[list[dict], dict]:
         "height_fallback": 0,
         "pluto_joined": 0,
         "skipped_no_geometry": 0,
+        "ground_from_dataset": 0,
+        "ground_from_dem": 0,
+        "ground_unknown": 0,
     }
+    deferred_ground: list[dict] = []
 
     for record in footprints:
         geom = record.get("the_geom") or {}
@@ -227,11 +343,35 @@ def build_buildings(control: DistrictControl) -> tuple[list[dict], dict]:
         roof_ft = _as_float(record.get("height_roof"))
         floors = _as_float((lot or {}).get("numfloors"))
 
-        base_z = (ground_ft or 0.0) * FT
+        # The ring is already in local ENU metres, where the shoelace moments are numerically safe,
+        # so the centroid is computed here rather than trusting the one carried on the record.
+        cx, cy = polygon_centroid(outer)
 
         source_basis = ["official_dataset"]
         control_refs = ["DCTL-001", "DCTL-002", "DCTL-061"]
         open_questions: list[str] = []
+
+        # Ground elevation. The footprint dataset encodes "unknown" as zero, and DUMBO rises to
+        # 23 m, so taking that at face value planted seven buildings up to 18 m below the street
+        # they stand on. The old interpolated ground could never reveal this, because it was built
+        # from these same values: the error was baked into the surface used to check it. An
+        # independent DEM is what makes the defect visible, and what repairs it.
+        if ground_ft is not None and ground_ft > 0:
+            base_z = ground_ft * FT
+            ground_basis = "dataset"
+            stats["ground_from_dataset"] += 1
+        elif dem is not None and (sampled := dem.at(cx, cy)) is not None:
+            base_z = sampled
+            ground_basis = "dem"
+            source_basis.append("official_dataset")
+            control_refs.append("DCTL-074")
+            stats["ground_from_dem"] += 1
+        else:
+            base_z = 0.0
+            ground_basis = "unknown"
+            open_questions.append("DOQ-003")
+            stats["ground_unknown"] += 1
+            deferred_ground.append({"bin": bin_id})
 
         if roof_ft and roof_ft > 0:
             height_m = roof_ft * FT
@@ -255,22 +395,12 @@ def build_buildings(control: DistrictControl) -> tuple[list[dict], dict]:
             stats["height_fallback"] += 1
             height_basis = "fallback"
 
-        if ground_ft is None:
-            # No registered ground elevation: the base sits on the frame's zero plane.
-            open_questions.append("DOQ-003")
-
-        centroid = record.get("_centroid")
-        if centroid:
-            cx, cy, _ = control.geodetic_to_enu(float(centroid[0]), float(centroid[1]))
-        else:
-            cx = sum(p[0] for p in outer) / len(outer)
-            cy = sum(p[1] for p in outer) / len(outer)
-
         attributes: dict[str, object] = {
             "bin": bin_id,
             "bbl": bbl or None,
             "height_roof_m": round(height_m, 2),
             "ground_elevation_m": round(base_z, 2),
+            "ground_elevation_basis": ground_basis,
             "roof_elevation_m": round(base_z + height_m, 2),
             "footprint_area_m2": round(abs(ring_area(outer)), 1),
             "construction_year": _as_int(record.get("construction_year")),
@@ -847,6 +977,8 @@ def build_source_register(control: DistrictControl) -> dict:
                 "url": "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations/8518750/datums.json",
                 "accessed": "2026-08-09",
                 "license": "Public domain (US Government work)",
+                "attribution_required": False,
+                "attribution_text": "Tidal datums: NOAA CO-OPS station 8518750",
                 "vertical_datum": "MHW",
                 "units": "meters",
                 "grants_confidence": "A",
@@ -960,9 +1092,77 @@ def build_source_register(control: DistrictControl) -> dict:
                     "spacing are nominal, not a timetable. See DOQ-009."
                 ),
             },
+            {
+                "source_id": "DSRC-013",
+                "title": "USGS 3DEP 1 m bare-earth digital elevation model",
+                "tier": "A",
+                "publisher": "U.S. Geological Survey, 3D Elevation Program",
+                "url": (
+                    "https://elevation.nationalmap.gov/arcgis/rest/services/"
+                    "3DEPElevation/ImageServer"
+                ),
+                "accessed": "2026-08-09",
+                "license": "Public domain (U.S. Government work)",
+                "attribution_required": True,
+                "attribution_text": "Elevation: USGS 3D Elevation Program (3DEP)",
+                "native_crs": "EPSG:4326 query, EPSG:3857 service",
+                "vertical_datum": "NAVD88",
+                "units": "m",
+                "positional_accuracy_m": 1.0,
+                "grants_confidence": "A",
+                "verified": True,
+                "notes": (
+                    "Bare-earth terrain sampled on the district ground grid at 8 m spacing from a "
+                    "1 m source raster. Buildings are already removed, so this is the pavement "
+                    "rather than the roofline. Cross-checked every build against building "
+                    "ground_elevation from DSRC-003; the build fails if they disagree beyond "
+                    "DCTL-075. Retires DOQ-003."
+                ),
+            },
+            {
+                "source_id": "DSRC-014",
+                "title": "NYC Planimetric Database: Hydrography",
+                "tier": "A",
+                "publisher": "NYC Office of Technology and Innovation, via NYC Open Data",
+                "url": "https://data.cityofnewyork.us/resource/pjs3-c3z5.json",
+                "accessed": "2026-08-09",
+                "license": "NYC Open Data Terms of Use",
+                "attribution_required": True,
+                "attribution_text": "Hydrography: NYC Open Data (OTI)",
+                "native_crs": "EPSG:4326",
+                "grants_confidence": "A",
+                "verified": True,
+                "notes": (
+                    "Water body polygons including the East River and Navy Yard Basin. Supplies the "
+                    "land/water mask for the terrain mesh, replacing the district scope boundary "
+                    "which was never a shoreline. See DOQ-005."
+                ),
+            },
         ],
         "provenance": provenance(control),
     }
+
+
+def _required_attributions(control: DistrictControl) -> list[str]:
+    """Every attribution line the register can supply, in register order, de-duplicated.
+
+    Derived rather than hand-listed. A viewer is contractually obliged to display these, so a list
+    maintained by hand becomes a licence exposure the moment a source is added and the list is not —
+    which is exactly what had happened to street trees, elevation and hydrography.
+
+    Any source carrying an `attribution_text` is credited, not only those where
+    `attribution_required` is true. USGS and NOAA works are public domain and oblige nothing, but
+    naming who measured the ground you are standing on costs a line of text.
+
+    Several sources share a line — both OpenStreetMap entries want the same ODbL credit — so the set
+    is collapsed while preserving order, keeping the footer stable between builds instead of
+    reshuffling with dictionary iteration.
+    """
+    seen: dict[str, None] = {}
+    for source in build_source_register(control)["sources"]:
+        if source.get("attribution_text"):
+            seen.setdefault(source["attribution_text"], None)
+    return list(seen)
 
 
 def build_manifest(control: DistrictControl, bridge_manifest_url: str) -> dict:
@@ -980,7 +1180,7 @@ def build_manifest(control: DistrictControl, bridge_manifest_url: str) -> dict:
             "building footprints and massing within the district boundary",
             "street and footway network",
             "waterfront and park extents",
-            "district terrain (planned)",
+            "district terrain",
             "property metadata",
             "tile streaming and LOD management for the district",
             "walking experience and district navigation",
@@ -999,17 +1199,16 @@ def build_manifest(control: DistrictControl, bridge_manifest_url: str) -> dict:
         "source_register_url": "./source-register.json",
         "modes": ["walk", "map", "tour"],
         "handoff": {"supported": False},
-        "attribution": [
-            "Building footprints and lot data: NYC Open Data (OTI, DCP)",
-            "Street trees: NYC Parks Forestry Management System",
-            "© OpenStreetMap contributors, ODbL",
-            "Tidal datums: NOAA CO-OPS station 8518750",
-        ],
+        # Derived from the source register rather than hand-listed. A viewer is contractually obliged
+        # to display every one of these, so a list maintained by hand is a licence risk the moment a
+        # source is added and the list is not: exactly what happened when trees, elevation and
+        # hydrography arrived. Ask the register instead, and the obligation cannot fall behind.
+        "attribution": _required_attributions(control),
         "not_implemented_yet": [
-            "terrain surface from NYC DEM and LiDAR (DOQ-003); ground is currently flat per building base",
+            "roof form modelling; all roofs are flat at the dataset roof height (DOQ-002)",
             "district photogrammetry (deliberately out of scope for Phase 1)",
             "interior spaces",
-            "roof form modelling; all roofs are flat at the dataset roof height",
+            "facade appearance from imagery; it is inferred from building class (DOQ-007)",
             "ratified Manhattan Bridge placement (DOQ-001); the current one is provisional",
         ],
         "provenance": provenance(control),
@@ -1067,35 +1266,110 @@ def build_asset_registry(control: DistrictControl, landmarks: list[dict]) -> dic
 # ---------------------------------------------------------------------- main
 
 
-def build_ground_grid(control: DistrictControl, buildings: list[dict], index: dict) -> dict:
+def build_ground_grid(
+    control: DistrictControl, buildings: list[dict], index: dict, dem: "Dem | None" = None,
+) -> dict:
     """
-    Interpolate a ground height surface from building base elevations.
+    Build the ground height surface.
 
-    `ground_elevation` on each footprint is, per DSRC-003, the lowest elevation at that building's
-    ground level in NAVD88. Those are grade A point samples of the real terrain. This blends them
-    with inverse-distance weighting into a coarse grid so that a walking camera, and anything else
-    that needs to know where the pavement is, follows DUMBO's actual rise from the waterfront rather
-    than floating twelve metres under it.
+    Preferred path: sample the USGS 3DEP 1 m bare-earth DEM (DSRC-013), ingested to
+    data/terrain/dem.raw.json. Bare earth is what a walker stands on, already stripped of buildings,
+    and it arrives in NAVD88 metres so nothing has to be transformed.
 
-    The samples are grade A; the surface between them is not. Anything derived from this grid is
-    graded C and carries DOQ-003, which is retired when a real DEM is ingested (DSRC-008).
+    Fallback path: if the DEM has not been ingested, interpolate from building base elevations as
+    before and grade the result C under DOQ-003. A fresh clone that has not run the ingest step still
+    builds and still runs; it simply tells the truth about how well it knows the ground.
+
+    Land and water come from the city's hydrography polygons (DSRC-014) when available, so the
+    shoreline is sourced rather than inferred from the project's own scope boundary.
     """
     cell = control.value_m("DCTL-070")
+    ox, oy, span_x, span_y = control.tile_extent
+    cols = int(math.ceil(span_x / cell)) + 1
+    rows = int(math.ceil(span_y / cell)) + 1
+
+    dem_grid = dem.grid if dem is not None else None
+    if dem_grid is not None:
+        heights = dem_grid
+        confidence = "A"
+        source_refs = ["DSRC-013"]
+        control_refs = ["DCTL-070", "DCTL-074", "DCTL-075", "DCTL-076"]
+        open_questions: list[str] = []
+        method = "usgs_3dep_1m_bare_earth"
+        notes = (
+            "Sampled from the USGS 3DEP 1 m bare-earth DEM in NAVD88 metres, bilinear. Grade A, "
+            "cross-checked every build against building ground_elevation (DSRC-003)."
+        )
+    else:
+        print("    no DEM ingested; falling back to interpolation from building base elevations")
+        heights = _interpolate_ground(control, buildings, ox, oy, cell, cols, rows)
+        confidence = "C"
+        source_refs = ["DSRC-001", "DSRC-003"]
+        control_refs = ["DCTL-070", "DCTL-071", "DCTL-072", "DCTL-073"]
+        open_questions = ["DOQ-003"]
+        method = "idw_building_base_elevations"
+        notes = (
+            "Inverse-distance interpolation of building base elevations. Grade C: the samples are "
+            "authoritative, the surface between them is inferred. Run "
+            "`python scripts/ingest_sources.py --dem` to replace this with DSRC-013."
+        )
+
+    land, land_source = _land_mask(control, ox, oy, cell, cols, rows)
+    land_cells = sum(sum(line) for line in land)
+
+    agreement = (
+        _dem_agreement(control, buildings, heights, ox, oy, cell, cols, rows)
+        if dem_grid is not None else None
+    )
+
+    land_heights = [
+        heights[r][c] for r in range(rows) for c in range(cols) if land[r][c]
+    ] or [v for line in heights for v in line]
+    flat = [v for line in heights for v in line]
+
+    document = {
+        "contract_version": CONTRACT_VERSION,
+        "module_id": MODULE_ID,
+        "frame_id": FRAME_ID,
+        "origin_xy_m": [ox, oy],
+        "cell_m": cell,
+        "cols": cols,
+        "rows": rows,
+        "vertical_datum": "NAVD88",
+        "confidence": confidence,
+        "method": method,
+        "source_refs": source_refs + ([land_source] if land_source else []),
+        "control_refs": control_refs,
+        "open_questions": open_questions,
+        "notes": notes,
+        "min_m": round(min(flat), 2),
+        "max_m": round(max(flat), 2),
+        "land_min_m": round(min(land_heights), 2),
+        "land_max_m": round(max(land_heights), 2),
+        "heights": heights,
+        "land": land,
+        "land_cells": land_cells,
+        "land_mask_source": land_source or "district_boundary",
+        "provenance": provenance(control),
+    }
+    if agreement:
+        document["dem_agreement_m"] = agreement
+    return document
+
+
+
+def _interpolate_ground(
+    control: DistrictControl, buildings: list[dict],
+    ox: float, oy: float, cell: float, cols: int, rows: int,
+) -> list[list[float]]:
+    """Fallback surface: inverse-distance weighting of building base elevations."""
     radius = control.value_m("DCTL-071")
     neighbours = int(control.value("DCTL-072"))
     power = control.value("DCTL-073")
 
-    scheme = index["scheme"]
-    ox, oy = scheme["origin_xy_m"]
-    span_x = scheme["grid_size"][0] * scheme["tile_size_m"]
-    span_y = scheme["grid_size"][1] * scheme["tile_size_m"]
-
-    cols = int(math.ceil(span_x / cell)) + 1
-    rows = int(math.ceil(span_y / cell)) + 1
-
     samples = [(b["centroid"][0], b["centroid"][1], b["base_z"]) for b in buildings]
     if not samples:
-        raise SystemExit("no building samples; cannot interpolate a ground surface")
+        raise SystemExit("no building samples and no DEM; cannot build a ground surface")
 
     radius2 = radius * radius
     heights: list[list[float]] = []
@@ -1104,15 +1378,14 @@ def build_ground_grid(control: DistrictControl, buildings: list[dict], index: di
         line: list[float] = []
         for col in range(cols):
             x = ox + col * cell
-            near: list[tuple[float, float]] = []
-            for sx, sy, sz in samples:
-                d2 = (sx - x) ** 2 + (sy - y) ** 2
-                if d2 <= radius2:
-                    near.append((d2, sz))
+            near = [
+                (d2, sz) for sx, sy, sz in samples
+                if (d2 := (sx - x) ** 2 + (sy - y) ** 2) <= radius2
+            ]
             if not near:
-                # Outside the sampled area, usually over water. Fall back to the single nearest
-                # sample so the surface stays continuous instead of collapsing to zero.
-                d2, sz = min(((sx - x) ** 2 + (sy - y) ** 2, sz) for sx, sy, sz in samples)
+                # Outside the sampled area. Fall back to the single nearest sample so the surface
+                # stays continuous instead of collapsing to zero.
+                _, sz = min(((sx - x) ** 2 + (sy - y) ** 2, sz) for sx, sy, sz in samples)
                 line.append(round(sz, 2))
                 continue
             near.sort(key=lambda item: item[0])
@@ -1128,60 +1401,169 @@ def build_ground_grid(control: DistrictControl, buildings: list[dict], index: di
                 value_sum += w * sz
             line.append(round(value_sum / weight_sum, 2))
         heights.append(line)
+    return heights
 
-    flat = [v for line in heights for v in line]
 
-    # Land mask. The ground grid is interpolated from building samples, so beyond the shoreline it
-    # keeps extrapolating land out over the East River and buries the water surface. The district
-    # boundary already traces the shoreline, so cells outside it, plus a small apron so the kerb of
-    # the waterfront is not cut off, are marked as water and skipped when the terrain is meshed.
+def _land_mask(
+    control: DistrictControl, ox: float, oy: float, cell: float, cols: int, rows: int,
+) -> tuple[list[list[int]], str | None]:
+    """Classify every cell as land or water.
+
+    Preferred: the city's hydrography polygons, rasterised. Cells inside a water body are water and
+    everything else is land, which lets the piers of Brooklyn Bridge Park read as what they are —
+    land standing out over the river — instead of being cut off at a boundary line.
+
+    Fallback: the district boundary, as before. Honest but crude; the boundary was drawn to scope the
+    project, not to trace a shoreline.
+    """
+    path = REPO_ROOT / "data" / "terrain" / "hydrography.raw.json"
+    if path.exists():
+        records = json.loads(path.read_text(encoding="utf-8"))
+        water = _rasterise_water(control, records, ox, oy, cell, cols, rows)
+        wet = sum(sum(line) for line in water)
+        if wet:
+            print(f"    land mask from hydrography: {wet} water cells of {cols * rows}")
+            return [[0 if water[r][c] else 1 for c in range(cols)] for r in range(rows)], "DSRC-014"
+        print("    hydrography covered no cells; falling back to the district boundary")
+
     ring_enu = [control.geodetic_to_enu(lon, lat)[:2] for lon, lat in control.boundary_ring]
     apron = cell * 1.5
     land: list[list[int]] = []
-    land_cells = 0
     for row in range(rows):
         y = oy + row * cell
-        line_mask: list[int] = []
+        line: list[int] = []
         for col in range(cols):
             x = ox + col * cell
             inside = point_in_ring((x, y), ring_enu)
             if not inside:
-                # Keep cells just outside the ring so the shoreline has a bank rather than a cliff
-                # exactly on the boundary line.
                 nearest = min(
                     distance_point_to_segment((x, y), ring_enu[i], ring_enu[i + 1])
                     for i in range(len(ring_enu) - 1)
                 )
                 inside = nearest <= apron
-            line_mask.append(1 if inside else 0)
-            if inside:
-                land_cells += 1
-        land.append(line_mask)
+            line.append(1 if inside else 0)
+        land.append(line)
+    return land, None
 
-    return {
-        "contract_version": CONTRACT_VERSION,
-        "module_id": MODULE_ID,
-        "frame_id": FRAME_ID,
-        "origin_xy_m": [ox, oy],
-        "cell_m": cell,
-        "cols": cols,
-        "rows": rows,
-        "vertical_datum": "NAVD88",
-        "confidence": "C",
-        "source_refs": ["DSRC-001", "DSRC-003"],
-        "control_refs": ["DCTL-070", "DCTL-071", "DCTL-072", "DCTL-073"],
-        "open_questions": ["DOQ-003"],
-        "notes": (
-            "Inverse-distance interpolation of building base elevations. Grade C: the samples are "
-            "authoritative, the surface between them is inferred. Replace with NYC DEM (DSRC-008)."
-        ),
-        "min_m": round(min(flat), 2),
-        "max_m": round(max(flat), 2),
-        "heights": heights,
-        "land": land,
-        "land_cells": land_cells,
-        "provenance": provenance(control),
+
+def _rasterise_water(
+    control: DistrictControl, records: list[dict],
+    ox: float, oy: float, cell: float, cols: int, rows: int,
+) -> list[list[int]]:
+    """Scanline-fill water polygons onto the grid.
+
+    Testing every cell against every edge would be 29,025 x ~4,400 point-in-polygon operations. A
+    scanline fill is one pass per grid row instead, so the cost falls to rows x edges. Each polygon
+    is filled independently under the even-odd rule — which handles its holes correctly — and the
+    results are OR-ed, so two overlapping water bodies cannot cancel each other out.
+    """
+    water = [[0] * cols for _ in range(rows)]
+    for record in records:
+        geom = record.get("the_geom") or {}
+        if geom.get("type") == "MultiPolygon":
+            polygons = geom.get("coordinates", [])
+        elif geom.get("type") == "Polygon":
+            polygons = [geom.get("coordinates", [])]
+        else:
+            continue
+        for polygon in polygons:
+            edges: list[tuple[float, float, float, float]] = []
+            for ring in polygon:
+                pts = [control.geodetic_to_enu(lon, lat)[:2] for lon, lat, *_ in ring]
+                for i in range(len(pts) - 1):
+                    (x0, y0), (x1, y1) = pts[i], pts[i + 1]
+                    if y0 != y1:
+                        edges.append((x0, y0, x1, y1))
+            if not edges:
+                continue
+            for row in range(rows):
+                y = oy + row * cell
+                crossings = sorted(
+                    x0 + (y - y0) * (x1 - x0) / (y1 - y0)
+                    for x0, y0, x1, y1 in edges
+                    if (y0 <= y < y1) or (y1 <= y < y0)
+                )
+                for i in range(0, len(crossings) - 1, 2):
+                    start = max(0, int(math.ceil((crossings[i] - ox) / cell)))
+                    end = min(cols - 1, int(math.floor((crossings[i + 1] - ox) / cell)))
+                    for col in range(start, end + 1):
+                        water[row][col] = 1
+    return water
+
+
+def _dem_agreement(
+    control: DistrictControl, buildings: list[dict], heights: list[list[float]],
+    ox: float, oy: float, cell: float, cols: int, rows: int,
+) -> dict:
+    """Cross-check the DEM against an independent measurement of the same quantity.
+
+    `ground_elevation` on each building footprint is a grade A NAVD88 elevation produced by a
+    different agency from a different survey. Comparing it to the DEM at the same place is the one
+    check that can catch a wrong vertical datum, wrong units, or a misregistered sampling grid — all
+    of which produce a perfectly plausible-looking terrain that is quietly, uniformly wrong.
+
+    Two statistics, because they fail differently and a single threshold would conflate them:
+
+    **Bias** is the signed median. It is the systematic-error detector. A datum slip moves every
+    sample the same way, so a 0.59 m MHW-for-NAVD88 mistake shows up here as a 0.59 m offset and
+    nowhere else. DCTL-075 bounds it.
+
+    **Spread** is the 95th percentile of the absolute difference. It catches misregistration, which
+    scatters rather than shifts: a grid offset by a block drags samples onto the wrong side of
+    DUMBO's slope and the disagreement fans out while the median may barely move. DCTL-076 bounds
+    it, and is necessarily looser, because the two quantities are not quite the same thing —
+    `ground_elevation` is the *lowest* point of a building, and a large building on a slope will
+    legitimately sit below a DEM sample taken at its centroid.
+
+    Buildings whose base came from the DEM are excluded: a value cannot corroborate itself.
+    """
+    diffs: list[float] = []
+    for building in buildings:
+        if building["attributes"].get("ground_elevation_basis") != "dataset":
+            continue
+        cx, cy = building["centroid"]
+        col = int(round((cx - ox) / cell))
+        row = int(round((cy - oy) / cell))
+        if 0 <= col < cols and 0 <= row < rows:
+            diffs.append(heights[row][col] - building["base_z"])
+    if not diffs:
+        return {}
+
+    signed = sorted(diffs)
+    absolute = sorted(abs(d) for d in diffs)
+    n = len(diffs)
+
+    def pct(values: list[float], p: float) -> float:
+        return round(values[min(n - 1, int(p * n))], 3)
+
+    result = {
+        "samples": n,
+        "bias_m": pct(signed, 0.5),
+        "abs_median_m": pct(absolute, 0.5),
+        "p95_m": pct(absolute, 0.95),
+        "max_m": round(absolute[-1], 3),
+        "over_3m": sum(1 for d in absolute if d > 3.0),
+        "compared_against": "DSRC-003 ground_elevation",
     }
+
+    bias_limit = control.value_m("DCTL-075")
+    spread_limit = control.value_m("DCTL-076")
+    print(f"    DEM vs building ground_elevation over {n} buildings:")
+    print(f"      bias {result['bias_m']:+.3f} m (limit ±{bias_limit}) · "
+          f"p95 {result['p95_m']:.3f} m (limit {spread_limit}) · max {result['max_m']:.2f} m")
+
+    if abs(result["bias_m"]) > bias_limit:
+        raise SystemExit(
+            f"DEM is systematically offset from building ground elevations: bias "
+            f"{result['bias_m']:+.3f} m exceeds DCTL-075 limit ±{bias_limit} m. "
+            "Check the vertical datum and the units."
+        )
+    if result["p95_m"] > spread_limit:
+        raise SystemExit(
+            f"DEM disagrees too widely with building ground elevations: p95 {result['p95_m']} m "
+            f"exceeds DCTL-076 limit {spread_limit} m. Check the grid registration."
+        )
+    return result
 
 
 def _canonical_frame_path() -> Path:
@@ -1254,7 +1636,10 @@ def main() -> int:
     print(f"district control : {control.path.name} @ {control.sha256[:12]}")
 
     print("[buildings]")
-    buildings, stats = build_buildings(control)
+    dem = Dem.load(control)
+    if dem is None:
+        print("    no DEM ingested (run: python scripts/ingest_sources.py --dem)")
+    buildings, stats = build_buildings(control, dem)
     print(f"    {len(buildings)} buildings")
     print(f"    heights: {stats}")
 
@@ -1274,7 +1659,7 @@ def main() -> int:
     print(f"    {len(walk['nodes'])} nodes, {len(walk['edges'])} edges")
 
     print("[ground surface]")
-    ground = build_ground_grid(control, buildings, index)
+    ground = build_ground_grid(control, buildings, index, dem)
     write_json(OUT / "ground-grid.json", ground, compact=True)
     print(f"    {ground['cols']} x {ground['rows']} cells at {ground['cell_m']:g} m, "
           f"{ground['min_m']:.1f} to {ground['max_m']:.1f} m NAVD88")

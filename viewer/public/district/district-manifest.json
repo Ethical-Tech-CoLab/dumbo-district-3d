@@ -13,7 +13,7 @@
   "building footprints and massing within the district boundary",
   "street and footway network",
   "waterfront and park extents",
-  "district terrain (planned)",
+  "district terrain",
   "property metadata",
   "tile streaming and LOD management for the district",
   "walking experience and district navigation"
@@ -43,26 +43,29 @@
   "supported": false
  },
  "attribution": [
-  "Building footprints and lot data: NYC Open Data (OTI, DCP)",
+  "Building footprints: NYC Open Data (OTI)",
+  "Lot attributes: NYC Department of City Planning (PLUTO)",
+  "Tidal datums: NOAA CO-OPS station 8518750",
+  "\u00a9 OpenStreetMap contributors",
   "Street trees: NYC Parks Forestry Management System",
-  "\u00a9 OpenStreetMap contributors, ODbL",
-  "Tidal datums: NOAA CO-OPS station 8518750"
+  "Elevation: USGS 3D Elevation Program (3DEP)",
+  "Hydrography: NYC Open Data (OTI)"
  ],
  "not_implemented_yet": [
-  "terrain surface from NYC DEM and LiDAR (DOQ-003); ground is currently flat per building base",
+  "roof form modelling; all roofs are flat at the dataset roof height (DOQ-002)",
   "district photogrammetry (deliberately out of scope for Phase 1)",
   "interior spaces",
-  "roof form modelling; all roofs are flat at the dataset roof height",
+  "facade appearance from imagery; it is inferred from building class (DOQ-007)",
   "ratified Manhattan Bridge placement (DOQ-001); the current one is provisional"
  ],
  "provenance": {
   "module_id": "dumbo-district",
   "generated_by": "dumbo-district-3d/scripts@1.0.0",
-  "generated_at": "2026-08-09T18:24:27+00:00",
+  "generated_at": "2026-08-09T20:00:18+00:00",
   "source_documents": [
    {
     "path": "DUMBO-GEOSPATIAL-CONTROL.md",
-    "sha256": "e357b5304f2c107abcc8a176286584b429850f8ca72438cda65bf3b750fa5e5b"
+    "sha256": "647184b0c8d520e4c7501af54bfc57b6f07931390283126ab4bc30aea94c363d"
    }
   ]
  }
