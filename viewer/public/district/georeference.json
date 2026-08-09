@@ -1,0 +1,54 @@
+{
+ "contract_version": "1.0.0",
+ "frame_id": "nyc-harbor-enu",
+ "kind": "enu",
+ "units": "meters",
+ "axes": {
+  "x": "east",
+  "y": "north",
+  "z": "up",
+  "handedness": "right"
+ },
+ "anchor": {
+  "lon": -73.989,
+  "lat": 40.703,
+  "height_m": 0.0,
+  "vertical_datum": "NAVD88",
+  "horizontal_crs": "EPSG:4326",
+  "rationale": "Frozen by convention (DCTL-001..003). A round-numbered point near the district centroid, chosen so DUMBO coordinates stay small and float32 precision stays comfortable in the browser. Not a survey monument."
+ },
+ "vertical_datum_offsets_m": {
+  "NAVD88": 0.0,
+  "MHW": 0.59,
+  "MSL": -0.07,
+  "MLLW": -0.85
+ },
+ "valid_radius_m": 4000.0,
+ "max_planar_error_m": 1.26,
+ "ellipsoid": {
+  "name": "WGS84",
+  "semi_major_axis_m": 6378137.0,
+  "inverse_flattening": 298.257223563
+ },
+ "render_convention": {
+  "gltf_up_axis": "Y",
+  "scene_to_render": "(x, y, z) -> (x, z, -y)"
+ },
+ "source_refs": [
+  "DSRC-005",
+  "DSRC-006"
+ ],
+ "confidence": "A",
+ "notes": "MHW offset DCTL-010 reconciles this frame with manhattan-bridge-3d, whose geometry is authored against mean high water. Consumers placing bridge geometry MUST apply it.",
+ "provenance": {
+  "module_id": "dumbo-district",
+  "generated_by": "dumbo-district-3d/scripts@1.0.0",
+  "generated_at": "2026-08-09T16:22:20+00:00",
+  "source_documents": [
+   {
+    "path": "DUMBO-GEOSPATIAL-CONTROL.md",
+    "sha256": "16248a6cae4a94ebf940ec73277c02460056434c50f2bcd1dd257464af1e5105"
+   }
+  ]
+ }
+}

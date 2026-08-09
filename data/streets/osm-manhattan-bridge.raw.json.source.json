@@ -1,0 +1,10 @@
+{
+  "source_id": "DSRC-007",
+  "query": "[out:json][timeout:180];(way[\"man_made\"=\"bridge\"][\"name\"=\"Manhattan Bridge\"](40.700,-74.005,40.716,-73.980);way[\"highway\"][\"name\"=\"Manhattan Bridge\"](40.700,-74.005,40.716,-73.980);way[\"bridge\"][\"name\"~\"^Manhattan Bridge\"](40.700,-74.005,40.716,-73.980););out geom tags;",
+  "fetched_at": "2026-08-09T15:59:53+00:00",
+  "fetched_by": "dumbo-district-3d/scripts@1.0.0",
+  "bytes": 7842,
+  "sha256": "2873bcb348f1fa818c4dafbc1715abc8c2748cb136aa978c3eeed2bbbff65613",
+  "record_count": 6,
+  "note": "OpenStreetMap contributors, ODbL. Manhattan Bridge centreline, used ONLY to derive a provisional placement (DOQ-001 / OQ-009). Not bridge geometry."
+}

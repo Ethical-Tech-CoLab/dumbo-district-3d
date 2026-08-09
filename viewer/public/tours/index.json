@@ -1,0 +1,14 @@
+[
+ {
+  "id": "dumbo-family-of-four",
+  "title": "DUMBO in an hour \u2014 a family of four",
+  "url": "tours/dumbo-family-of-four.json",
+  "description": "A four-stop walking tour from the Brooklyn Bridge to the Manhattan Bridge, dwelling at each stop and taking photographs. Routed on the OpenStreetMap pedestrian network at a family walking pace, then dressed with narration, look-at targets, photo moments and a hand-off into the Manhattan Bridge team's inspect mode."
+ },
+ {
+  "id": "dumbo-step-free-short",
+  "title": "Step-free waterfront short loop",
+  "url": "tours/dumbo-step-free-short.json",
+  "description": "A brief, level, wheelchair-friendly walk along the Brooklyn Bridge Park edge."
+ }
+]

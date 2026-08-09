@@ -1,0 +1,10 @@
+{
+  "source_id": "DSRC-004",
+  "query": "nta2020='BK0202'",
+  "fetched_at": "2026-08-09T14:44:50+00:00",
+  "fetched_by": "dumbo-district-3d/scripts@1.0.0",
+  "bytes": 21302,
+  "sha256": "03164cab2c3b4ed3067a66293cc9210d65d7419a36fdcca584589ff6112aecd5",
+  "record_count": 1,
+  "note": "Downtown Brooklyn-DUMBO-Boerum Hill. Retained as context. The project boundary is the polygon in DUMBO-GEOSPATIAL-CONTROL.md section 2.1, which is much smaller."
+}

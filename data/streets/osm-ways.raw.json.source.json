@@ -1,0 +1,10 @@
+{
+  "source_id": "DSRC-007",
+  "query": "[out:json][timeout:180];(way[\"highway\"][\"highway\"!~\"^(motorway|motorway_link|trunk_link|construction|proposed)$\"](40.6975,-73.9985,40.706,-73.98);way[\"footway\"](40.6975,-73.9985,40.706,-73.98););out geom tags;",
+  "fetched_at": "2026-08-09T14:43:18+00:00",
+  "fetched_by": "dumbo-district-3d/scripts@1.0.0",
+  "bytes": 1294269,
+  "sha256": "658b485b7e2f4efebafbfe83bac752ef72fc4c9e240228340030e53fe13fe3e4",
+  "record_count": 2015,
+  "note": "OpenStreetMap contributors, ODbL. Attribution is mandatory wherever this is rendered."
+}

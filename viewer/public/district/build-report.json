@@ -1,0 +1,49 @@
+{
+ "generated_at": "2026-08-09T16:22:20+00:00",
+ "generated_by": "dumbo-district-3d/scripts@1.0.0",
+ "control_document": {
+  "path": "DUMBO-GEOSPATIAL-CONTROL.md",
+  "sha256": "16248a6cae4a94ebf940ec73277c02460056434c50f2bcd1dd257464af1e5105"
+ },
+ "buildings": 381,
+ "height_sources": {
+  "height_from_dataset": 381,
+  "height_from_floors": 0,
+  "height_fallback": 0,
+  "pluto_joined": 375,
+  "skipped_no_geometry": 0
+ },
+ "tiles": {
+  "total": 112,
+  "with_content": 49,
+  "by_zone": {
+   "context": 49,
+   "walkable": 31,
+   "hero": 32
+  }
+ },
+ "confidence_histogram": {
+  "A": 381
+ },
+ "payloads": {
+  "count": 123,
+  "bytes": 456264
+ },
+ "walk_network": {
+  "nodes": 4346,
+  "edges": 5131
+ },
+ "ground_grid": {
+  "cols": 57,
+  "rows": 33,
+  "cell_m": 32.0,
+  "min_m": 0.0,
+  "max_m": 22.55,
+  "confidence": "C"
+ },
+ "landmarks": 29,
+ "open_questions_touched": [
+  "DOQ-001",
+  "DOQ-003"
+ ]
+}

@@ -1,0 +1,137 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -73.9907,
+      40.7025
+     ],
+     [
+      -73.99,
+      40.7043
+     ]
+    ]
+   },
+   "properties": {
+    "hero_id": "DHZ-01",
+    "name": "Washington Street view corridor",
+    "halfwidth_m": 60.0,
+    "confidence": "A"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -73.994,
+      40.7032
+     ],
+     [
+      -73.9865,
+      40.7026
+     ]
+    ]
+   },
+   "properties": {
+    "hero_id": "DHZ-02",
+    "name": "Water Street",
+    "halfwidth_m": 60.0,
+    "confidence": "A"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -73.9933,
+      40.7018
+     ],
+     [
+      -73.9942,
+      40.7043
+     ]
+    ]
+   },
+   "properties": {
+    "hero_id": "DHZ-03",
+    "name": "Main Street to the waterfront",
+    "halfwidth_m": 60.0,
+    "confidence": "A"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -73.996,
+      40.7038
+     ],
+     [
+      -73.99,
+      40.7046
+     ]
+    ]
+   },
+   "properties": {
+    "hero_id": "DHZ-04",
+    "name": "Brooklyn Bridge Park waterfront",
+    "halfwidth_m": 60.0,
+    "confidence": "A"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -73.99,
+      40.7005
+     ],
+     [
+      -73.9885,
+      40.7042
+     ]
+    ]
+   },
+   "properties": {
+    "hero_id": "DHZ-05",
+    "name": "Manhattan Bridge Brooklyn approach",
+    "halfwidth_m": 60.0,
+    "confidence": "A"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -73.9956,
+      40.702
+     ],
+     [
+      -73.9972,
+      40.7032
+     ]
+    ]
+   },
+   "properties": {
+    "hero_id": "DHZ-06",
+    "name": "Old Fulton Street to Fulton Ferry",
+    "halfwidth_m": 60.0,
+    "confidence": "A"
+   }
+  }
+ ]
+}

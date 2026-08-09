@@ -1,0 +1,136 @@
+{
+ "contract_version": "1.0.0",
+ "module_id": "manhattan-bridge",
+ "title": "Manhattan Bridge (placeholder manifest)",
+ "subtitle": "Stand-in published by dumbo-district-3d so the optional dependency resolves",
+ "module_version": "0.0.0",
+ "owner": {
+  "team": "Manhattan Bridge",
+  "repository": "manhattan-bridge-3d"
+ },
+ "authoritative_for": [
+  "bridge geometry",
+  "bridge control dimensions",
+  "bridge component taxonomy",
+  "bridge photogrammetry",
+  "bridge engineering detail"
+ ],
+ "georeference": {
+  "url": "../../frames/nyc-harbor-enu.json"
+ },
+ "placement": {
+  "frame": "nyc-harbor-enu",
+  "translation_m": [
+   -150.22,
+   511.26,
+   0.59
+  ],
+  "yaw_deg": 292.633,
+  "scale": 1,
+  "confidence": "D",
+  "provisional": true,
+  "open_questions": [
+   "OQ-009",
+   "DOQ-001"
+  ],
+  "notes": "PROPOSED BY dumbo-district-3d, NOT RATIFIED BY THE BRIDGE TEAM. Azimuth 157.37 deg from north is the principal axis of the bridge centerline as mapped by OpenStreetMap (DSRC-007), which is community mapping and not a survey. The translation is the centroid of that mapped centerline, which approximates but is not proven to equal the midpoint of the main span that manhattan-bridge-3d uses as its origin. The z term is DCTL-010, converting the bridge's mean-high-water zero onto this frame's NAVD88 zero; that part IS grade A and should be adopted regardless of what happens to the horizontal terms."
+ },
+ "lod_ladder": {
+  "contract_version": "1.0.0",
+  "module_id": "manhattan-bridge",
+  "ladder_id": "manhattan-bridge-ladder",
+  "levels": [
+   {
+    "level": 0,
+    "name": "control skeleton",
+    "intent": "inspect",
+    "max_geometric_error_m": 0.01,
+    "representation": "cad_solid",
+    "payload_format": "glb",
+    "selectable": true,
+    "carries_metadata": true,
+    "notes": "Mirrors the existing control_skeleton.glb. Not shipped by this placeholder."
+   },
+   {
+    "level": 2,
+    "name": "district proxy",
+    "intent": "context",
+    "max_geometric_error_m": 8.0,
+    "representation": "block",
+    "payload_format": "none",
+    "selectable": false,
+    "carries_metadata": false,
+    "notes": "NOT SHIPPED. The district renders a labelled wireframe placeholder at this level until the bridge team exports a real proxy."
+   }
+  ],
+  "selection": {
+   "policy": "screen_space_error",
+   "default_sse_budget_px": 12,
+   "mode_sse_budget_px": {
+    "inspect": 2,
+    "walk": 12,
+    "map": 48,
+    "tour": 8
+   },
+   "hysteresis": 0.15
+  }
+ },
+ "modes": [
+  "inspect",
+  "walk",
+  "map",
+  "tour"
+ ],
+ "proxy": {
+  "asset_id": "urn:d3d:manhattan-bridge:bridge_proxy",
+  "max_level": 2,
+  "notes": "Placeholder. Caps how far a consuming viewer may refine bridge content while the bridge is scenery rather than the subject."
+ },
+ "handoff": {
+  "supported": true,
+  "target_mode": "inspect",
+  "preserve_camera": true,
+  "entry_points": [
+   {
+    "entry_id": "brooklyn_tower",
+    "label": "Inspect the Brooklyn tower",
+    "focus_asset": "urn:d3d:manhattan-bridge:tower_brooklyn_envelope"
+   },
+   {
+    "entry_id": "brooklyn_anchorage",
+    "label": "Inspect the Brooklyn anchorage",
+    "focus_asset": "urn:d3d:manhattan-bridge:anchorage_brooklyn"
+   }
+  ]
+ },
+ "attribution": [
+  "Manhattan Bridge model: manhattan-bridge-3d"
+ ],
+ "not_implemented_yet": [
+  "THIS IS A PLACEHOLDER MANIFEST written by dumbo-district-3d, not by the bridge team",
+  "no geometry is published; the district draws a labelled wireframe envelope instead",
+  "placement is provisional and unratified (OQ-009 / DOQ-001)"
+ ],
+ "provenance": {
+  "module_id": "dumbo-district",
+  "generated_by": "dumbo-district-3d/scripts@1.0.0",
+  "generated_at": "2026-08-09T16:19:13+00:00",
+  "source_documents": [
+   {
+    "path": "DUMBO-GEOSPATIAL-CONTROL.md",
+    "sha256": "16248a6cae4a94ebf940ec73277c02460056434c50f2bcd1dd257464af1e5105"
+   }
+  ]
+ },
+ "extensions": {
+  "dumbo-district": {
+   "placeholder_envelope": {
+    "length_m": 2089.4,
+    "main_span_m": 448.1,
+    "tower_height_m": 98.1,
+    "deck_width_m": 36.0,
+    "source": "manhattan-bridge-3d/GEOMETRY-CONTROL.md CTL-001, CTL-005, CTL-007"
+   }
+  }
+ }
+}

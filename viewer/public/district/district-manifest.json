@@ -1,0 +1,68 @@
+{
+ "contract_version": "1.0.0",
+ "module_id": "dumbo-district",
+ "title": "DUMBO District Digital Twin",
+ "subtitle": "Walkable neighbourhood model, source-governed, streamed",
+ "module_version": "1.0.0",
+ "owner": {
+  "team": "DUMBO District",
+  "repository": "dumbo-district-3d"
+ },
+ "authoritative_for": [
+  "DUMBO neighbourhood geospatial model",
+  "building footprints and massing within the district boundary",
+  "street and footway network",
+  "waterfront and park extents",
+  "district terrain (planned)",
+  "property metadata",
+  "tile streaming and LOD management for the district",
+  "walking experience and district navigation"
+ ],
+ "depends_on": [
+  {
+   "module_id": "manhattan-bridge",
+   "manifest_url": "../modules/manhattan-bridge/bridge-manifest.json",
+   "required": false
+  }
+ ],
+ "georeference": {
+  "url": "./georeference.json"
+ },
+ "lod_ladder": {
+  "url": "./lod.json"
+ },
+ "asset_registry_url": "./asset-registry.json",
+ "tile_index_url": "./tile-index.json",
+ "source_register_url": "./source-register.json",
+ "modes": [
+  "walk",
+  "map",
+  "tour"
+ ],
+ "handoff": {
+  "supported": false
+ },
+ "attribution": [
+  "Building footprints and lot data: NYC Open Data (OTI, DCP)",
+  "\u00a9 OpenStreetMap contributors, ODbL",
+  "Tidal datums: NOAA CO-OPS station 8518750"
+ ],
+ "not_implemented_yet": [
+  "terrain surface from NYC DEM and LiDAR (DOQ-003); ground is currently flat per building base",
+  "district photogrammetry (deliberately out of scope for Phase 1)",
+  "interior spaces",
+  "roof form modelling; all roofs are flat at the dataset roof height",
+  "ratified Manhattan Bridge placement (DOQ-001); the current one is provisional"
+ ],
+ "provenance": {
+  "module_id": "dumbo-district",
+  "generated_by": "dumbo-district-3d/scripts@1.0.0",
+  "generated_at": "2026-08-09T16:22:20+00:00",
+  "source_documents": [
+   {
+    "path": "DUMBO-GEOSPATIAL-CONTROL.md",
+    "sha256": "16248a6cae4a94ebf940ec73277c02460056434c50f2bcd1dd257464af1e5105"
+   }
+  ]
+ }
+}

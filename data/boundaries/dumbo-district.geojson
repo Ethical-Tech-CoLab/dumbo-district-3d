@@ -1,0 +1,84 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -73.9975,
+       40.7033
+      ],
+      [
+       -73.995,
+       40.7045
+      ],
+      [
+       -73.99,
+       40.7048
+      ],
+      [
+       -73.984,
+       40.7042
+      ],
+      [
+       -73.9805,
+       40.7028
+      ],
+      [
+       -73.9805,
+       40.7005
+      ],
+      [
+       -73.9845,
+       40.6993
+      ],
+      [
+       -73.988,
+       40.6987
+      ],
+      [
+       -73.9912,
+       40.6988
+      ],
+      [
+       -73.9945,
+       40.6999
+      ],
+      [
+       -73.9972,
+       40.7014
+      ],
+      [
+       -73.9975,
+       40.7033
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "name": "DUMBO district project boundary",
+    "module_id": "dumbo-district",
+    "definition": "DUMBO-GEOSPATIAL-CONTROL.md section 2.1",
+    "control_sha256": "bed5f75bbb605dbd0a7872d1fa7e7678fae14ca9fb583249016a00e02322bd66",
+    "confidence": "A",
+    "note": "Project scope definition, not an administrative boundary. NYC NTA BK0202 is recorded as context in DSRC-004 and is deliberately not used.",
+    "vertices": [
+     "DBV-01",
+     "DBV-02",
+     "DBV-03",
+     "DBV-04",
+     "DBV-05",
+     "DBV-06",
+     "DBV-07",
+     "DBV-08",
+     "DBV-09",
+     "DBV-10",
+     "DBV-11"
+    ]
+   }
+  }
+ ]
+}

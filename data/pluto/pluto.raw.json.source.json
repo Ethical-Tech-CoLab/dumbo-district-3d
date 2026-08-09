@@ -1,0 +1,10 @@
+{
+  "source_id": "DSRC-002",
+  "query": "latitude between 40.6975 and 40.706 and longitude between -73.9985 and -73.98 and borough='BK'",
+  "fetched_at": "2026-08-09T14:43:15+00:00",
+  "fetched_by": "dumbo-district-3d/scripts@1.0.0",
+  "bytes": 315181,
+  "sha256": "156527103a702738d5be5fa7e9037b0bacbdf11c71a702bd17d5034367555ceb",
+  "record_count": 603,
+  "note": "Brooklyn lots within the district query envelope. Joined to footprints on BBL."
+}

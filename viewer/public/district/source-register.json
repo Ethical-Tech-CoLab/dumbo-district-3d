@@ -1,0 +1,134 @@
+{
+ "contract_version": "1.0.0",
+ "module_id": "dumbo-district",
+ "grades": {
+  "A": "Derived from an authoritative published dataset, an official dimension, or an archival drawing.",
+  "B": "Derived from consistent imagery or community mapping combined with known control geometry.",
+  "C": "Derived from a reconstructed attribute, an aligned mesh, or photogrammetry.",
+  "D": "Inferred, decorative, or placeholder. Never citable as a dimension."
+ },
+ "weakest_link_rule": true,
+ "tier_rule": "No Tier C source may override Tier A geometry.",
+ "sources": [
+  {
+   "source_id": "DSRC-001",
+   "title": "NYC Building Footprints",
+   "tier": "A",
+   "publisher": "NYC Office of Technology and Innovation, via NYC Open Data",
+   "url": "https://data.cityofnewyork.us/resource/5zhs-2jue.json",
+   "accessed": "2026-08-09",
+   "license": "NYC Open Data Terms of Use",
+   "attribution_required": true,
+   "attribution_text": "Building footprints: NYC Open Data (OTI)",
+   "native_crs": "EPSG:2263",
+   "vertical_datum": "NAVD88",
+   "units": "feet",
+   "positional_accuracy_m": 0.61,
+   "grants_confidence": "A",
+   "verified": true,
+   "notes": "Plan geometry and roof heights. Positional accuracy is the publisher's stated +/- 2 ft for photogrammetrically captured features (ASPRS Class 1). height_roof is a height above ground_elevation, not an elevation."
+  },
+  {
+   "source_id": "DSRC-002",
+   "title": "NYC MapPLUTO / PLUTO tax lot attributes",
+   "tier": "A",
+   "publisher": "NYC Department of City Planning, via NYC Open Data",
+   "url": "https://data.cityofnewyork.us/resource/64uk-42ks.json",
+   "accessed": "2026-08-09",
+   "license": "NYC Open Data Terms of Use",
+   "attribution_required": true,
+   "attribution_text": "Lot attributes: NYC Department of City Planning (PLUTO)",
+   "native_crs": "EPSG:2263",
+   "units": "feet",
+   "grants_confidence": "A",
+   "verified": true,
+   "notes": "Attributes only: address, owner, class, land use, floors, year built. Never a geometry source. Floor counts fall back to grade C via DCTL-062."
+  },
+  {
+   "source_id": "DSRC-003",
+   "title": "NYC building footprint published metadata",
+   "tier": "A",
+   "publisher": "City of New York, nyc-geo-metadata",
+   "url": "https://github.com/CityOfNewYork/nyc-geo-metadata/blob/main/Metadata/Metadata_BuildingFootprints.md",
+   "accessed": "2026-08-09",
+   "license": "NYC Open Data Terms of Use",
+   "grants_confidence": "A",
+   "verified": true,
+   "notes": "Authoritative attribute definitions. The source of the statement that HEIGHTROOF is measured above GROUNDELEV and that GROUNDELEV is NAVD88."
+  },
+  {
+   "source_id": "DSRC-004",
+   "title": "NYC Neighborhood Tabulation Areas 2020",
+   "tier": "A",
+   "publisher": "NYC Department of City Planning, via NYC Open Data",
+   "url": "https://data.cityofnewyork.us/resource/9nt8-h7nd.json",
+   "accessed": "2026-08-09",
+   "license": "NYC Open Data Terms of Use",
+   "grants_confidence": "A",
+   "verified": true,
+   "notes": "Context only. BK0202 is 'Downtown Brooklyn-DUMBO-Boerum Hill' and is much larger than this project's subject, so it is NOT used as the boundary."
+  },
+  {
+   "source_id": "DSRC-005",
+   "title": "NOAA CO-OPS tidal datums, station 8518750 (The Battery, NY)",
+   "tier": "A",
+   "publisher": "NOAA National Ocean Service",
+   "url": "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations/8518750/datums.json",
+   "accessed": "2026-08-09",
+   "license": "Public domain (US Government work)",
+   "vertical_datum": "MHW",
+   "units": "meters",
+   "grants_confidence": "A",
+   "verified": true,
+   "notes": "Epoch 1983-2001, relative to station datum: MHW 2.44, NAVD88 1.85. Yields DCTL-010, MHW = NAVD88 + 0.59 m."
+  },
+  {
+   "source_id": "DSRC-006",
+   "title": "NYSAPLS tide datum reference for station 8518750",
+   "tier": "B",
+   "publisher": "New York State Association of Professional Land Surveyors",
+   "url": "https://cdn.ymaws.com/www.nysapls.org/resource/resmgr/2019_conference/handouts/horbas,_peter_tide_datums_01.pdf",
+   "accessed": "2026-08-09",
+   "license": "Conference handout, cited not redistributed",
+   "grants_confidence": "B",
+   "verified": true,
+   "notes": "Independent corroboration: MHW 0.596 m above NAVD88. Agrees with DSRC-005."
+  },
+  {
+   "source_id": "DSRC-007",
+   "title": "OpenStreetMap street, footway and landmark data",
+   "tier": "B",
+   "publisher": "OpenStreetMap contributors, via Overpass API",
+   "url": "https://overpass-api.de/api/interpreter",
+   "accessed": "2026-08-09",
+   "license": "ODbL-1.0",
+   "attribution_required": true,
+   "attribution_text": "\u00a9 OpenStreetMap contributors",
+   "native_crs": "EPSG:4326",
+   "grants_confidence": "B",
+   "verified": true,
+   "notes": "Walk network and landmark names and positions. ODbL requires attribution wherever this is rendered; the viewer displays it unconditionally."
+  },
+  {
+   "source_id": "DSRC-008",
+   "title": "NYC digital elevation model and LiDAR",
+   "tier": "A",
+   "publisher": "NYC Office of Technology and Innovation",
+   "license": "NYC Open Data Terms of Use",
+   "grants_confidence": "A",
+   "verified": false,
+   "notes": "NOT YET INGESTED. Registered so DOQ-003, the missing terrain surface, names a real remedy rather than a wish. Phase 2."
+  }
+ ],
+ "provenance": {
+  "module_id": "dumbo-district",
+  "generated_by": "dumbo-district-3d/scripts@1.0.0",
+  "generated_at": "2026-08-09T16:22:20+00:00",
+  "source_documents": [
+   {
+    "path": "DUMBO-GEOSPATIAL-CONTROL.md",
+    "sha256": "16248a6cae4a94ebf940ec73277c02460056434c50f2bcd1dd257464af1e5105"
+   }
+  ]
+ }
+}

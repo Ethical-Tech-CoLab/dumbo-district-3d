@@ -1,0 +1,1541 @@
+{
+ "contract_version": "1.0.0",
+ "module_id": "dumbo-district",
+ "frame_id": "nyc-harbor-enu",
+ "ladder_id": "dumbo-district-ladder",
+ "base_url": "./",
+ "assets": [
+  {
+   "asset_id": "urn:d3d:dumbo-district:district_tileset",
+   "kind": "tileset",
+   "tile_index_url": "./tile-index.json",
+   "bbox_geodetic": [
+    -73.9985,
+    40.6975,
+    -73.98,
+    40.706
+   ],
+   "tags": [
+    "district",
+    "buildings"
+   ]
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:manhattan_bridge_reference",
+   "kind": "proxy",
+   "represents": "urn:d3d:manhattan-bridge:bridge_proxy",
+   "tags": [
+    "foreign",
+    "bridge"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:manhattan_bridge_reference",
+    "module_id": "dumbo-district",
+    "local_id": "manhattan_bridge_reference",
+    "display_name": "Manhattan Bridge (owned by manhattan-bridge-3d)",
+    "category": "reference",
+    "source_basis": [
+     "inferred"
+    ],
+    "confidence": "D",
+    "control_refs": [],
+    "open_questions": [
+     "DOQ-001"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "notes": "This district owns NO bridge geometry. This entry exists only so a URN reference resolves and so the viewer can show a labelled placeholder when the bridge module is unavailable. Replace with the bridge team's published proxy."
+   }
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:landmark_janet_borden",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_janet_borden",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_janet_borden",
+    "display_name": "Janet Borden",
+    "category": "landmark",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "landmark"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      -167.26,
+      39.02,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "node",
+     "osm_id": 419361418,
+     "kind": "gallery"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:landmark_brooklyn_flea",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_brooklyn_flea",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_brooklyn_flea",
+    "display_name": "Brooklyn Flea",
+    "category": "landmark",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "landmark"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      96.18,
+      11.35,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "node",
+     "osm_id": 552255010,
+     "kind": "marketplace"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:landmark_dumbo_fulton_ferry",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_dumbo_fulton_ferry",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_dumbo_fulton_ferry",
+    "display_name": "DUMBO/Fulton Ferry",
+    "category": "landmark",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "landmark"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      -577.75,
+      81.5,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "node",
+     "osm_id": 1437051166,
+     "kind": "ferry_terminal"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:landmark_spark_brooklyn_children_s_museum_annex",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_spark_brooklyn_children_s_museum_annex",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_spark_brooklyn_children_s_museum_annex",
+    "display_name": "Spark Brooklyn Children's Museum Annex",
+    "category": "landmark",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "landmark"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      100.46,
+      171.97,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "node",
+     "osm_id": 4631369553,
+     "kind": "museum"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:landmark_triangle_arts_association",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_triangle_arts_association",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_triangle_arts_association",
+    "display_name": "Triangle Arts Association",
+    "category": "landmark",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "landmark"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      183.78,
+      133.5,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "node",
+     "osm_id": 5562886493,
+     "kind": "arts_centre"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:landmark_brooklyn_historical_society",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_brooklyn_historical_society",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_brooklyn_historical_society",
+    "display_name": "Brooklyn Historical Society",
+    "category": "landmark",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "landmark"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      -252.86,
+      79.27,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "node",
+     "osm_id": 6562823263,
+     "kind": "museum"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:landmark_undercurrent",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_undercurrent",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_undercurrent",
+    "display_name": "Undercurrent",
+    "category": "landmark",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "landmark"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      300.05,
+      140.59,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "node",
+     "osm_id": 6632318536,
+     "kind": "arts_centre"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:landmark_klompching_gallery",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_klompching_gallery",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_klompching_gallery",
+    "display_name": "Klompching Gallery",
+    "category": "landmark",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "landmark"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      -173.35,
+      39.31,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "node",
+     "osm_id": 6719106991,
+     "kind": "gallery"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:landmark_william_jay_gaynor",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_william_jay_gaynor",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_william_jay_gaynor",
+    "display_name": "William Jay Gaynor",
+    "category": "landmark",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "landmark"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      -127.83,
+      -384.27,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "node",
+     "osm_id": 7377084843,
+     "kind": "monument"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:landmark_matt_brenner",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_matt_brenner",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_matt_brenner",
+    "display_name": "Matt Brenner",
+    "category": "landmark",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "landmark"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      230.75,
+      -320.95,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "node",
+     "osm_id": 9688723166,
+     "kind": "memorial"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:landmark_loop_of_the_loom",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_loop_of_the_loom",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_loop_of_the_loom",
+    "display_name": "Loop of the Loom",
+    "category": "landmark",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "landmark"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      312.37,
+      86.87,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "node",
+     "osm_id": 9797307321,
+     "kind": "arts_centre"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:landmark_fat_boy",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_fat_boy",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_fat_boy",
+    "display_name": "Fat Boy",
+    "category": "landmark",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "landmark"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      125.88,
+      -150.01,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "node",
+     "osm_id": 11565984816,
+     "kind": "artwork"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:landmark_brookland_ferry_landing",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_brookland_ferry_landing",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_brookland_ferry_landing",
+    "display_name": "Brookland Ferry Landing",
+    "category": "landmark",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "landmark"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      -502.17,
+      25.58,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "node",
+     "osm_id": 11687099993,
+     "kind": "memorial"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:landmark_akua",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_akua",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_akua",
+    "display_name": "Akua",
+    "category": "landmark",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "landmark"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      -621.33,
+      -58.0,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "node",
+     "osm_id": 12860605930,
+     "kind": "artwork"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:landmark_brooklyn_bridge_viewpoint",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_brooklyn_bridge_viewpoint",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_brooklyn_bridge_viewpoint",
+    "display_name": "Brooklyn Bridge Viewpoint",
+    "category": "landmark",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "landmark"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      -44.11,
+      96.97,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "node",
+     "osm_id": 13666190001,
+     "kind": "viewpoint"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:landmark_bar_and_grill_park",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_bar_and_grill_park",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_bar_and_grill_park",
+    "display_name": "Bar and Grill Park",
+    "category": "park",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "park"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      70.9,
+      -172.64,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "way",
+     "osm_id": 20521884,
+     "kind": "park"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:landmark_maritcha_r_lyons_park",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_maritcha_r_lyons_park",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_maritcha_r_lyons_park",
+    "display_name": "Maritcha R. Lyons Park",
+    "category": "park",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "park"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      227.04,
+      -244.01,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "way",
+     "osm_id": 20523422,
+     "kind": "park"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:landmark_susan_smith_mckinney_steward_park",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_susan_smith_mckinney_steward_park",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_susan_smith_mckinney_steward_park",
+    "display_name": "Susan Smith McKinney Steward Park",
+    "category": "park",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "park"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      274.19,
+      -215.85,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "way",
+     "osm_id": 33406924,
+     "kind": "park"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:landmark_empire_fulton_ferry",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_empire_fulton_ferry",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_empire_fulton_ferry",
+    "display_name": "Empire Fulton Ferry",
+    "category": "park",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "park"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      -272.32,
+      141.24,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "way",
+     "osm_id": 95163097,
+     "kind": "park"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:landmark_jane_s_carousel",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_jane_s_carousel",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_jane_s_carousel",
+    "display_name": "Jane's Carousel",
+    "category": "landmark",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "landmark"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      -286.02,
+      159.26,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "way",
+     "osm_id": 223183095,
+     "kind": "attraction"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:landmark_fulton_ferry_landing",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_fulton_ferry_landing",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_fulton_ferry_landing",
+    "display_name": "Fulton Ferry Landing",
+    "category": "landmark",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "landmark"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      -557.93,
+      67.57,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "way",
+     "osm_id": 245320702,
+     "kind": "pier"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:landmark_brooklyn_bridge_park_environmental_education_cen",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_brooklyn_bridge_park_environmental_education_cen",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_brooklyn_bridge_park_environmental_education_cen",
+    "display_name": "Brooklyn Bridge Park Environmental Education Center",
+    "category": "landmark",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "landmark"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      -21.74,
+      122.1,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "way",
+     "osm_id": 250402662,
+     "kind": "museum"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:landmark_poplar_street_community_garden",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_poplar_street_community_garden",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_poplar_street_community_garden",
+    "display_name": "Poplar Street Community Garden",
+    "category": "park",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "park"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      -358.99,
+      -187.8,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "way",
+     "osm_id": 314365830,
+     "kind": "park"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:landmark_st_ann_s_warehouse",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_st_ann_s_warehouse",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_st_ann_s_warehouse",
+    "display_name": "St. Ann's Warehouse",
+    "category": "landmark",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "landmark"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      -322.21,
+      72.61,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "way",
+     "osm_id": 373709849,
+     "kind": "theatre"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:landmark_main_street",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_main_street",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_main_street",
+    "display_name": "Main Street",
+    "category": "park",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "park"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      -50.75,
+      158.72,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "way",
+     "osm_id": 1255470715,
+     "kind": "park"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:landmark_harry_chapin_playground",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_harry_chapin_playground",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_harry_chapin_playground",
+    "display_name": "Harry Chapin Playground",
+    "category": "park",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "park"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      -502.03,
+      -252.02,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "way",
+     "osm_id": 1256657302,
+     "kind": "park"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:landmark_hillside_dog_park",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_hillside_dog_park",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_hillside_dog_park",
+    "display_name": "Hillside Dog Park",
+    "category": "park",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "park"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      -445.5,
+      -175.11,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "way",
+     "osm_id": 1256657304,
+     "kind": "park"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:landmark_squibb_park",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_squibb_park",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_squibb_park",
+    "display_name": "Squibb Park",
+    "category": "park",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "park"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      -548.09,
+      -231.58,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "way",
+     "osm_id": 1256929303,
+     "kind": "park"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:landmark_pier_1",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_pier_1",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_pier_1",
+    "display_name": "Pier 1",
+    "category": "park",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "park"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      -632.54,
+      -95.95,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "way",
+     "osm_id": 1257997467,
+     "kind": "park"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  }
+ ],
+ "provenance": {
+  "module_id": "dumbo-district",
+  "generated_by": "dumbo-district-3d/scripts@1.0.0",
+  "generated_at": "2026-08-09T16:22:20+00:00",
+  "source_documents": [
+   {
+    "path": "DUMBO-GEOSPATIAL-CONTROL.md",
+    "sha256": "16248a6cae4a94ebf940ec73277c02460056434c50f2bcd1dd257464af1e5105"
+   }
+  ]
+ }
+}

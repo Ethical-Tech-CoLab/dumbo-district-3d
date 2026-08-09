@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Node
+node_modules/
+dist/
+*.tsbuildinfo
+
+# Fetched sources are reproducible from scripts/ingest_sources.py and are large.
+# The .source.json audit sidecars ARE tracked: they are the provenance record.
+data/footprints/*.raw.json
+data/pluto/*.raw.json
+data/streets/*.raw.json
+data/boundaries/*.raw.json
+data/ingest.log
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

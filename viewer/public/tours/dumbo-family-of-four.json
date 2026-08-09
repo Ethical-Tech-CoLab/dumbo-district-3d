@@ -1,0 +1,1059 @@
+{
+ "contract_version": "1.0.0",
+ "tour_id": "dumbo-family-of-four",
+ "title": "DUMBO in an hour \u2014 a family of four",
+ "description": "A four-stop walking tour from the Brooklyn Bridge to the Manhattan Bridge, dwelling at each stop and taking photographs. Routed on the OpenStreetMap pedestrian network at a family walking pace, then dressed with narration, look-at targets, photo moments and a hand-off into the Manhattan Bridge team's inspect mode.",
+ "locale": "en-US",
+ "requires_modules": [
+  "dumbo-district"
+ ],
+ "party": {
+  "size": 4,
+  "label": "Family of 4",
+  "members": [
+   {
+    "member_id": "adult_1",
+    "name": "Parent",
+    "role": "adult",
+    "eye_height_m": 1.65
+   },
+   {
+    "member_id": "adult_2",
+    "name": "Parent",
+    "role": "adult",
+    "eye_height_m": 1.72
+   },
+   {
+    "member_id": "child_1",
+    "name": "Older child",
+    "role": "child",
+    "eye_height_m": 1.35
+   },
+   {
+    "member_id": "child_2",
+    "name": "Younger child",
+    "role": "child",
+    "eye_height_m": 1.15
+   }
+  ],
+  "point_of_view": "adult_1",
+  "pace_mps": 1.05,
+  "accessibility": {
+   "avoid_stairs": true
+  }
+ },
+ "defaults": {
+  "dwell_s": 45,
+  "eye_height_m": 1.65,
+  "camera": {
+   "rig": "first_person",
+   "look": "forward",
+   "bob": true,
+   "fov_deg": 62
+  },
+  "transition": {
+   "kind": "walk",
+   "easing": "ease_in_out"
+  },
+  "viewer_mode": "walk",
+  "speed_multiplier": 4,
+  "time_of_day": "17:10",
+  "weather": "clear"
+ },
+ "route_source": {
+  "provider": "internal_router",
+  "profile": "walking",
+  "generated_at": "2026-08-09T16:05:24+00:00",
+  "attribution_text": "Route computed on OpenStreetMap data \u00a9 OpenStreetMap contributors, ODbL",
+  "notes": "A* over the district walk network, split into maneuver steps at turns over 35 degrees and at street-name changes. Replace with a Google, Bing or Apple directions response by rewriting scripts/build_tour.py::route_leg and nothing else."
+ },
+ "stops": [
+  {
+   "stop_id": "a_fulton_ferry",
+   "name": "A \u00b7 Fulton Ferry Landing, under the Brooklyn Bridge",
+   "position": {
+    "lon": -73.995089,
+    "lat": 40.703347,
+    "height_m": 0,
+    "vertical_datum": "NAVD88"
+   },
+   "dwell_s": 55,
+   "on_arrive": [
+    {
+     "type": "narrate",
+     "text": "We start where most people do: the old Fulton Ferry landing, directly under the Brooklyn Bridge. Before 1883 this was the only way across.",
+     "duration_s": 11
+    },
+    {
+     "type": "narrate",
+     "text": "Look east along the waterfront and you can see the whole of DUMBO, with the Manhattan Bridge closing off the far end.",
+     "duration_s": 8
+    },
+    {
+     "type": "pan",
+     "heading_deg": 72,
+     "pitch_deg": 4,
+     "duration_s": 4
+    },
+    {
+     "type": "capture_photo",
+     "framing": "wide",
+     "label": "DUMBO waterfront from Fulton Ferry",
+     "duration_s": 3
+    },
+    {
+     "type": "narrate",
+     "text": "Everyone in? Good. Let's walk east along the waterfront.",
+     "duration_s": 5
+    }
+   ],
+   "tags": [
+    "photo_spot"
+   ],
+   "heading_deg": 25
+  },
+  {
+   "stop_id": "b_janes_carousel",
+   "name": "B \u00b7 Jane's Carousel, Brooklyn Bridge Park",
+   "position": {
+    "lon": -73.992385,
+    "lat": 40.704434,
+    "height_m": 0,
+    "vertical_datum": "NAVD88"
+   },
+   "dwell_s": 60,
+   "on_arrive": [
+    {
+     "type": "narrate",
+     "text": "Jane's Carousel, built in 1922, sits in a glass pavilion right on the water between the two bridges. The kids get one ride.",
+     "duration_s": 10
+    },
+    {
+     "type": "look_at",
+     "target": {
+      "asset": "urn:d3d:dumbo-district:landmark_janes_carousel"
+     },
+     "duration_s": 7
+    },
+    {
+     "type": "group_photo",
+     "framing": "normal",
+     "label": "The family at the carousel",
+     "duration_s": 3
+    },
+    {
+     "type": "look_at",
+     "target": {
+      "asset": "urn:d3d:manhattan-bridge:bridge_proxy"
+     },
+     "duration_s": 8
+    },
+    {
+     "type": "narrate",
+     "text": "That is the Manhattan Bridge, and it is where we are heading next.",
+     "duration_s": 6
+    },
+    {
+     "type": "capture_photo",
+     "framing": "tele",
+     "label": "Manhattan Bridge from the park",
+     "duration_s": 3
+    }
+   ],
+   "tags": [
+    "photo_spot"
+   ]
+  },
+  {
+   "stop_id": "c_washington_water",
+   "name": "C \u00b7 Washington Street at Water Street",
+   "position": {
+    "lon": -73.98958,
+    "lat": 40.703201,
+    "height_m": 0,
+    "vertical_datum": "NAVD88"
+   },
+   "dwell_s": 70,
+   "on_arrive": [
+    {
+     "type": "narrate",
+     "text": "This is the shot everybody comes for. Stand in the middle of Washington Street, look north, and the Manhattan Bridge frames the Empire State Building. Watch for cars.",
+     "duration_s": 13
+    },
+    {
+     "type": "pan",
+     "heading_deg": 352,
+     "pitch_deg": 16,
+     "duration_s": 5
+    },
+    {
+     "type": "capture_photo",
+     "framing": "portrait",
+     "label": "The Washington Street view",
+     "capture": {
+      "width": 1000,
+      "height": 1400
+     },
+     "duration_s": 4
+    },
+    {
+     "type": "group_photo",
+     "framing": "portrait",
+     "label": "Family on Washington Street",
+     "duration_s": 3
+    },
+    {
+     "type": "set_time_of_day",
+     "time_of_day": "18:40",
+     "duration_s": 2
+    },
+    {
+     "type": "narrate",
+     "text": "Golden hour. One more, then we walk under the bridge itself.",
+     "duration_s": 6
+    },
+    {
+     "type": "capture_photo",
+     "framing": "wide",
+     "label": "Washington Street at golden hour",
+     "duration_s": 3
+    }
+   ],
+   "tags": [
+    "photo_spot"
+   ],
+   "heading_deg": 355
+  },
+  {
+   "stop_id": "d_anchorage",
+   "name": "D \u00b7 Anchorage Place, beneath the Manhattan Bridge",
+   "position": {
+    "lon": -73.988012,
+    "lat": 40.703296,
+    "height_m": 0,
+    "vertical_datum": "NAVD88"
+   },
+   "dwell_s": 75,
+   "on_arrive": [
+    {
+     "type": "narrate",
+     "text": "Anchorage Place runs beneath the Brooklyn anchorage: the masonry block that holds the ends of all four main cables. Look up.",
+     "duration_s": 11
+    },
+    {
+     "type": "look_at",
+     "target": {
+      "asset": "urn:d3d:manhattan-bridge:bridge_proxy"
+     },
+     "duration_s": 6
+    },
+    {
+     "type": "capture_photo",
+     "framing": "wide",
+     "label": "Under the Brooklyn anchorage",
+     "duration_s": 3
+    },
+    {
+     "type": "narrate",
+     "text": "The neighbourhood model stops at the kerb here. The bridge itself belongs to another team's model, so we hand over to their viewer to look at it properly.",
+     "duration_s": 12
+    },
+    {
+     "type": "enter_inspect",
+     "module_id": "manhattan-bridge",
+     "entry_id": "brooklyn_anchorage",
+     "target": {
+      "asset": "urn:d3d:manhattan-bridge:anchorage_brooklyn"
+     },
+     "duration_s": 10
+    },
+    {
+     "type": "exit_inspect",
+     "module_id": "manhattan-bridge",
+     "duration_s": 2
+    },
+    {
+     "type": "wait_for_user",
+     "label": "Look around \u00b7 press continue when you are ready"
+    },
+    {
+     "type": "narrate",
+     "text": "That is the tour. Thanks for walking with us.",
+     "duration_s": 5
+    }
+   ],
+   "tags": [
+    "photo_spot"
+   ]
+  }
+ ],
+ "legs": [
+  {
+   "leg_id": "a_fulton_ferry__b_janes_carousel",
+   "from_stop": "a_fulton_ferry",
+   "to_stop": "b_janes_carousel",
+   "distance_m": 346.1,
+   "duration_s": 329.6,
+   "transition": {
+    "kind": "walk"
+   },
+   "steps": [
+    {
+     "step_id": "a_fulton_ferry_b_janes_carousel_s1",
+     "maneuver": "depart",
+     "instruction": "Head south on the walkway",
+     "distance_m": 16.3,
+     "duration_s": 15.5,
+     "path": {
+      "geodetic": [
+       [
+        -73.995089,
+        40.703347
+       ],
+       [
+        -73.995077,
+        40.7032004
+       ]
+      ]
+     }
+    },
+    {
+     "step_id": "a_fulton_ferry_b_janes_carousel_s2",
+     "maneuver": "turn-slight-left",
+     "instruction": "Bear left onto the walkway",
+     "distance_m": 114.1,
+     "duration_s": 108.6,
+     "path": {
+      "geodetic": [
+       [
+        -73.995077,
+        40.7032004
+       ],
+       [
+        -73.9950176,
+        40.7031788
+       ],
+       [
+        -73.9949735,
+        40.7031629
+       ],
+       [
+        -73.9947802,
+        40.7030972
+       ],
+       [
+        -73.9946699,
+        40.7030598
+       ],
+       [
+        -73.9944796,
+        40.703039
+       ],
+       [
+        -73.9944452,
+        40.703038
+       ],
+       [
+        -73.9944152,
+        40.7030452
+       ],
+       [
+        -73.9943898,
+        40.7030599
+       ],
+       [
+        -73.9943422,
+        40.7031029
+       ],
+       [
+        -73.9942283,
+        40.7032135
+       ],
+       [
+        -73.9942078,
+        40.7032333
+       ],
+       [
+        -73.9941881,
+        40.7032524
+       ],
+       [
+        -73.9940013,
+        40.7034203
+       ]
+      ]
+     }
+    },
+    {
+     "step_id": "a_fulton_ferry_b_janes_carousel_s3",
+     "maneuver": "turn-slight-right",
+     "instruction": "Bear right onto the walkway",
+     "distance_m": 15.3,
+     "duration_s": 14.5,
+     "path": {
+      "geodetic": [
+       [
+        -73.9940013,
+        40.7034203
+       ],
+       [
+        -73.9939899,
+        40.7035576
+       ]
+      ]
+     }
+    },
+    {
+     "step_id": "a_fulton_ferry_b_janes_carousel_s4",
+     "maneuver": "turn-left",
+     "instruction": "Turn left onto the walkway",
+     "distance_m": 140.2,
+     "duration_s": 133.6,
+     "path": {
+      "geodetic": [
+       [
+        -73.9939899,
+        40.7035576
+       ],
+       [
+        -73.9939441,
+        40.7035901
+       ],
+       [
+        -73.9937269,
+        40.7037506
+       ],
+       [
+        -73.9937017,
+        40.7037692
+       ],
+       [
+        -73.9935537,
+        40.7038697
+       ],
+       [
+        -73.9934818,
+        40.7039097
+       ],
+       [
+        -73.9933706,
+        40.7039614
+       ],
+       [
+        -73.9933324,
+        40.7039736
+       ],
+       [
+        -73.9933143,
+        40.7039795
+       ],
+       [
+        -73.9932964,
+        40.7039841
+       ],
+       [
+        -73.9932494,
+        40.7039922
+       ],
+       [
+        -73.9932119,
+        40.7039964
+       ],
+       [
+        -73.9931389,
+        40.7040008
+       ],
+       [
+        -73.9930772,
+        40.7040009
+       ],
+       [
+        -73.9930238,
+        40.7039984
+       ],
+       [
+        -73.9929439,
+        40.7039903
+       ],
+       [
+        -73.9928583,
+        40.7039725
+       ],
+       [
+        -73.9927823,
+        40.7039596
+       ],
+       [
+        -73.9927073,
+        40.7039539
+       ],
+       [
+        -73.9925432,
+        40.7039504
+       ]
+      ]
+     }
+    },
+    {
+     "step_id": "a_fulton_ferry_b_janes_carousel_s5",
+     "maneuver": "turn-right",
+     "instruction": "Turn right onto the walkway",
+     "distance_m": 45.8,
+     "duration_s": 43.6,
+     "path": {
+      "geodetic": [
+       [
+        -73.9925432,
+        40.7039504
+       ],
+       [
+        -73.9925355,
+        40.7042023
+       ],
+       [
+        -73.9925334,
+        40.7043028
+       ],
+       [
+        -73.99249745304648,
+        40.704302714834455
+       ],
+       [
+        -73.99249780979093,
+        40.704336303842624
+       ]
+      ]
+     }
+    },
+    {
+     "step_id": "a_fulton_ferry_b_janes_carousel_s6",
+     "maneuver": "continue",
+     "instruction": "Continue on the walkway",
+     "distance_m": 14.4,
+     "duration_s": 13.8,
+     "path": {
+      "geodetic": [
+       [
+        -73.9924978,
+        40.7043363
+       ],
+       [
+        -73.992385,
+        40.704434
+       ]
+      ]
+     }
+    },
+    {
+     "step_id": "a_fulton_ferry_b_janes_carousel_arrive",
+     "maneuver": "arrive",
+     "instruction": "Arrive at B \u00b7 Jane's Carousel, Brooklyn Bridge Park",
+     "distance_m": 0.0,
+     "duration_s": 0.0
+    }
+   ]
+  },
+  {
+   "leg_id": "b_janes_carousel__c_washington_water",
+   "from_stop": "b_janes_carousel",
+   "to_stop": "c_washington_water",
+   "distance_m": 356.3,
+   "duration_s": 339.3,
+   "transition": {
+    "kind": "walk"
+   },
+   "steps": [
+    {
+     "step_id": "b_janes_carousel_c_washington_water_s1",
+     "maneuver": "depart",
+     "instruction": "Head southwest on the walkway",
+     "distance_m": 18.1,
+     "duration_s": 17.2,
+     "path": {
+      "geodetic": [
+       [
+        -73.992385,
+        40.704434
+       ],
+       [
+        -73.9924978,
+        40.7043363
+       ],
+       [
+        -73.99249745304648,
+        40.704302714834455
+       ]
+      ]
+     }
+    },
+    {
+     "step_id": "b_janes_carousel_c_washington_water_s2",
+     "maneuver": "turn-right",
+     "instruction": "Turn right onto the walkway",
+     "distance_m": 31.2,
+     "duration_s": 29.7,
+     "path": {
+      "geodetic": [
+       [
+        -73.9924975,
+        40.7043027
+       ],
+       [
+        -73.9923113,
+        40.7043019
+       ],
+       [
+        -73.992268,
+        40.7043017
+       ],
+       [
+        -73.992232,
+        40.7043015
+       ],
+       [
+        -73.992192,
+        40.7043015
+       ],
+       [
+        -73.9921601,
+        40.7043015
+       ],
+       [
+        -73.9921286,
+        40.7043017
+       ]
+      ]
+     }
+    },
+    {
+     "step_id": "b_janes_carousel_c_washington_water_s3",
+     "maneuver": "turn-slight-right",
+     "instruction": "Bear right onto the walkway",
+     "distance_m": 130.7,
+     "duration_s": 124.5,
+     "path": {
+      "geodetic": [
+       [
+        -73.9921286,
+        40.7043017
+       ],
+       [
+        -73.9921084,
+        40.7042665
+       ],
+       [
+        -73.9920831,
+        40.7042309
+       ],
+       [
+        -73.9920444,
+        40.7041948
+       ],
+       [
+        -73.99201,
+        40.7041621
+       ],
+       [
+        -73.9919759,
+        40.7041343
+       ],
+       [
+        -73.9919364,
+        40.7041089
+       ],
+       [
+        -73.9918923,
+        40.704079
+       ],
+       [
+        -73.9918374,
+        40.704042
+       ],
+       [
+        -73.9917704,
+        40.7040034
+       ],
+       [
+        -73.991719,
+        40.703983
+       ],
+       [
+        -73.9916652,
+        40.7039689
+       ],
+       [
+        -73.9916294,
+        40.7039644
+       ],
+       [
+        -73.9916006,
+        40.7039608
+       ],
+       [
+        -73.9909998,
+        40.7039424
+       ],
+       [
+        -73.9909594,
+        40.7039376
+       ],
+       [
+        -73.9909172,
+        40.7039307
+       ],
+       [
+        -73.9908836,
+        40.7039238
+       ],
+       [
+        -73.9908525,
+        40.7039186
+       ],
+       [
+        -73.9908275,
+        40.7039162
+       ],
+       [
+        -73.9907763,
+        40.7039139
+       ]
+      ]
+     }
+    },
+    {
+     "step_id": "b_janes_carousel_c_washington_water_s4",
+     "maneuver": "turn-slight-left",
+     "instruction": "Bear left onto the walkway",
+     "distance_m": 9.6,
+     "duration_s": 9.2,
+     "path": {
+      "geodetic": [
+       [
+        -73.9907763,
+        40.7039139
+       ],
+       [
+        -73.9906903,
+        40.7038568
+       ]
+      ]
+     }
+    },
+    {
+     "step_id": "b_janes_carousel_c_washington_water_s5",
+     "maneuver": "turn-right",
+     "instruction": "Turn right onto the walkway",
+     "distance_m": 90.1,
+     "duration_s": 85.8,
+     "path": {
+      "geodetic": [
+       [
+        -73.9906903,
+        40.7038568
+       ],
+       [
+        -73.9906283,
+        40.7038527
+       ],
+       [
+        -73.9905671,
+        40.703846
+       ],
+       [
+        -73.9905,
+        40.7038651
+       ],
+       [
+        -73.989631,
+        40.7038222
+       ]
+      ]
+     }
+    },
+    {
+     "step_id": "b_janes_carousel_c_washington_water_s6",
+     "maneuver": "turn-sharp-left",
+     "instruction": "Turn sharply left onto the walkway",
+     "distance_m": 70.0,
+     "duration_s": 66.7,
+     "path": {
+      "geodetic": [
+       [
+        -73.989631,
+        40.7038222
+       ],
+       [
+        -73.9896536,
+        40.7032539
+       ],
+       [
+        -73.98963861218719,
+        40.70326240687063
+       ],
+       [
+        -73.98957637203478,
+        40.70326042607603
+       ]
+      ]
+     }
+    },
+    {
+     "step_id": "b_janes_carousel_c_washington_water_s7",
+     "maneuver": "continue",
+     "instruction": "Continue on Washington Street",
+     "street_name": "Washington Street",
+     "distance_m": 6.6,
+     "duration_s": 6.3,
+     "path": {
+      "geodetic": [
+       [
+        -73.9895764,
+        40.7032604
+       ],
+       [
+        -73.98958,
+        40.7032012
+       ],
+       [
+        -73.98958,
+        40.703201
+       ]
+      ]
+     }
+    },
+    {
+     "step_id": "b_janes_carousel_c_washington_water_arrive",
+     "maneuver": "arrive",
+     "instruction": "Arrive at C \u00b7 Washington Street at Water Street",
+     "distance_m": 0.0,
+     "duration_s": 0.0
+    }
+   ]
+  },
+  {
+   "leg_id": "c_washington_water__d_anchorage",
+   "from_stop": "c_washington_water",
+   "to_stop": "d_anchorage",
+   "distance_m": 169.0,
+   "duration_s": 161.0,
+   "transition": {
+    "kind": "walk"
+   },
+   "steps": [
+    {
+     "step_id": "c_washington_water_d_anchorage_s1",
+     "maneuver": "depart",
+     "instruction": "Head east on Water Street",
+     "street_name": "Water Street",
+     "distance_m": 12.5,
+     "duration_s": 11.9,
+     "path": {
+      "geodetic": [
+       [
+        -73.98958,
+        40.7032012
+       ],
+       [
+        -73.9895006,
+        40.7031984
+       ],
+       [
+        -73.98949874919622,
+        40.70323863409401
+       ],
+       [
+        -73.98950774213336,
+        40.70324772920643
+       ]
+      ]
+     }
+    },
+    {
+     "step_id": "c_washington_water_d_anchorage_s2",
+     "maneuver": "turn-slight-right",
+     "instruction": "Bear right onto Water Street",
+     "street_name": "Water Street",
+     "distance_m": 51.9,
+     "duration_s": 49.4,
+     "path": {
+      "geodetic": [
+       [
+        -73.9895077,
+        40.7032477
+       ],
+       [
+        -73.9888947,
+        40.703225
+       ]
+      ]
+     }
+    },
+    {
+     "step_id": "c_washington_water_d_anchorage_s3",
+     "maneuver": "turn-slight-left",
+     "instruction": "Bear left onto Water Street",
+     "street_name": "Water Street",
+     "distance_m": 6.9,
+     "duration_s": 6.6,
+     "path": {
+      "geodetic": [
+       [
+        -73.9888947,
+        40.703225
+       ],
+       [
+        -73.9888885,
+        40.7032188
+       ],
+       [
+        -73.9888453,
+        40.7031758
+       ]
+      ]
+     }
+    },
+    {
+     "step_id": "c_washington_water_d_anchorage_s4",
+     "maneuver": "turn-right",
+     "instruction": "Turn right onto Water Street",
+     "street_name": "Water Street",
+     "distance_m": 7.1,
+     "duration_s": 6.7,
+     "path": {
+      "geodetic": [
+       [
+        -73.9888453,
+        40.7031758
+       ],
+       [
+        -73.988762,
+        40.7031724
+       ]
+      ]
+     }
+    },
+    {
+     "step_id": "c_washington_water_d_anchorage_s5",
+     "maneuver": "turn-left",
+     "instruction": "Turn left onto Adams Street",
+     "street_name": "Adams Street",
+     "distance_m": 19.8,
+     "duration_s": 18.8,
+     "path": {
+      "geodetic": [
+       [
+        -73.988762,
+        40.7031724
+       ],
+       [
+        -73.9886641,
+        40.7030107
+       ]
+      ]
+     }
+    },
+    {
+     "step_id": "c_washington_water_d_anchorage_s6",
+     "maneuver": "continue",
+     "instruction": "Continue on Adams Street",
+     "street_name": "Adams Street",
+     "distance_m": 8.6,
+     "duration_s": 8.2,
+     "path": {
+      "geodetic": [
+       [
+        -73.9886641,
+        40.7030107
+       ],
+       [
+        -73.9885691,
+        40.703039
+       ]
+      ]
+     }
+    },
+    {
+     "step_id": "c_washington_water_d_anchorage_s7",
+     "maneuver": "turn-left",
+     "instruction": "Turn left onto Dumbo Archway",
+     "street_name": "Dumbo Archway",
+     "distance_m": 46.7,
+     "duration_s": 44.5,
+     "path": {
+      "geodetic": [
+       [
+        -73.9885691,
+        40.703039
+       ],
+       [
+        -73.988062,
+        40.7032066
+       ]
+      ]
+     }
+    },
+    {
+     "step_id": "c_washington_water_d_anchorage_s8",
+     "maneuver": "turn-right",
+     "instruction": "Turn right onto Dumbo Archway",
+     "street_name": "Dumbo Archway",
+     "distance_m": 7.7,
+     "duration_s": 7.4,
+     "path": {
+      "geodetic": [
+       [
+        -73.988062,
+        40.7032066
+       ],
+       [
+        -73.9880981,
+        40.7032706
+       ]
+      ]
+     }
+    },
+    {
+     "step_id": "c_washington_water_d_anchorage_s9",
+     "maneuver": "continue",
+     "instruction": "Continue on Dumbo Archway",
+     "street_name": "Dumbo Archway",
+     "distance_m": 7.8,
+     "duration_s": 7.4,
+     "path": {
+      "geodetic": [
+       [
+        -73.9880981,
+        40.7032706
+       ],
+       [
+        -73.9880832,
+        40.7032754
+       ],
+       [
+        -73.9880124,
+        40.7032956
+       ],
+       [
+        -73.988012,
+        40.703296
+       ]
+      ]
+     }
+    },
+    {
+     "step_id": "c_washington_water_d_anchorage_arrive",
+     "maneuver": "arrive",
+     "instruction": "Arrive at D \u00b7 Anchorage Place, beneath the Manhattan Bridge",
+     "distance_m": 0.0,
+     "duration_s": 0.0
+    }
+   ]
+  }
+ ],
+ "totals": {
+  "distance_m": 871.4,
+  "walking_duration_s": 829.9,
+  "dwell_duration_s": 260,
+  "estimated_duration_s": 1089.9
+ }
+}

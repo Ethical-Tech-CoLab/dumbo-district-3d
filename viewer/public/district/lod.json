@@ -1,0 +1,86 @@
+{
+ "contract_version": "1.0.0",
+ "module_id": "dumbo-district",
+ "ladder_id": "dumbo-district-ladder",
+ "levels": [
+  {
+   "level": 0,
+   "name": "hero",
+   "intent": "traverse",
+   "max_geometric_error_m": 0.2,
+   "representation": "extruded_footprint",
+   "payload_format": "json",
+   "triangle_budget": 40000,
+   "selectable": true,
+   "carries_metadata": true,
+   "streamed": true,
+   "typical_distance_m": {
+    "min": 0,
+    "max": 120
+   },
+   "notes": "Full-resolution footprint ring extruded to the dataset roof height. Error is dominated by the flat-roof assumption, not by the plan geometry."
+  },
+  {
+   "level": 1,
+   "name": "walkable",
+   "intent": "traverse",
+   "max_geometric_error_m": 2.0,
+   "representation": "extruded_footprint",
+   "payload_format": "json",
+   "triangle_budget": 16000,
+   "selectable": true,
+   "carries_metadata": true,
+   "streamed": true,
+   "typical_distance_m": {
+    "min": 80,
+    "max": 400
+   },
+   "notes": "Ring simplified with a 1 m Douglas-Peucker tolerance."
+  },
+  {
+   "level": 2,
+   "name": "context",
+   "intent": "context",
+   "max_geometric_error_m": 8.0,
+   "representation": "block",
+   "payload_format": "json",
+   "triangle_budget": 4000,
+   "selectable": false,
+   "carries_metadata": false,
+   "streamed": true,
+   "typical_distance_m": {
+    "min": 300,
+    "max": 1200
+   },
+   "notes": "Minimum-area oriented box preserving footprint area and orientation."
+  },
+  {
+   "level": 3,
+   "name": "silhouette",
+   "intent": "silhouette",
+   "max_geometric_error_m": 25.0,
+   "representation": "map_polygon",
+   "payload_format": "geojson",
+   "triangle_budget": null,
+   "selectable": false,
+   "carries_metadata": false,
+   "streamed": false,
+   "typical_distance_m": {
+    "min": 1000
+   },
+   "notes": "Map view only. Not rendered in 3D."
+  }
+ ],
+ "selection": {
+  "policy": "screen_space_error",
+  "default_sse_budget_px": 12,
+  "mode_sse_budget_px": {
+   "inspect": 2,
+   "walk": 12,
+   "map": 48,
+   "tour": 8
+  },
+  "hysteresis": 0.15
+ },
+ "notes": "One axis, four levels. A viewer mode changes only the screen-space error budget, never the ladder. See digital-3d-shared-contracts/VIEWER-MODES.md section 3.2."
+}

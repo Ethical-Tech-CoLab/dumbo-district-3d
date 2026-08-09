@@ -1,0 +1,342 @@
+{
+ "contract_version": "1.0.0",
+ "tour_id": "dumbo-step-free-short",
+ "title": "Step-free waterfront short loop",
+ "description": "A brief, level, wheelchair-friendly walk along the Brooklyn Bridge Park edge.",
+ "requires_modules": [
+  "dumbo-district"
+ ],
+ "party": {
+  "size": 2,
+  "label": "Two visitors, step-free",
+  "pace_mps": 0.9,
+  "accessibility": {
+   "avoid_stairs": true,
+   "avoid_steep_grades": true,
+   "max_grade_percent": 5
+  }
+ },
+ "defaults": {
+  "dwell_s": 35,
+  "camera": {
+   "rig": "first_person",
+   "look": "forward",
+   "bob": false
+  },
+  "speed_multiplier": 3,
+  "time_of_day": "11:00",
+  "viewer_mode": "walk"
+ },
+ "route_source": {
+  "provider": "internal_router",
+  "profile": "wheelchair"
+ },
+ "stops": [
+  {
+   "stop_id": "s1_main_street",
+   "name": "Main Street lawn",
+   "position": {
+    "lon": -73.993345,
+    "lat": 40.703529,
+    "height_m": 0,
+    "vertical_datum": "NAVD88"
+   },
+   "dwell_s": 35,
+   "on_arrive": [
+    {
+     "type": "narrate",
+     "text": "A short, step-free loop. We keep to the level ground.",
+     "duration_s": 6
+    },
+    {
+     "type": "capture_photo",
+     "framing": "wide",
+     "label": "Main Street lawn",
+     "duration_s": 3
+    }
+   ]
+  },
+  {
+   "stop_id": "s2_empire_stores",
+   "name": "Empire Fulton Ferry",
+   "position": {
+    "lon": -73.992222,
+    "lat": 40.704272,
+    "height_m": 0,
+    "vertical_datum": "NAVD88"
+   },
+   "dwell_s": 40,
+   "on_arrive": [
+    {
+     "type": "look_at",
+     "target": {
+      "asset": "urn:d3d:manhattan-bridge:bridge_proxy"
+     },
+     "duration_s": 6
+    },
+    {
+     "type": "capture_photo",
+     "framing": "normal",
+     "label": "Empire Fulton Ferry",
+     "duration_s": 3
+    }
+   ]
+  }
+ ],
+ "legs": [
+  {
+   "leg_id": "s1_main_street__s2_empire_stores",
+   "from_stop": "s1_main_street",
+   "to_stop": "s2_empire_stores",
+   "distance_m": 182.8,
+   "duration_s": 203.1,
+   "transition": {
+    "kind": "walk"
+   },
+   "steps": [
+    {
+     "step_id": "s1_main_street_s2_empire_stores_s1",
+     "maneuver": "depart",
+     "instruction": "Head northwest on the walkway",
+     "distance_m": 14.1,
+     "duration_s": 15.7,
+     "path": {
+      "geodetic": [
+       [
+        -73.993345,
+        40.703529
+       ],
+       [
+        -73.9934864,
+        40.703597
+       ]
+      ]
+     }
+    },
+    {
+     "step_id": "s1_main_street_s2_empire_stores_s2",
+     "maneuver": "turn-left",
+     "instruction": "Turn left onto the walkway",
+     "distance_m": 27.8,
+     "duration_s": 30.9,
+     "path": {
+      "geodetic": [
+       [
+        -73.9934864,
+        40.703597
+       ],
+       [
+        -73.9932144,
+        40.7036632
+       ],
+       [
+        -73.99323046327407,
+        40.70369403563045
+       ]
+      ]
+     }
+    },
+    {
+     "step_id": "s1_main_street_s2_empire_stores_s3",
+     "maneuver": "turn-right",
+     "instruction": "Turn right onto New Dock Street",
+     "street_name": "New Dock Street",
+     "distance_m": 14.1,
+     "duration_s": 15.6,
+     "path": {
+      "geodetic": [
+       [
+        -73.9932305,
+        40.703694
+       ],
+       [
+        -73.9931717,
+        40.7037108
+       ],
+       [
+        -73.9931362,
+        40.7037291
+       ],
+       [
+        -73.9931263,
+        40.7037344
+       ],
+       [
+        -73.9930962,
+        40.7037636
+       ]
+      ]
+     }
+    },
+    {
+     "step_id": "s1_main_street_s2_empire_stores_s4",
+     "maneuver": "turn-left",
+     "instruction": "Turn left onto New Dock Street",
+     "street_name": "New Dock Street",
+     "distance_m": 6.0,
+     "duration_s": 6.7,
+     "path": {
+      "geodetic": [
+       [
+        -73.9930962,
+        40.7037636
+       ],
+       [
+        -73.9930669,
+        40.7037618
+       ],
+       [
+        -73.9930248,
+        40.7037602
+       ]
+      ]
+     }
+    },
+    {
+     "step_id": "s1_main_street_s2_empire_stores_s5",
+     "maneuver": "turn-right",
+     "instruction": "Turn right onto New Dock Street",
+     "street_name": "New Dock Street",
+     "distance_m": 26.5,
+     "duration_s": 29.4,
+     "path": {
+      "geodetic": [
+       [
+        -73.9930248,
+        40.7037602
+       ],
+       [
+        -73.9930256,
+        40.7038541
+       ],
+       [
+        -73.993026,
+        40.7039218
+       ],
+       [
+        -73.9930238,
+        40.7039984
+       ]
+      ]
+     }
+    },
+    {
+     "step_id": "s1_main_street_s2_empire_stores_s6",
+     "maneuver": "turn-left",
+     "instruction": "Turn left onto New Dock Street",
+     "street_name": "New Dock Street",
+     "distance_m": 71.9,
+     "duration_s": 79.9,
+     "path": {
+      "geodetic": [
+       [
+        -73.9930238,
+        40.7039984
+       ],
+       [
+        -73.9929439,
+        40.7039903
+       ],
+       [
+        -73.9928583,
+        40.7039725
+       ],
+       [
+        -73.9927823,
+        40.7039596
+       ],
+       [
+        -73.9927073,
+        40.7039539
+       ],
+       [
+        -73.9925432,
+        40.7039504
+       ],
+       [
+        -73.9924944,
+        40.7039661
+       ],
+       [
+        -73.992443,
+        40.7039868
+       ],
+       [
+        -73.9923175,
+        40.7040403
+       ],
+       [
+        -73.992221,
+        40.7040798
+       ]
+      ]
+     }
+    },
+    {
+     "step_id": "s1_main_street_s2_empire_stores_s7",
+     "maneuver": "turn-slight-right",
+     "instruction": "Bear right onto New Dock Street",
+     "street_name": "New Dock Street",
+     "distance_m": 22.4,
+     "duration_s": 24.9,
+     "path": {
+      "geodetic": [
+       [
+        -73.992221,
+        40.7040798
+       ],
+       [
+        -73.9922339,
+        40.7040923
+       ],
+       [
+        -73.992244,
+        40.7041091
+       ],
+       [
+        -73.9922507,
+        40.7041424
+       ],
+       [
+        -73.9922474,
+        40.7041766
+       ],
+       [
+        -73.9922385,
+        40.7042086
+       ],
+       [
+        -73.9922349,
+        40.7042295
+       ],
+       [
+        -73.9922336,
+        40.7042371
+       ],
+       [
+        -73.9922314,
+        40.7042654
+       ],
+       [
+        -73.99222199999629,
+        40.70427199999853
+       ]
+      ]
+     }
+    },
+    {
+     "step_id": "s1_main_street_s2_empire_stores_arrive",
+     "maneuver": "arrive",
+     "instruction": "Arrive at Empire Fulton Ferry",
+     "distance_m": 0.0,
+     "duration_s": 0.0
+    }
+   ]
+  }
+ ],
+ "totals": {
+  "distance_m": 182.8,
+  "walking_duration_s": 203.1,
+  "dwell_duration_s": 75
+ }
+}
