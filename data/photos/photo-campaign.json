@@ -1,0 +1,96 @@
+{
+ "module_id": "dumbo-district-3d",
+ "campaign_name": "DUMBO District — facade, surface and planting evidence",
+ "frame_id": "nyc-harbor-enu",
+ "purpose": "The district corpus that proved this pipeline, and the reason the human is in the loop at all: the automatic screen could not tell an office interior from a street view, so 537 photographs were reviewed by a person instead. Those decisions are preserved verbatim and reloaded by this sheet. The category vocabulary is unchanged from scripts/build_photo_corpus.py REVIEW_CATEGORIES, which remains the authority for how a decision becomes an aspect in the survey; this config exists so the review SHEET can come from digital-3d-shared-contracts rather than being a fork.",
+ "user_agent": "dumbo-district-3d/1.0 (https://github.com/Ethical-Tech-CoLab/dumbo-district-3d; openly-licensed imagery survey) Python-urllib/3.12",
+ "per_shot_limit": 60,
+ "categories": [
+  {
+   "id": "facade",
+   "label": "Building facade",
+   "grants": "material",
+   "help": "A building exterior you could read a material or colour from.",
+   "temporal": "renewed"
+  },
+  {
+   "id": "surface",
+   "label": "Street surface",
+   "grants": "material",
+   "help": "Cobblestone, paving, kerbs, the ground underfoot.",
+   "temporal": "renewed"
+  },
+  {
+   "id": "greenery",
+   "label": "Trees and planting",
+   "grants": "existence",
+   "help": "Street trees, canopy size, grass.",
+   "temporal": "renewed"
+  },
+  {
+   "id": "furniture",
+   "label": "Street furniture",
+   "grants": "existence",
+   "help": "Benches, lamps, railings, bollards, bike racks.",
+   "temporal": "renewed"
+  },
+  {
+   "id": "landmark",
+   "label": "Landmark",
+   "grants": "existence",
+   "help": "Jane's Carousel, the Archway, a named thing rather than a generic building.",
+   "temporal": "stable"
+  },
+  {
+   "id": "bridge",
+   "label": "Bridge (another module owns this)",
+   "grants": "appearance",
+   "help": "Brooklyn or Manhattan Bridge. Kept and credited, never used to derive district geometry.",
+   "temporal": "stable"
+  },
+  {
+   "id": "historic",
+   "label": "Historic",
+   "grants": "condition",
+   "help": "Archival. Describes a DUMBO that may no longer exist.",
+   "temporal": "stable"
+  },
+  {
+   "id": "context",
+   "label": "Context only",
+   "grants": "appearance",
+   "help": "Area designation, maps, signage, wayfinding. Not geometry.",
+   "temporal": "renewed"
+  },
+  {
+   "id": "waterside",
+   "label": "Water's edge",
+   "grants": "material",
+   "help": "Rocks, riprap, the beach, where the land stops and the river starts.",
+   "temporal": "renewed"
+  },
+  {
+   "id": "lawn",
+   "label": "Grass and lawn",
+   "grants": "material",
+   "help": "Park lawns, planted beds, grass meeting paving.",
+   "temporal": "renewed"
+  },
+  {
+   "id": "railing",
+   "label": "Railings and fences",
+   "grants": "existence",
+   "help": "The promenade guard rail, park fences, handrails.",
+   "temporal": "renewed"
+  }
+ ],
+ "shots": [],
+ "outputs": {
+  "raw": "data/photos/photos.raw.json",
+  "decisions": "data/photos/review-decisions.json",
+  "survey": "viewer/public/district/photo-survey.json",
+  "review_sheet": "viewer/public/review/index.html"
+ },
+ "temporal_note": "A 'renewed' subject is replaced on a maintenance cycle, so a photograph of it describes only the day it was taken. A 'stable' subject is substantially original fabric, so an archival frame is still evidence about it.",
+ "renewed_not_before": 1990
+}

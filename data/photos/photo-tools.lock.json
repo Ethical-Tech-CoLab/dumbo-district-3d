@@ -1,0 +1,16 @@
+{
+  "$comment": "Declares whether this module generates its human-in-the-loop photo review sheet with the shared tool from digital-3d-shared-contracts (tools/photo-survey/review_sheet.py) or with a local fork. Read by scripts/check_photo_tools_sync.mjs.",
+  "adopted": false,
+  "tool": "digital-3d-shared-contracts/tools/photo-survey/review_sheet.py",
+  "local_fork": "scripts/build_review_sheet.py",
+  "reason": "Blocked on the raw-record shape, not the sheet. This module's data/photos/photos.raw.json is a bare list of records keyed licence_id / lat / lon / title, produced by scripts/ingest_photos.py. The shared tool reads {\"observations\": [...]} with observation_id / license / position / notes, as written by tools/photo-survey/harvest.py. Forcing the two together would put a field-mapping layer inside the shared tool, which only moves the fork rather than removing it. The category vocabulary IS already migrated: data/photos/photo-campaign.json carries all eleven categories in the shared config shape.",
+  "decisions_are_compatible": true,
+  "decisions_note": "The 537 human decisions in data/photos/review-decisions.json are already in the shared format (\"use:cat,cat\" / \"skip\") and reload unchanged, so no review work is lost when this migrates.",
+  "features_already_folded_in": [
+    "uncategorised filter",
+    "auto-screened filter and badge",
+    "Skip all shown",
+    "Clear all shown"
+  ],
+  "tracking_issue": "https://github.com/Ethical-Tech-CoLab/dumbo-district-3d/issues/1"
+}

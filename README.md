@@ -1,5 +1,9 @@
 # DUMBO District Digital Twin
 
+**▶ [Walk the district in your browser](https://ethical-tech-colab.github.io/dumbo-district-3d/)** ·
+**[🔍 Photograph audit](https://ethical-tech-colab.github.io/dumbo-district-3d/review/)** — **537
+photographs reviewed by a person**, the corpus that proved the pipeline
+
 A walkable, browser-renderable digital twin of the DUMBO neighbourhood in Brooklyn, built from
 authoritative NYC open data, with every asset traceable to a registered source.
 
