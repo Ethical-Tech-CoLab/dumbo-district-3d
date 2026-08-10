@@ -1108,6 +1108,7 @@ def build_facades(control: DistrictControl) -> dict:
             "photograph, and are never reassigned by the procedural pass."
         ),
         "styles": facades,
+        "parapet_height_m": control.value_m("DCTL-081"),
         "provenance": provenance(control),
     }
 

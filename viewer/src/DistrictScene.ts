@@ -458,6 +458,18 @@ export class DistrictScene {
       const height = Math.max(building.h, 1.5);
       const topZ = building.base + height;
 
+      // The roof deck sits below the top of the wall, not level with it. DUMBO is a flat-roofed
+      // district -- 73 of the 81 buildings here that carry an OSM roof:shape tag are flat -- and a
+      // flat roof rendered as a bare plane meets the sky as a knife edge. A real one has a parapet
+      // standing above the deck, and that rim is most of the roofline's silhouette from the bridge.
+      //
+      // Taken out of the declared height rather than added to it: `height_roof` is an authoritative
+      // measurement of the building's extent, so the walls still reach exactly that and only the
+      // deck moves down. Suppressed on very low structures, where a 0.9 m parapet would be most of
+      // the building.
+      const parapet = style && height > 4 ? this.facades?.parapet_height_m ?? 0.9 : 0;
+      const deckZ = topZ - parapet;
+
       // Walls. Scene (x, y, z) -> render (x, z, -y).
       for (let i = 0; i < ring.length; i++) {
         const a = ring[i];
@@ -542,12 +554,37 @@ export class DistrictScene {
       for (let i = 0; i < ring.length; i++) {
         const a = ring[i];
         const b = ring[(i + 1) % ring.length];
-        positions.push(cx, topZ, -cy);
-        positions.push(ox + a[0], topZ, -(oy + a[1]));
-        positions.push(ox + b[0], topZ, -(oy + b[1]));
+        positions.push(cx, deckZ, -cy);
+        positions.push(ox + a[0], deckZ, -(oy + a[1]));
+        positions.push(ox + b[0], deckZ, -(oy + b[1]));
         for (let k = 0; k < 3; k++) {
           normals.push(0, 1, 0);
           colors.push(color.r, color.g, color.b);
+        }
+      }
+
+      // Coping: the flat top of the parapet, so the rim reads as a built edge rather than as a wall
+      // that simply stops. Only worth the triangles where there is a parapet at all.
+      if (parapet > 0) {
+        color.setHex(tint).multiplyScalar(1.2);
+        const inset = 0.28;
+        // Pull each ring vertex toward the centroid by a fixed distance to get the inner edge.
+        const inner = ring.map(([px, py]) => {
+          const wx = ox + px;
+          const wy = oy + py;
+          const span = Math.hypot(cx - wx, cy - wy) || 1;
+          return [wx + ((cx - wx) / span) * inset, wy + ((cy - wy) / span) * inset];
+        });
+        for (let i = 0; i < ring.length; i++) {
+          const j = (i + 1) % ring.length;
+          const outerA = [ox + ring[i][0], oy + ring[i][1]];
+          const outerB = [ox + ring[j][0], oy + ring[j][1]];
+          const quad = [outerA, outerB, inner[j], outerA, inner[j], inner[i]];
+          for (const [vx, vy] of quad) {
+            positions.push(vx, topZ, -vy);
+            normals.push(0, 1, 0);
+            colors.push(color.r, color.g, color.b);
+          }
         }
       }
 

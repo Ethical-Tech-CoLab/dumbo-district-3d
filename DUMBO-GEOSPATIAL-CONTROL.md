@@ -329,6 +329,27 @@ polygon, and kerbs from surveyed kerb *lines*.
 A kerb face is worth its own control because it is the strongest cue for reading a street at eye
 level: without one, a pavement is a change of colour and the eye cannot judge distance across it.
 
+### 6.5 Roofs
+
+| Control ID | Key | Value | Unit | Source IDs | Confidence | Notes |
+|---|---|---:|---|---|---|---|
+| DCTL-081 | parapet_height | 0.90 | m | DEF-009, DSRC-007 | C | Height of the parapet rim above the roof deck on a flat roof. A single conventional value, like the kerb: New York requires a parapet or guard at the edge of an occupiable flat roof, and DUMBO's are visible from the bridge and from across the river. Taken *out of* the building's declared `height_roof` rather than added to it, so the total extent still matches the authoritative measurement and only the roof deck moves down. |
+
+**Roof form was measured before it was modelled, and the measurement retired the question.** Of the
+buildings in this district that carry an OpenStreetMap `roof:shape` tag, **73 of 81 are `flat`** — the
+remainder being four skillion, two gabled, one hipped and one pyramidal. DUMBO is a flat-roofed
+district of masonry warehouses and row houses, and a pitched-roof classifier would have spent its
+effort on under ten buildings out of 446.
+
+That is why `DOQ-011` was closed by evidence rather than by acquiring the NYC DCP LOD2 model. The
+model would have told us, at considerable cost, what one Overpass query told us for nothing: these
+roofs are flat. What the model *would* still add is the rooftop bulkheads, stair houses and tanks
+that sit on them, which remains open and is recorded as such.
+
+The parapet is the part that actually reads. A flat roof rendered as a bare plane meets the sky as a
+knife edge; a real one has a rim standing about knee-to-waist height above the deck, and that rim is
+most of a DUMBO roofline's silhouette from the Manhattan Bridge.
+
 ### What the ground is made of
 
 The survey traces *where* the ground is, to the centimetre, and is silent on what it is made of.
@@ -373,6 +394,8 @@ Elizabeth Place and the Dumbo Archway — which is the Belgian block the distric
 | DOQ-007 | Facade appearance is inferred from PLUTO building class and construction year. It describes the *kind* of building, not the actual facade of that building. | Building appearance in walk mode | Street-level imagery, district photogrammetry | Open. Appearance graded `C`; it never affects geometry or dimensions. |
 | DOQ-008 | The Manhattan skyline is reduced to oriented silhouette blocks. Positions and heights are authoritative, but footprint shape is discarded, and buildings below a prominence threshold are omitted entirely. | Far-field appearance across the river | DSRC-011 | Open by design. Graded `B`; never selectable and never dimensionally citable at that range. |
 | DOQ-009 | Vessel movement is plausible traffic, not a timetable. Ferries follow real routes at a nominal speed; recreational craft are invented outright. | Water animation | NYC Ferry schedules, AIS vessel tracking | Open. Ferries graded `C`, recreational craft `D`. |
+| DOQ-011 | Roof form is not modelled per building: every roof is a flat deck with a parapet. | Rooflines, silhouette from the bridge and across the river | DSRC-007 `roof:shape`; NYC DCP 3-D Building Model; NYC LiDAR DSM | **Closed by measurement** 2026-08-10. Of the buildings here carrying an OSM `roof:shape` tag, **73 of 81 are flat** — the rest being four skillion, two gabled, one hipped and one pyramidal. A pitched-roof classifier would have served under ten of 446 buildings, so the question was retired rather than answered expensively. Residual, recorded honestly: rooftop bulkheads, stair houses and water tanks are still absent, and those are what the DCP LOD2 model would genuinely add. `DOQ-012`. |
+| DOQ-012 | Rooftop structures — bulkheads, stair houses, lift overruns and timber water tanks — are not modelled. A DUMBO roofline seen from the Manhattan Bridge has them; ours does not. | Roofline silhouette at middle distance | NYC DCP 3-D Building Model (Rhino `.3dm`, readable with `rhino3dm`, MIT); NYC LiDAR DSM | Open. The reading tool is proven to install and work; the DCP download page has moved and needs locating. See `DUMBO-DATA-OPTIONS.md`. |
 
 ---
 

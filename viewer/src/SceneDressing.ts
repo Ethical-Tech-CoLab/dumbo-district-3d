@@ -76,6 +76,8 @@ export interface FacadeStyle {
 
 export interface FacadeDocument {
   styles: Record<string, FacadeStyle>;
+  /** Parapet rim height above the roof deck, DCTL-081. Taken out of the building's declared height. */
+  parapet_height_m?: number;
 }
 
 /**
