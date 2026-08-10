@@ -397,6 +397,49 @@ footprints do not all wind the same way — the same trap that made whole planim
 Graded **D**. The business is real and the wall is real; that it has an awning at all, and the size
 and colour of that awning, are decoration.
 
+### DSRC-018 — NYC landmark building register (LPC) · Tier A · grants A
+
+| | |
+|---|---|
+| Publisher | NYC Landmarks Preservation Commission, via NYC Open Data (`gpmc-yuvp`) |
+| Accessed | 2026-08-10 |
+| License | NYC Open Data Terms of Use |
+| Attribution | **Required** — "Landmark designations: NYC Landmarks Preservation Commission" |
+| Native CRS | EPSG:4326 · keyed by BIN and BBL |
+| Verified | Yes |
+
+**1,386 designated buildings** inside the district envelope, each carrying the primary material, the
+architectural style, the building type and the construction date — as published in the designation
+report for that specific address.
+
+This is the strongest architectural evidence in the project, and it arrived late. Everything else
+*infers* what a building looks like: PLUTO gives a tax class, from which a material family is
+guessed; a photograph gives a colour measured off a wall. Here the city says, on its own authority,
+that 55 Hudson Avenue is Greek Revival, brick, 1830s. 287 of the district's 446 buildings are covered.
+
+| District | Buildings |
+|---|---:|
+| Brooklyn Heights Historic District | 1,166 |
+| DUMBO Historic District | 93 |
+| Vinegar Hill Historic District | 45 |
+| Fulton Ferry Historic District | 37 |
+| Borough Hall Skyscraper Historic District | 21 |
+| Individual landmarks | 17 |
+
+**It also corrected the district's own boundary.** Tested against this register, the previous
+hand-drawn extent excluded eleven designated buildings — ten of them the Hudson Avenue row that the
+Vinegar Hill Historic District exists to protect, and 10 Jay Street on the DUMBO shoreline. A scope
+polygon that omits the landmarked core of a neighbourhood it claims to cover is simply drawn wrong,
+and no amount of looking at it would have said so. See section 2 of the control document.
+
+The register drives three things: the facade's **material** (brownstone and brick are distinct and it
+distinguishes them), the **glazing ratio** via architectural style, and the **bay pitch** via building
+type — a row house has a narrow two-bay front, a daylight factory has wide industrial openings, and
+that single number is most of what stops a wall reading as a striped box.
+
+A photographed facade still wins on colour. The report describes the fabric; the photograph describes
+the surface as it stands today, after however many repaintings.
+
 ---
 
 ## 3. Definition sources

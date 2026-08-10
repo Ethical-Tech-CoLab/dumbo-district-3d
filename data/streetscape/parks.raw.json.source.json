@@ -1,10 +1,10 @@
 {
   "source_id": "DSRC-010",
-  "query": "intersects(the_geom,'POLYGON((-73.9985 40.6975,-73.98 40.6975,-73.98 40.706,-73.9985 40.706,-73.9985 40.6975))')",
-  "fetched_at": "2026-08-10T01:11:06+00:00",
+  "query": "intersects(the_geom,'POLYGON((-74.0045 40.6915,-73.978 40.6915,-73.978 40.706,-74.0045 40.706,-74.0045 40.6915))')",
+  "fetched_at": "2026-08-10T12:46:25+00:00",
   "fetched_by": "dumbo-district-3d/scripts@1.0.0",
-  "bytes": 484689,
-  "sha256": "bf426570d43932bfbfb1e12df15dcfc2517288fa86116722e36381882a18019b",
-  "record_count": 88,
+  "bytes": 695331,
+  "sha256": "cbf7e50ce8bf503ad5ea3c41b87771e727889495a9d989035014d8ef12f2a690",
+  "record_count": 149,
   "note": "Open space with names and land use; grass rather than paving."
 }

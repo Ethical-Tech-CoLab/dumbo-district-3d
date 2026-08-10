@@ -1076,8 +1076,11 @@ def build_facades(control: DistrictControl) -> dict:
         }
 
     observed = apply_observed_appearance(facades)
+    designated = apply_designations(facades)
 
     print(f"    {len(facades)} facades; families {dict(sorted(histogram.items(), key=lambda kv: -kv[1])[:5])}")
+    if designated:
+        print(f"    {designated} facades carry the city's designated style and material")
     if observed:
         print(f"    {observed} facades observed from photographs and locked against the procedural pass")
 
@@ -1085,20 +1088,140 @@ def build_facades(control: DistrictControl) -> dict:
         "contract_version": CONTRACT_VERSION,
         "module_id": MODULE_ID,
         "frame_id": FRAME_ID,
-        "source_refs": ["DSRC-001", "DSRC-002"] + (["DSRC-015"] if observed else []),
+        "source_refs": (
+            ["DSRC-001", "DSRC-002"]
+            + (["DSRC-015"] if observed else [])
+            + (["DSRC-018"] if designated else [])
+        ),
         "confidence": "C",
         "observed_count": observed,
+        "designated_count": designated,
         "open_questions": ["DOQ-007"],
         "notes": (
             "Facade appearance derived from PLUTO building class and construction year. The inputs "
             "are grade A; the mapping from class to material and glazing ratio is a convention, so "
             "the appearance is graded C. It describes the KIND of building, not its actual facade. "
-            "Buildings carrying photographic evidence are marked basis=observed, take their colour "
-            "from that photograph, and are never reassigned by the procedural pass."
+            "Buildings in the city's landmark register take their material, style and bay rhythm "
+            "from the designation report instead, which is an authoritative statement about that "
+            "specific building rather than an inference from its tax class. Buildings carrying "
+            "photographic evidence are marked basis=observed, take their colour from that "
+            "photograph, and are never reassigned by the procedural pass."
         ),
         "styles": facades,
         "provenance": provenance(control),
     }
+
+
+# What the city's designation reports say a building is made of, as a rendered colour. Brownstone and
+# brick are not interchangeable and the register distinguishes them, so neither should this.
+DESIGNATED_MATERIAL = {
+    "Brick": ("#7d5544", "brick"),
+    "Philadelphia Brick": ("#8a6350", "brick"),
+    "Brownstone": ("#6b4a35", "brownstone"),
+    "Stone": ("#8d8577", "stone"),
+    "Limestone": ("#a89e8b", "stone"),
+    "Marble": ("#b4b0a6", "stone"),
+    "Granite": ("#8a8a86", "stone"),
+    "Stucco": ("#a09384", "stucco"),
+    "Wood Frame": ("#8b7a63", "timber"),
+    "Reinforced Concrete": ("#918d85", "concrete"),
+    "Concrete Block": ("#918d85", "concrete"),
+    "Cement Block": ("#918d85", "concrete"),
+    "Cast Iron": ("#5f6468", "iron"),
+    "Terra Cotta": ("#9d6a4f", "terracotta"),
+}
+
+# Bay pitch in metres, by what the register says the building IS. This is the number that stops a
+# facade reading as a box: a row house has a narrow two-bay front and a factory has wide industrial
+# openings, and until now both were drawn with the same anonymous horizontal banding.
+DESIGNATED_BAY_M = {
+    "Row House": 2.6,
+    "Carriage House": 3.0,
+    "Apartment House": 3.2,
+    "Flats Building": 3.2,
+    "Tenement": 3.0,
+    "Factory": 4.6,
+    "Warehouse": 4.6,
+    "Store Building": 4.0,
+    "Office Building": 3.8,
+    "Church": 5.0,
+    "School": 4.0,
+    "Garage": 4.4,
+    "Stable": 3.6,
+}
+
+# Glazing by architectural style. A daylight factory is mostly window; a Federal row house is mostly
+# wall with punched openings. The register names the style, so this is a lookup, not a guess.
+DESIGNATED_STYLE_GLAZING = {
+    "Daylight Factory": 0.46,
+    "Industrial Neoclassical": 0.30,
+    "American Round Arch": 0.24,
+    "Romanesque Revival": 0.22,
+    "Greek Revival": 0.16,
+    "Federal": 0.14,
+    "Anglo-Italianate": 0.18,
+    "Italianate": 0.18,
+    "Gothic Revival": 0.16,
+    "Renaissance Revival": 0.20,
+    "Neo-Grec": 0.18,
+    "Queen Anne": 0.20,
+    "Vernacular": 0.16,
+    "Eclectic": 0.20,
+}
+
+
+def apply_designations(facades: dict[str, dict]) -> int:
+    """Take material, style and bay rhythm from the city's landmark register where it has an opinion.
+
+    PLUTO says what a building is *for*; the designation report says what it *is*. For 1,386
+    buildings in this district the city has published the primary material, the architectural style,
+    the building type and the date, per BIN, and that is strictly better evidence than a mapping from
+    tax class — it is a statement about that building rather than about buildings like it.
+
+    A photographed facade still wins. A colour measured from a photograph of the wall as it stands
+    today beats a designation report's material name, because the report describes the fabric and the
+    photograph describes the surface. Where both exist the photograph is left alone and only the bay
+    rhythm, which no photograph currently supplies, is taken from the register.
+    """
+    path = DATA / "boundaries" / "designations.raw.json"
+    if not path.exists():
+        return 0
+
+    applied = 0
+    for record in load(path):
+        bin_id = str(record.get("bin") or "").split(".")[0]
+        entry = facades.get(f"bldg_{bin_id}")
+        if not entry:
+            continue
+
+        build_type = (record.get("build_type") or "").strip()
+        style_name = (record.get("style_prim") or "").strip()
+        material = (record.get("mat_prim") or "").strip()
+
+        bay = DESIGNATED_BAY_M.get(build_type)
+        if bay:
+            entry["bay_m"] = bay
+        if style_name and style_name not in {"Not determined", "None"}:
+            entry["designated_style"] = style_name
+            glazing = DESIGNATED_STYLE_GLAZING.get(style_name)
+            if glazing and entry.get("basis") != "observed":
+                entry["glazing"] = glazing
+        if build_type and build_type not in {"Not determined", "Vacant Lot"}:
+            entry["designated_type"] = build_type
+
+        mapped = DESIGNATED_MATERIAL.get(material)
+        if mapped and entry.get("basis") != "observed":
+            entry["color"], entry["material"] = mapped
+            entry["basis"] = "designated"
+        elif mapped:
+            # Photograph wins on colour; the register still names the fabric.
+            entry["material"] = mapped[1]
+
+        if any(k in entry for k in ("bay_m", "designated_style", "designated_type")):
+            entry["designation"] = record.get("hist_dist") or record.get("lm_new") or "Individual Landmark"
+            applied += 1
+
+    return applied
 
 
 def apply_observed_appearance(facades: dict[str, dict]) -> int:

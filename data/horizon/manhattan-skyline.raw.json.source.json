@@ -1,10 +1,10 @@
 {
   "source_id": "DSRC-011",
   "query": "within_box(the_geom,40.726,-74.018,40.7005,-73.97) AND height_roof > 20",
-  "fetched_at": "2026-08-09T18:06:44+00:00",
+  "fetched_at": "2026-08-10T12:45:54+00:00",
   "fetched_by": "dumbo-district-3d/scripts@1.0.0",
-  "bytes": 6171754,
-  "sha256": "e4ce4eb53ea1af3dd7ecfa9e0f168217c423c965f7ef1d76fbac5dc23e8e9a52",
+  "bytes": 6230818,
+  "sha256": "843412e300ae56203aac527ce54dce08e9ee9aeb26e4f3fa61c461c27021b5bf",
   "record_count": 6107,
   "note": "Same authoritative dataset as the district (DSRC-001), bounded to the frontage visible from DUMBO and filtered to buildings tall enough to read at that distance. Rendered as silhouettes at LOD3, never selectable, never dimensionally citable at that range."
 }

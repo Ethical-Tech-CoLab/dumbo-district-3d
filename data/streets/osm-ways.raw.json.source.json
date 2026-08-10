@@ -1,10 +1,10 @@
 {
   "source_id": "DSRC-007",
-  "query": "[out:json][timeout:180];(way[\"highway\"][\"highway\"!~\"^(motorway|motorway_link|trunk_link|construction|proposed)$\"](40.6975,-73.9985,40.706,-73.98);way[\"footway\"](40.6975,-73.9985,40.706,-73.98););out geom tags;",
-  "fetched_at": "2026-08-09T14:43:18+00:00",
+  "query": "[out:json][timeout:180];(way[\"highway\"][\"highway\"!~\"^(motorway|motorway_link|trunk_link|construction|proposed)$\"](40.6915,-74.0045,40.706,-73.978);way[\"footway\"](40.6915,-74.0045,40.706,-73.978););out geom tags;",
+  "fetched_at": "2026-08-10T12:43:38+00:00",
   "fetched_by": "dumbo-district-3d/scripts@1.0.0",
-  "bytes": 1294269,
-  "sha256": "658b485b7e2f4efebafbfe83bac752ef72fc4c9e240228340030e53fe13fe3e4",
-  "record_count": 2015,
+  "bytes": 2362098,
+  "sha256": "b1b7ed81c3e2819b1243a7dd49a1b8f1e510b020924a668bbaf818308565007f",
+  "record_count": 3730,
   "note": "OpenStreetMap contributors, ODbL. Attribution is mandatory wherever this is rendered."
 }

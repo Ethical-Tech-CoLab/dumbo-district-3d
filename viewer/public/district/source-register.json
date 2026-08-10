@@ -259,16 +259,30 @@
    "grants_confidence": "A",
    "verified": true,
    "notes": "166 shops, cafes, restaurants and bars, 164 of them named, used to hang awnings on the facades that have a business behind them. PLUTO cannot answer this: its building class describes a whole building, so a cafe on the ground floor of a residential block is invisible to it, and the ground floor is precisely what a walker sees. The business and its wall are real; the awning is decoration and is graded D."
+  },
+  {
+   "source_id": "DSRC-018",
+   "title": "NYC landmark building register (LPC)",
+   "tier": "A",
+   "publisher": "NYC Landmarks Preservation Commission, via NYC Open Data",
+   "url": "https://data.cityofnewyork.us/resource/gpmc-yuvp",
+   "accessed": "2026-08-10",
+   "license": "NYC Open Data Terms of Use",
+   "attribution_required": true,
+   "attribution_text": "Landmark designations: NYC Landmarks Preservation Commission",
+   "grants_confidence": "A",
+   "verified": true,
+   "notes": "1,386 designated buildings with the primary material, architectural style, building type and date published per address. The strongest architectural evidence in the project: everything else infers a facade from a tax class, this states it. Drives facade material, glazing ratio by style, and bay pitch by building type. It also corrected the district boundary, which had excluded ten designated buildings on Hudson Avenue -- the row the Vinegar Hill Historic District exists to protect."
   }
  ],
  "provenance": {
   "module_id": "dumbo-district",
   "generated_by": "dumbo-district-3d/scripts@1.0.0",
-  "generated_at": "2026-08-10T12:31:41+00:00",
+  "generated_at": "2026-08-10T12:58:27+00:00",
   "source_documents": [
    {
     "path": "DUMBO-GEOSPATIAL-CONTROL.md",
-    "sha256": "3ee479ce2372c9f0d61de7f16a0d55a2ed9ea6eabd2b26f4b4102decae02963e"
+    "sha256": "f49d173b258f5d2a16c2e7c50280c9e199c2376ec75f9a13f4756a57557f75c7"
    }
   ]
  }

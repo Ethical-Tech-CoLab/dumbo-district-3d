@@ -397,8 +397,42 @@ def fetch_storefronts(control: DistrictControl) -> None:
     )
 
 
+def fetch_designations(control: DistrictControl) -> None:
+    """DSRC-018. The city's landmark building register: style, material, date, per building.
+
+    This is the only source in the project that states, on the city's own authority, what a specific
+    DUMBO building is *made of* and *built in the style of*. Everything else infers it: PLUTO gives a
+    tax class, the photo corpus gives a colour measured off a wall. Here a designation report says
+    "Greek Revival, brick, 1840s" about one address, and a landmark designation is about as
+    authoritative as an architectural claim gets.
+
+    It also settled the district's own extent. The previous boundary was drawn by eye along Bridge
+    Street and excluded ten of the forty-five designated buildings in the Vinegar Hill Historic
+    District, including the Hudson Avenue row the designation exists for.
+    """
+    print("[DSRC-018] NYC landmark building register (LPC)")
+    west, south, east, north = control.bbox
+    records = _socrata_paged(
+        "gpmc-yuvp",
+        {"$where": f"within_box(the_geom, {north}, {west}, {south}, {east})"},
+    )
+    districts: dict[str, int] = {}
+    for record in records:
+        key = record.get("hist_dist") or record.get("lm_new") or record.get("lm_orig") or "(individual)"
+        districts[key] = districts.get(key, 0) + 1
+    print(f"    {len(records)} designated buildings")
+    for key in sorted(districts, key=lambda k: -districts[k])[:6]:
+        print(f"    {districts[key]:5d}  {key}")
+    _write(
+        DATA / "boundaries" / "designations.raw.json",
+        records,
+        query="within_box on the district envelope",
+        source_id="DSRC-018",
+        note="NYC Landmarks Preservation Commission, via NYC Open Data. NYC Open Data Terms of Use.",
+    )
+
+
 def fetch_landmarks(control: DistrictControl) -> None:
-    """DSRC-007. Named places used as tour stops and map labels."""
     print("[DSRC-007] OpenStreetMap named landmarks")
     west, south, east, north = control.bbox
     bbox = f"{south},{west},{north},{east}"
@@ -797,6 +831,7 @@ def main() -> int:
     parser.add_argument("--landmarks", action="store_true")
     parser.add_argument("--furniture", action="store_true")
     parser.add_argument("--storefronts", action="store_true")
+    parser.add_argument("--designations", action="store_true")
     parser.add_argument("--nta", action="store_true")
     parser.add_argument("--trees", action="store_true")
     parser.add_argument("--sidewalks", action="store_true")
@@ -823,6 +858,8 @@ def main() -> int:
         jobs.append(fetch_street_furniture)
     if args.all or args.storefronts:
         jobs.append(fetch_storefronts)
+    if args.all or args.designations:
+        jobs.append(fetch_designations)
     if args.all or args.nta:
         jobs.append(fetch_nta)
     if args.all or args.trees:

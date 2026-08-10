@@ -1,10 +1,10 @@
 {
   "source_id": "DSRC-010",
-  "query": "intersects(the_geom,'POLYGON((-73.9985 40.6975,-73.98 40.6975,-73.98 40.706,-73.9985 40.706,-73.9985 40.6975))')",
-  "fetched_at": "2026-08-10T01:11:02+00:00",
+  "query": "intersects(the_geom,'POLYGON((-74.0045 40.6915,-73.978 40.6915,-73.978 40.706,-74.0045 40.706,-74.0045 40.6915))')",
+  "fetched_at": "2026-08-10T12:46:20+00:00",
   "fetched_by": "dumbo-district-3d/scripts@1.0.0",
-  "bytes": 3339922,
-  "sha256": "c87abd7a79643d82e60bf3a84a6c7cd4991557751668a911180d7266a839cb4c",
-  "record_count": 390,
+  "bytes": 5601961,
+  "sha256": "55edafb03e4b2a188d10803b9d0118f90ec7dcc3d02cf838e17fd1d6bfc8b7d0",
+  "record_count": 660,
   "note": "Carriageway polygons. The kerb line is where this meets the pavement."
 }

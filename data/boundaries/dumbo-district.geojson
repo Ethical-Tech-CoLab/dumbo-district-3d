@@ -9,26 +9,26 @@
      [
       [
        -73.9975,
-       40.7033
+       40.704
       ],
       [
        -73.995,
-       40.7045
+       40.7049
       ],
       [
        -73.99,
-       40.7048
+       40.7052
       ],
       [
        -73.984,
+       40.705
+      ],
+      [
+       -73.9795,
        40.7042
       ],
       [
-       -73.9805,
-       40.7028
-      ],
-      [
-       -73.9805,
+       -73.9785,
        40.7005
       ],
       [
@@ -52,8 +52,36 @@
        40.7014
       ],
       [
+       -73.9988,
+       40.6995
+      ],
+      [
+       -74.0006,
+       40.696
+      ],
+      [
+       -74.0028,
+       40.6922
+      ],
+      [
+       -74.0042,
+       40.693
+      ],
+      [
+       -74.003,
+       40.697
+      ],
+      [
+       -74.0012,
+       40.7
+      ],
+      [
+       -73.999,
+       40.7028
+      ],
+      [
        -73.9975,
-       40.7033
+       40.704
       ]
      ]
     ]
@@ -62,7 +90,7 @@
     "name": "DUMBO district project boundary",
     "module_id": "dumbo-district",
     "definition": "DUMBO-GEOSPATIAL-CONTROL.md section 2.1",
-    "control_sha256": "647184b0c8d520e4c7501af54bfc57b6f07931390283126ab4bc30aea94c363d",
+    "control_sha256": "f49d173b258f5d2a16c2e7c50280c9e199c2376ec75f9a13f4756a57557f75c7",
     "confidence": "A",
     "note": "Project scope definition, not an administrative boundary. NYC NTA BK0202 is recorded as context in DSRC-004 and is deliberately not used.",
     "vertices": [
@@ -76,7 +104,14 @@
      "DBV-08",
      "DBV-09",
      "DBV-10",
-     "DBV-11"
+     "DBV-11",
+     "DBV-12",
+     "DBV-13",
+     "DBV-14",
+     "DBV-15",
+     "DBV-16",
+     "DBV-17",
+     "DBV-18"
     ]
    }
   }

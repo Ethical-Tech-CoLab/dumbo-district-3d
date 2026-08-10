@@ -1,10 +1,10 @@
 {
   "source_id": "DSRC-016",
-  "query": "[out:json][timeout:180];(way[\"barrier\"~\"^(railing|handrail|fence|guard_rail|wall)$\"](40.6975,-73.9985,40.706,-73.98);node[\"highway\"=\"street_lamp\"](40.6975,-73.9985,40.706,-73.98);node[\"amenity\"=\"bench\"](40.6975,-73.9985,40.706,-73.98);node[\"barrier\"=\"bollard\"](40.6975,-73.9985,40.706,-73.98);node[\"amenity\"=\"bicycle_parking\"](40.6975,-73.9985,40.706,-73.98);node[\"amenity\"=\"waste_basket\"](40.6975,-73.9985,40.706,-73.98);node[\"amenity\"=\"drinking_fountain\"](40.6975,-73.9985,40.706,-73.98);node[\"emergency\"=\"fire_hydrant\"](40.6975,-73.9985,40.706,-73.98);node[\"highway\"=\"traffic_signals\"](40.6975,-73.9985,40.706,-73.98);node[\"man_made\"=\"flagpole\"](40.6975,-73.9985,40.706,-73.98);node[\"amenity\"=\"fountain\"](40.6975,-73.9985,40.706,-73.98););out geom tags;",
-  "fetched_at": "2026-08-10T03:49:40+00:00",
+  "query": "[out:json][timeout:180];(way[\"barrier\"~\"^(railing|handrail|fence|guard_rail|wall)$\"](40.6915,-74.0045,40.706,-73.978);node[\"highway\"=\"street_lamp\"](40.6915,-74.0045,40.706,-73.978);node[\"amenity\"=\"bench\"](40.6915,-74.0045,40.706,-73.978);node[\"barrier\"=\"bollard\"](40.6915,-74.0045,40.706,-73.978);node[\"amenity\"=\"bicycle_parking\"](40.6915,-74.0045,40.706,-73.978);node[\"amenity\"=\"waste_basket\"](40.6915,-74.0045,40.706,-73.978);node[\"amenity\"=\"drinking_fountain\"](40.6915,-74.0045,40.706,-73.978);node[\"emergency\"=\"fire_hydrant\"](40.6915,-74.0045,40.706,-73.978);node[\"highway\"=\"traffic_signals\"](40.6915,-74.0045,40.706,-73.978);node[\"man_made\"=\"flagpole\"](40.6915,-74.0045,40.706,-73.978);node[\"amenity\"=\"fountain\"](40.6915,-74.0045,40.706,-73.978););out geom tags;",
+  "fetched_at": "2026-08-10T12:44:49+00:00",
   "fetched_by": "dumbo-district-3d/scripts@1.0.0",
-  "bytes": 299491,
-  "sha256": "2b99d9769e8fa372408ec48db8499881683b65534e12fc51534cc384a7c85559",
+  "bytes": 500723,
+  "sha256": "6442b1b13a279d81e5aa20e40acd9a05b1fd7256b391fe0dc939386e5ab2657f",
   "record_count": null,
   "note": "OpenStreetMap contributors, ODbL. Attribution is mandatory wherever this is rendered."
 }

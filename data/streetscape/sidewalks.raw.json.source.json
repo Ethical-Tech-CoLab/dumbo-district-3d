@@ -1,10 +1,10 @@
 {
   "source_id": "DSRC-010",
-  "query": "intersects(the_geom,'POLYGON((-73.9985 40.6975,-73.98 40.6975,-73.98 40.706,-73.9985 40.706,-73.9985 40.6975))')",
-  "fetched_at": "2026-08-10T01:11:00+00:00",
+  "query": "intersects(the_geom,'POLYGON((-74.0045 40.6915,-73.978 40.6915,-73.978 40.706,-74.0045 40.706,-74.0045 40.6915))')",
+  "fetched_at": "2026-08-10T12:46:15+00:00",
   "fetched_by": "dumbo-district-3d/scripts@1.0.0",
-  "bytes": 3335285,
-  "sha256": "d88423a61bb17235707626f40980212ed386b748f0a80d4a3a6f98c808a316a3",
-  "record_count": 170,
+  "bytes": 5374551,
+  "sha256": "d99cf52d2b8d09e80479b1c76933cad9954f53a8609fc2734a0eb7bfec9de840",
+  "record_count": 336,
   "note": "Pavement polygons. Replaces centreline widening for footways."
 }

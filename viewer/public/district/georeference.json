@@ -43,11 +43,11 @@
  "provenance": {
   "module_id": "dumbo-district",
   "generated_by": "dumbo-district-3d/scripts@1.0.0",
-  "generated_at": "2026-08-10T12:31:41+00:00",
+  "generated_at": "2026-08-10T12:58:27+00:00",
   "source_documents": [
    {
     "path": "DUMBO-GEOSPATIAL-CONTROL.md",
-    "sha256": "3ee479ce2372c9f0d61de7f16a0d55a2ed9ea6eabd2b26f4b4102decae02963e"
+    "sha256": "f49d173b258f5d2a16c2e7c50280c9e199c2376ec75f9a13f4756a57557f75c7"
    }
   ]
  }

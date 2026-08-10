@@ -8,12 +8,12 @@
   "kind": "planar_grid",
   "tile_size_m": 128.0,
   "origin_xy_m": [
-   -896.0,
-   -640.0
+   -1536.0,
+   -1408.0
   ],
   "grid_size": [
-   14,
-   8
+   20,
+   14
   ],
   "id_pattern": "t_{col}_{row}"
  },
@@ -28,6 +28,2058 @@
    "tile_id": "t_0_0",
    "col": 0,
    "row": 0,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1536.0,
+     -1408.0,
+     -5.0
+    ],
+    "max": [
+     -1408.0,
+     -1280.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0071715,
+    40.6903194,
+    -74.0056575,
+    40.6914723
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_0_1",
+   "col": 0,
+   "row": 1,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1536.0,
+     -1280.0,
+     -5.0
+    ],
+    "max": [
+     -1408.0,
+     -1152.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0071719,
+    40.691472,
+    -74.0056578,
+    40.6926249
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_0_2",
+   "col": 0,
+   "row": 2,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1536.0,
+     -1152.0,
+     -5.0
+    ],
+    "max": [
+     -1408.0,
+     -1024.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0071722,
+    40.6926247,
+    -74.0056581,
+    40.6937776
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_0_3",
+   "col": 0,
+   "row": 3,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1536.0,
+     -1024.0,
+     -5.0
+    ],
+    "max": [
+     -1408.0,
+     -896.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0071725,
+    40.6937773,
+    -74.0056584,
+    40.6949302
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_0_4",
+   "col": 0,
+   "row": 4,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1536.0,
+     -896.0,
+     -5.0
+    ],
+    "max": [
+     -1408.0,
+     -768.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0071728,
+    40.69493,
+    -74.0056587,
+    40.6960829
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_0_5",
+   "col": 0,
+   "row": 5,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1536.0,
+     -768.0,
+     -5.0
+    ],
+    "max": [
+     -1408.0,
+     -640.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0071731,
+    40.6960826,
+    -74.005659,
+    40.6972355
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_0_6",
+   "col": 0,
+   "row": 6,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1536.0,
+     -640.0,
+     -5.0
+    ],
+    "max": [
+     -1408.0,
+     -512.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0071734,
+    40.6972353,
+    -74.0056593,
+    40.6983882
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_0_7",
+   "col": 0,
+   "row": 7,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1536.0,
+     -512.0,
+     -5.0
+    ],
+    "max": [
+     -1408.0,
+     -384.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0071737,
+    40.698388,
+    -74.0056595,
+    40.6995408
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_0_8",
+   "col": 0,
+   "row": 8,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1536.0,
+     -384.0,
+     -5.0
+    ],
+    "max": [
+     -1408.0,
+     -256.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0071741,
+    40.6995406,
+    -74.0056598,
+    40.7006935
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_0_9",
+   "col": 0,
+   "row": 9,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1536.0,
+     -256.0,
+     -5.0
+    ],
+    "max": [
+     -1408.0,
+     -128.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0071744,
+    40.7006933,
+    -74.0056601,
+    40.7018461
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_0_10",
+   "col": 0,
+   "row": 10,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1536.0,
+     -128.0,
+     -5.0
+    ],
+    "max": [
+     -1408.0,
+     0.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0071747,
+    40.7018459,
+    -74.0056604,
+    40.7029988
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_0_11",
+   "col": 0,
+   "row": 11,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1536.0,
+     0.0,
+     -5.0
+    ],
+    "max": [
+     -1408.0,
+     128.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.007175,
+    40.7029986,
+    -74.0056607,
+    40.7041515
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_0_12",
+   "col": 0,
+   "row": 12,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1536.0,
+     128.0,
+     -5.0
+    ],
+    "max": [
+     -1408.0,
+     256.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0071753,
+    40.7041512,
+    -74.005661,
+    40.7053041
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_0_13",
+   "col": 0,
+   "row": 13,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1536.0,
+     256.0,
+     -5.0
+    ],
+    "max": [
+     -1408.0,
+     384.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0071756,
+    40.7053039,
+    -74.0056613,
+    40.7064568
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_1_0",
+   "col": 1,
+   "row": 0,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1408.0,
+     -1408.0,
+     -5.0
+    ],
+    "max": [
+     -1280.0,
+     -1280.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0056573,
+    40.6903196,
+    -74.0041432,
+    40.6914725
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_1_1",
+   "col": 1,
+   "row": 1,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1408.0,
+     -1280.0,
+     -5.0
+    ],
+    "max": [
+     -1280.0,
+     -1152.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0056575,
+    40.6914723,
+    -74.0041435,
+    40.6926251
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_1_2",
+   "col": 1,
+   "row": 2,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1408.0,
+     -1152.0,
+     -5.0
+    ],
+    "max": [
+     -1280.0,
+     -1024.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0056578,
+    40.6926249,
+    -74.0041437,
+    40.6937778
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_1_3",
+   "col": 1,
+   "row": 3,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1408.0,
+     -1024.0,
+     -5.0
+    ],
+    "max": [
+     -1280.0,
+     -896.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0056581,
+    40.6937776,
+    -74.004144,
+    40.6949304
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_1_4",
+   "col": 1,
+   "row": 4,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1408.0,
+     -896.0,
+     -5.0
+    ],
+    "max": [
+     -1280.0,
+     -768.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0056584,
+    40.6949302,
+    -74.0041443,
+    40.6960831
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_1_5",
+   "col": 1,
+   "row": 5,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1408.0,
+     -768.0,
+     -5.0
+    ],
+    "max": [
+     -1280.0,
+     -640.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0056587,
+    40.6960829,
+    -74.0041445,
+    40.6972357
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_1_6",
+   "col": 1,
+   "row": 6,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1408.0,
+     -640.0,
+     -5.0
+    ],
+    "max": [
+     -1280.0,
+     -512.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.005659,
+    40.6972355,
+    -74.0041448,
+    40.6983884
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_1_7",
+   "col": 1,
+   "row": 7,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1408.0,
+     -512.0,
+     -5.0
+    ],
+    "max": [
+     -1280.0,
+     -384.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0056593,
+    40.6983882,
+    -74.004145,
+    40.699541
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_1_8",
+   "col": 1,
+   "row": 8,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1408.0,
+     -384.0,
+     -5.0
+    ],
+    "max": [
+     -1280.0,
+     -256.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0056595,
+    40.6995408,
+    -74.0041453,
+    40.7006937
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_1_9",
+   "col": 1,
+   "row": 9,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1408.0,
+     -256.0,
+     -5.0
+    ],
+    "max": [
+     -1280.0,
+     -128.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0056598,
+    40.7006935,
+    -74.0041456,
+    40.7018464
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_1_10",
+   "col": 1,
+   "row": 10,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1408.0,
+     -128.0,
+     -5.0
+    ],
+    "max": [
+     -1280.0,
+     0.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0056601,
+    40.7018461,
+    -74.0041458,
+    40.702999
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_1_11",
+   "col": 1,
+   "row": 11,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1408.0,
+     0.0,
+     -5.0
+    ],
+    "max": [
+     -1280.0,
+     128.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0056604,
+    40.7029988,
+    -74.0041461,
+    40.7041517
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_1_12",
+   "col": 1,
+   "row": 12,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1408.0,
+     128.0,
+     -5.0
+    ],
+    "max": [
+     -1280.0,
+     256.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0056607,
+    40.7041515,
+    -74.0041464,
+    40.7053043
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_1_13",
+   "col": 1,
+   "row": 13,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1408.0,
+     256.0,
+     -5.0
+    ],
+    "max": [
+     -1280.0,
+     384.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.005661,
+    40.7053041,
+    -74.0041466,
+    40.706457
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_2_0",
+   "col": 2,
+   "row": 0,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1280.0,
+     -1408.0,
+     -5.0
+    ],
+    "max": [
+     -1152.0,
+     -1280.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.004143,
+    40.6903198,
+    -74.0026289,
+    40.6914727
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_2_1",
+   "col": 2,
+   "row": 1,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1280.0,
+     -1280.0,
+     -5.0
+    ],
+    "max": [
+     -1152.0,
+     -1152.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0041432,
+    40.6914725,
+    -74.0026291,
+    40.6926253
+   ],
+   "zone": "walkable",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_2_2",
+   "col": 2,
+   "row": 2,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1280.0,
+     -1152.0,
+     -5.0
+    ],
+    "max": [
+     -1152.0,
+     -1024.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0041435,
+    40.6926251,
+    -74.0026294,
+    40.693778
+   ],
+   "zone": "walkable",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_2_3",
+   "col": 2,
+   "row": 3,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1280.0,
+     -1024.0,
+     -5.0
+    ],
+    "max": [
+     -1152.0,
+     -896.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0041437,
+    40.6937778,
+    -74.0026296,
+    40.6949306
+   ],
+   "zone": "walkable",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_2_4",
+   "col": 2,
+   "row": 4,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1280.0,
+     -896.0,
+     -5.0
+    ],
+    "max": [
+     -1152.0,
+     -768.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.004144,
+    40.6949304,
+    -74.0026298,
+    40.6960833
+   ],
+   "zone": "walkable",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_2_5",
+   "col": 2,
+   "row": 5,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1280.0,
+     -768.0,
+     -5.0
+    ],
+    "max": [
+     -1152.0,
+     -640.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0041443,
+    40.6960831,
+    -74.0026301,
+    40.6972359
+   ],
+   "zone": "walkable",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_2_6",
+   "col": 2,
+   "row": 6,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1280.0,
+     -640.0,
+     -5.0
+    ],
+    "max": [
+     -1152.0,
+     -512.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0041445,
+    40.6972357,
+    -74.0026303,
+    40.6983886
+   ],
+   "zone": "walkable",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_2_7",
+   "col": 2,
+   "row": 7,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1280.0,
+     -512.0,
+     -5.0
+    ],
+    "max": [
+     -1152.0,
+     -384.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0041448,
+    40.6983884,
+    -74.0026305,
+    40.6995412
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_2_8",
+   "col": 2,
+   "row": 8,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1280.0,
+     -384.0,
+     -5.0
+    ],
+    "max": [
+     -1152.0,
+     -256.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.004145,
+    40.699541,
+    -74.0026308,
+    40.7006939
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_2_9",
+   "col": 2,
+   "row": 9,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1280.0,
+     -256.0,
+     -5.0
+    ],
+    "max": [
+     -1152.0,
+     -128.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0041453,
+    40.7006937,
+    -74.002631,
+    40.7018465
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_2_10",
+   "col": 2,
+   "row": 10,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1280.0,
+     -128.0,
+     -5.0
+    ],
+    "max": [
+     -1152.0,
+     0.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0041456,
+    40.7018464,
+    -74.0026312,
+    40.7029992
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_2_11",
+   "col": 2,
+   "row": 11,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1280.0,
+     0.0,
+     -5.0
+    ],
+    "max": [
+     -1152.0,
+     128.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0041458,
+    40.702999,
+    -74.0026315,
+    40.7041518
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_2_12",
+   "col": 2,
+   "row": 12,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1280.0,
+     128.0,
+     -5.0
+    ],
+    "max": [
+     -1152.0,
+     256.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0041461,
+    40.7041517,
+    -74.0026317,
+    40.7053045
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_2_13",
+   "col": 2,
+   "row": 13,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1280.0,
+     256.0,
+     -5.0
+    ],
+    "max": [
+     -1152.0,
+     384.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0041464,
+    40.7053043,
+    -74.002632,
+    40.7064572
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_3_0",
+   "col": 3,
+   "row": 0,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1152.0,
+     -1408.0,
+     -5.0
+    ],
+    "max": [
+     -1024.0,
+     -1280.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0026287,
+    40.69032,
+    -74.0011146,
+    40.6914728
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_3_1",
+   "col": 3,
+   "row": 1,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1152.0,
+     -1280.0,
+     -5.0
+    ],
+    "max": [
+     -1024.0,
+     -1152.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0026289,
+    40.6914727,
+    -74.0011148,
+    40.6926255
+   ],
+   "zone": "walkable",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_3_2",
+   "col": 3,
+   "row": 2,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1152.0,
+     -1152.0,
+     -5.0
+    ],
+    "max": [
+     -1024.0,
+     -1024.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0026291,
+    40.6926253,
+    -74.001115,
+    40.6937781
+   ],
+   "zone": "walkable",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_3_3",
+   "col": 3,
+   "row": 3,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1152.0,
+     -1024.0,
+     -5.0
+    ],
+    "max": [
+     -1024.0,
+     -896.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0026294,
+    40.693778,
+    -74.0011152,
+    40.6949308
+   ],
+   "zone": "walkable",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_3_4",
+   "col": 3,
+   "row": 4,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1152.0,
+     -896.0,
+     -5.0
+    ],
+    "max": [
+     -1024.0,
+     -768.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0026296,
+    40.6949306,
+    -74.0011154,
+    40.6960834
+   ],
+   "zone": "walkable",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_3_5",
+   "col": 3,
+   "row": 5,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1152.0,
+     -768.0,
+     -5.0
+    ],
+    "max": [
+     -1024.0,
+     -640.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0026298,
+    40.6960833,
+    -74.0011156,
+    40.6972361
+   ],
+   "zone": "walkable",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_3_6",
+   "col": 3,
+   "row": 6,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1152.0,
+     -640.0,
+     -5.0
+    ],
+    "max": [
+     -1024.0,
+     -512.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0026301,
+    40.6972359,
+    -74.0011158,
+    40.6983888
+   ],
+   "zone": "walkable",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_3_7",
+   "col": 3,
+   "row": 7,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1152.0,
+     -512.0,
+     -5.0
+    ],
+    "max": [
+     -1024.0,
+     -384.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0026303,
+    40.6983886,
+    -74.001116,
+    40.6995414
+   ],
+   "zone": "walkable",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_3_8",
+   "col": 3,
+   "row": 8,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1152.0,
+     -384.0,
+     -5.0
+    ],
+    "max": [
+     -1024.0,
+     -256.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0026305,
+    40.6995412,
+    -74.0011162,
+    40.7006941
+   ],
+   "zone": "walkable",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_3_9",
+   "col": 3,
+   "row": 9,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1152.0,
+     -256.0,
+     -5.0
+    ],
+    "max": [
+     -1024.0,
+     -128.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0026308,
+    40.7006939,
+    -74.0011165,
+    40.7018467
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_3_10",
+   "col": 3,
+   "row": 10,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1152.0,
+     -128.0,
+     -5.0
+    ],
+    "max": [
+     -1024.0,
+     0.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.002631,
+    40.7018465,
+    -74.0011167,
+    40.7029994
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_3_11",
+   "col": 3,
+   "row": 11,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1152.0,
+     0.0,
+     -5.0
+    ],
+    "max": [
+     -1024.0,
+     128.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0026312,
+    40.7029992,
+    -74.0011169,
+    40.704152
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_3_12",
+   "col": 3,
+   "row": 12,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1152.0,
+     128.0,
+     -5.0
+    ],
+    "max": [
+     -1024.0,
+     256.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0026315,
+    40.7041518,
+    -74.0011171,
+    40.7053047
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_3_13",
+   "col": 3,
+   "row": 13,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1152.0,
+     256.0,
+     -5.0
+    ],
+    "max": [
+     -1024.0,
+     384.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0026317,
+    40.7053045,
+    -74.0011173,
+    40.7064573
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_4_0",
+   "col": 4,
+   "row": 0,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1024.0,
+     -1408.0,
+     -5.0
+    ],
+    "max": [
+     -896.0,
+     -1280.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0011144,
+    40.6903202,
+    -73.9996003,
+    40.691473
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_4_1",
+   "col": 4,
+   "row": 1,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1024.0,
+     -1280.0,
+     -5.0
+    ],
+    "max": [
+     -896.0,
+     -1152.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0011146,
+    40.6914728,
+    -73.9996004,
+    40.6926256
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_4_2",
+   "col": 4,
+   "row": 2,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1024.0,
+     -1152.0,
+     -5.0
+    ],
+    "max": [
+     -896.0,
+     -1024.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0011148,
+    40.6926255,
+    -73.9996006,
+    40.6937783
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_4_3",
+   "col": 4,
+   "row": 3,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1024.0,
+     -1024.0,
+     -5.0
+    ],
+    "max": [
+     -896.0,
+     -896.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.001115,
+    40.6937781,
+    -73.9996008,
+    40.6949309
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_4_4",
+   "col": 4,
+   "row": 4,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1024.0,
+     -896.0,
+     -5.0
+    ],
+    "max": [
+     -896.0,
+     -768.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0011152,
+    40.6949308,
+    -73.999601,
+    40.6960836
+   ],
+   "zone": "walkable",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_4_5",
+   "col": 4,
+   "row": 5,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1024.0,
+     -768.0,
+     -5.0
+    ],
+    "max": [
+     -896.0,
+     -640.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0011154,
+    40.6960834,
+    -73.9996012,
+    40.6972362
+   ],
+   "zone": "walkable",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_4_6",
+   "col": 4,
+   "row": 6,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1024.0,
+     -640.0,
+     -5.0
+    ],
+    "max": [
+     -896.0,
+     -512.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0011156,
+    40.6972361,
+    -73.9996013,
+    40.6983889
+   ],
+   "zone": "walkable",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_4_7",
+   "col": 4,
+   "row": 7,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1024.0,
+     -512.0,
+     -5.0
+    ],
+    "max": [
+     -896.0,
+     -384.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0011158,
+    40.6983888,
+    -73.9996015,
+    40.6995416
+   ],
+   "zone": "walkable",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_4_8",
+   "col": 4,
+   "row": 8,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1024.0,
+     -384.0,
+     -5.0
+    ],
+    "max": [
+     -896.0,
+     -256.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.001116,
+    40.6995414,
+    -73.9996017,
+    40.7006942
+   ],
+   "zone": "walkable",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_4_9",
+   "col": 4,
+   "row": 9,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1024.0,
+     -256.0,
+     -5.0
+    ],
+    "max": [
+     -896.0,
+     -128.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0011162,
+    40.7006941,
+    -73.9996019,
+    40.7018469
+   ],
+   "zone": "walkable",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_4_10",
+   "col": 4,
+   "row": 10,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1024.0,
+     -128.0,
+     -5.0
+    ],
+    "max": [
+     -896.0,
+     0.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0011165,
+    40.7018467,
+    -73.9996021,
+    40.7029995
+   ],
+   "zone": "walkable",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_4_11",
+   "col": 4,
+   "row": 11,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1024.0,
+     0.0,
+     -5.0
+    ],
+    "max": [
+     -896.0,
+     128.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0011167,
+    40.7029994,
+    -73.9996023,
+    40.7041522
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_4_12",
+   "col": 4,
+   "row": 12,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1024.0,
+     128.0,
+     -5.0
+    ],
+    "max": [
+     -896.0,
+     256.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0011169,
+    40.704152,
+    -73.9996024,
+    40.7053048
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_4_13",
+   "col": 4,
+   "row": 13,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -1024.0,
+     256.0,
+     -5.0
+    ],
+    "max": [
+     -896.0,
+     384.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -74.0011171,
+    40.7053047,
+    -73.9996026,
+    40.7064575
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_5_0",
+   "col": 5,
+   "row": 0,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -896.0,
+     -1408.0,
+     -5.0
+    ],
+    "max": [
+     -768.0,
+     -1280.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9996001,
+    40.6903203,
+    -73.9980859,
+    40.6914731
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_5_1",
+   "col": 5,
+   "row": 1,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -896.0,
+     -1280.0,
+     -5.0
+    ],
+    "max": [
+     -768.0,
+     -1152.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9996003,
+    40.691473,
+    -73.9980861,
+    40.6926258
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_5_2",
+   "col": 5,
+   "row": 2,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -896.0,
+     -1152.0,
+     -5.0
+    ],
+    "max": [
+     -768.0,
+     -1024.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9996004,
+    40.6926256,
+    -73.9980862,
+    40.6937784
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_5_3",
+   "col": 5,
+   "row": 3,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -896.0,
+     -1024.0,
+     -5.0
+    ],
+    "max": [
+     -768.0,
+     -896.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9996006,
+    40.6937783,
+    -73.9980864,
+    40.6949311
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_5_4",
+   "col": 5,
+   "row": 4,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -896.0,
+     -896.0,
+     -5.0
+    ],
+    "max": [
+     -768.0,
+     -768.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9996008,
+    40.6949309,
+    -73.9980866,
+    40.6960837
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_5_5",
+   "col": 5,
+   "row": 5,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -896.0,
+     -768.0,
+     -5.0
+    ],
+    "max": [
+     -768.0,
+     -640.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.999601,
+    40.6960836,
+    -73.9980867,
+    40.6972364
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_5_6",
+   "col": 5,
+   "row": 6,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -47,14 +2099,14 @@
     -73.9980869,
     40.698389
    ],
-   "zone": "context",
+   "zone": "walkable",
    "asset_count": 0,
    "content": []
   },
   {
-   "tile_id": "t_0_1",
-   "col": 0,
-   "row": 1,
+   "tile_id": "t_5_7",
+   "col": 5,
+   "row": 7,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -74,14 +2126,14 @@
     -73.998087,
     40.6995417
    ],
-   "zone": "context",
+   "zone": "walkable",
    "asset_count": 0,
    "content": []
   },
   {
-   "tile_id": "t_0_2",
-   "col": 0,
-   "row": 2,
+   "tile_id": "t_5_8",
+   "col": 5,
+   "row": 8,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -101,14 +2153,14 @@
     -73.9980872,
     40.7006943
    ],
-   "zone": "context",
+   "zone": "walkable",
    "asset_count": 0,
    "content": []
   },
   {
-   "tile_id": "t_0_3",
-   "col": 0,
-   "row": 3,
+   "tile_id": "t_5_9",
+   "col": 5,
+   "row": 9,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -128,14 +2180,14 @@
     -73.9980873,
     40.701847
    ],
-   "zone": "context",
+   "zone": "walkable",
    "asset_count": 0,
    "content": []
   },
   {
-   "tile_id": "t_0_4",
-   "col": 0,
-   "row": 4,
+   "tile_id": "t_5_10",
+   "col": 5,
+   "row": 10,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -155,14 +2207,14 @@
     -73.9980875,
     40.7029996
    ],
-   "zone": "context",
+   "zone": "walkable",
    "asset_count": 0,
    "content": []
   },
   {
-   "tile_id": "t_0_5",
-   "col": 0,
-   "row": 5,
+   "tile_id": "t_5_11",
+   "col": 5,
+   "row": 11,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -182,14 +2234,14 @@
     -73.9980877,
     40.7041523
    ],
-   "zone": "context",
+   "zone": "hero",
    "asset_count": 0,
    "content": []
   },
   {
-   "tile_id": "t_0_6",
-   "col": 0,
-   "row": 6,
+   "tile_id": "t_5_12",
+   "col": 5,
+   "row": 12,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -214,9 +2266,9 @@
    "content": []
   },
   {
-   "tile_id": "t_0_7",
-   "col": 0,
-   "row": 7,
+   "tile_id": "t_5_13",
+   "col": 5,
+   "row": 13,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -241,9 +2293,171 @@
    "content": []
   },
   {
-   "tile_id": "t_1_0",
-   "col": 1,
+   "tile_id": "t_6_0",
+   "col": 6,
    "row": 0,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -768.0,
+     -1408.0,
+     -5.0
+    ],
+    "max": [
+     -640.0,
+     -1280.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9980858,
+    40.6903204,
+    -73.9965716,
+    40.6914732
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_6_1",
+   "col": 6,
+   "row": 1,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -768.0,
+     -1280.0,
+     -5.0
+    ],
+    "max": [
+     -640.0,
+     -1152.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9980859,
+    40.6914731,
+    -73.9965717,
+    40.6926259
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_6_2",
+   "col": 6,
+   "row": 2,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -768.0,
+     -1152.0,
+     -5.0
+    ],
+    "max": [
+     -640.0,
+     -1024.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9980861,
+    40.6926258,
+    -73.9965719,
+    40.6937785
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_6_3",
+   "col": 6,
+   "row": 3,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -768.0,
+     -1024.0,
+     -5.0
+    ],
+    "max": [
+     -640.0,
+     -896.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9980862,
+    40.6937784,
+    -73.996572,
+    40.6949312
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_6_4",
+   "col": 6,
+   "row": 4,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -768.0,
+     -896.0,
+     -5.0
+    ],
+    "max": [
+     -640.0,
+     -768.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9980864,
+    40.6949311,
+    -73.9965721,
+    40.6960838
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_6_5",
+   "col": 6,
+   "row": 5,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -768.0,
+     -768.0,
+     -5.0
+    ],
+    "max": [
+     -640.0,
+     -640.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9980866,
+    40.6960837,
+    -73.9965723,
+    40.6972365
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_6_6",
+   "col": 6,
+   "row": 6,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -268,9 +2482,9 @@
    "content": []
   },
   {
-   "tile_id": "t_1_1",
-   "col": 1,
-   "row": 1,
+   "tile_id": "t_6_7",
+   "col": 6,
+   "row": 7,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -295,9 +2509,9 @@
    "content": []
   },
   {
-   "tile_id": "t_1_2",
-   "col": 1,
-   "row": 2,
+   "tile_id": "t_6_8",
+   "col": 6,
+   "row": 8,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -317,14 +2531,14 @@
     -73.9965727,
     40.7006944
    ],
-   "zone": "context",
+   "zone": "walkable",
    "asset_count": 0,
    "content": []
   },
   {
-   "tile_id": "t_1_3",
-   "col": 1,
-   "row": 3,
+   "tile_id": "t_6_9",
+   "col": 6,
+   "row": 9,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -349,9 +2563,9 @@
    "content": []
   },
   {
-   "tile_id": "t_1_4",
-   "col": 1,
-   "row": 4,
+   "tile_id": "t_6_10",
+   "col": 6,
+   "row": 10,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -376,9 +2590,9 @@
    "content": []
   },
   {
-   "tile_id": "t_1_5",
-   "col": 1,
-   "row": 5,
+   "tile_id": "t_6_11",
+   "col": 6,
+   "row": 11,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -403,9 +2617,9 @@
    "content": []
   },
   {
-   "tile_id": "t_1_6",
-   "col": 1,
-   "row": 6,
+   "tile_id": "t_6_12",
+   "col": 6,
+   "row": 12,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -425,14 +2639,14 @@
     -73.9965732,
     40.7053051
    ],
-   "zone": "context",
+   "zone": "walkable",
    "asset_count": 0,
    "content": []
   },
   {
-   "tile_id": "t_1_7",
-   "col": 1,
-   "row": 7,
+   "tile_id": "t_6_13",
+   "col": 6,
+   "row": 13,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -457,9 +2671,171 @@
    "content": []
   },
   {
-   "tile_id": "t_2_0",
-   "col": 2,
+   "tile_id": "t_7_0",
+   "col": 7,
    "row": 0,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -640.0,
+     -1408.0,
+     -5.0
+    ],
+    "max": [
+     -512.0,
+     -1280.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9965715,
+    40.6903206,
+    -73.9950573,
+    40.6914733
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_7_1",
+   "col": 7,
+   "row": 1,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -640.0,
+     -1280.0,
+     -5.0
+    ],
+    "max": [
+     -512.0,
+     -1152.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9965716,
+    40.6914732,
+    -73.9950574,
+    40.692626
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_7_2",
+   "col": 7,
+   "row": 2,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -640.0,
+     -1152.0,
+     -5.0
+    ],
+    "max": [
+     -512.0,
+     -1024.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9965717,
+    40.6926259,
+    -73.9950575,
+    40.6937786
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_7_3",
+   "col": 7,
+   "row": 3,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -640.0,
+     -1024.0,
+     -5.0
+    ],
+    "max": [
+     -512.0,
+     -896.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9965719,
+    40.6937785,
+    -73.9950576,
+    40.6949313
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_7_4",
+   "col": 7,
+   "row": 4,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -640.0,
+     -896.0,
+     -5.0
+    ],
+    "max": [
+     -512.0,
+     -768.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.996572,
+    40.6949312,
+    -73.9950577,
+    40.6960839
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_7_5",
+   "col": 7,
+   "row": 5,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -640.0,
+     -768.0,
+     -5.0
+    ],
+    "max": [
+     -512.0,
+     -640.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9965721,
+    40.6960838,
+    -73.9950578,
+    40.6972366
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_7_6",
+   "col": 7,
+   "row": 6,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -484,9 +2860,9 @@
    "content": []
   },
   {
-   "tile_id": "t_2_1",
-   "col": 2,
-   "row": 1,
+   "tile_id": "t_7_7",
+   "col": 7,
+   "row": 7,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -511,9 +2887,9 @@
    "content": []
   },
   {
-   "tile_id": "t_2_2",
-   "col": 2,
-   "row": 2,
+   "tile_id": "t_7_8",
+   "col": 7,
+   "row": 8,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -538,9 +2914,9 @@
    "content": []
   },
   {
-   "tile_id": "t_2_3",
-   "col": 2,
-   "row": 3,
+   "tile_id": "t_7_9",
+   "col": 7,
+   "row": 9,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -565,9 +2941,9 @@
    "content": []
   },
   {
-   "tile_id": "t_2_4",
-   "col": 2,
-   "row": 4,
+   "tile_id": "t_7_10",
+   "col": 7,
+   "row": 10,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -592,9 +2968,9 @@
    "content": []
   },
   {
-   "tile_id": "t_2_5",
-   "col": 2,
-   "row": 5,
+   "tile_id": "t_7_11",
+   "col": 7,
+   "row": 11,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -619,9 +2995,9 @@
    "content": []
   },
   {
-   "tile_id": "t_2_6",
-   "col": 2,
-   "row": 6,
+   "tile_id": "t_7_12",
+   "col": 7,
+   "row": 12,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -646,9 +3022,9 @@
    "content": []
   },
   {
-   "tile_id": "t_2_7",
-   "col": 2,
-   "row": 7,
+   "tile_id": "t_7_13",
+   "col": 7,
+   "row": 13,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -673,9 +3049,171 @@
    "content": []
   },
   {
-   "tile_id": "t_3_0",
-   "col": 3,
+   "tile_id": "t_8_0",
+   "col": 8,
    "row": 0,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -512.0,
+     -1408.0,
+     -5.0
+    ],
+    "max": [
+     -384.0,
+     -1280.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9950572,
+    40.6903206,
+    -73.993543,
+    40.6914734
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_8_1",
+   "col": 8,
+   "row": 1,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -512.0,
+     -1280.0,
+     -5.0
+    ],
+    "max": [
+     -384.0,
+     -1152.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9950573,
+    40.6914733,
+    -73.993543,
+    40.692626
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_8_2",
+   "col": 8,
+   "row": 2,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -512.0,
+     -1152.0,
+     -5.0
+    ],
+    "max": [
+     -384.0,
+     -1024.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9950574,
+    40.692626,
+    -73.9935431,
+    40.6937787
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_8_3",
+   "col": 8,
+   "row": 3,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -512.0,
+     -1024.0,
+     -5.0
+    ],
+    "max": [
+     -384.0,
+     -896.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9950575,
+    40.6937786,
+    -73.9935432,
+    40.6949313
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_8_4",
+   "col": 8,
+   "row": 4,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -512.0,
+     -896.0,
+     -5.0
+    ],
+    "max": [
+     -384.0,
+     -768.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9950576,
+    40.6949313,
+    -73.9935433,
+    40.696084
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_8_5",
+   "col": 8,
+   "row": 5,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -512.0,
+     -768.0,
+     -5.0
+    ],
+    "max": [
+     -384.0,
+     -640.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9950577,
+    40.6960839,
+    -73.9935434,
+    40.6972366
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_8_6",
+   "col": 8,
+   "row": 6,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -700,9 +3238,9 @@
    "content": []
   },
   {
-   "tile_id": "t_3_1",
-   "col": 3,
-   "row": 1,
+   "tile_id": "t_8_7",
+   "col": 8,
+   "row": 7,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -727,9 +3265,9 @@
    "content": []
   },
   {
-   "tile_id": "t_3_2",
-   "col": 3,
-   "row": 2,
+   "tile_id": "t_8_8",
+   "col": 8,
+   "row": 8,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -754,9 +3292,9 @@
    "content": []
   },
   {
-   "tile_id": "t_3_3",
-   "col": 3,
-   "row": 3,
+   "tile_id": "t_8_9",
+   "col": 8,
+   "row": 9,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -781,9 +3319,9 @@
    "content": []
   },
   {
-   "tile_id": "t_3_4",
-   "col": 3,
-   "row": 4,
+   "tile_id": "t_8_10",
+   "col": 8,
+   "row": 10,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -808,9 +3346,9 @@
    "content": []
   },
   {
-   "tile_id": "t_3_5",
-   "col": 3,
-   "row": 5,
+   "tile_id": "t_8_11",
+   "col": 8,
+   "row": 11,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -835,9 +3373,9 @@
    "content": []
   },
   {
-   "tile_id": "t_3_6",
-   "col": 3,
-   "row": 6,
+   "tile_id": "t_8_12",
+   "col": 8,
+   "row": 12,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -862,9 +3400,9 @@
    "content": []
   },
   {
-   "tile_id": "t_3_7",
-   "col": 3,
-   "row": 7,
+   "tile_id": "t_8_13",
+   "col": 8,
+   "row": 13,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -889,9 +3427,171 @@
    "content": []
   },
   {
-   "tile_id": "t_4_0",
-   "col": 4,
+   "tile_id": "t_9_0",
+   "col": 9,
    "row": 0,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -384.0,
+     -1408.0,
+     -5.0
+    ],
+    "max": [
+     -256.0,
+     -1280.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9935429,
+    40.6903207,
+    -73.9920286,
+    40.6914734
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_9_1",
+   "col": 9,
+   "row": 1,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -384.0,
+     -1280.0,
+     -5.0
+    ],
+    "max": [
+     -256.0,
+     -1152.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.993543,
+    40.6914734,
+    -73.9920287,
+    40.6926261
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_9_2",
+   "col": 9,
+   "row": 2,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -384.0,
+     -1152.0,
+     -5.0
+    ],
+    "max": [
+     -256.0,
+     -1024.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.993543,
+    40.692626,
+    -73.9920287,
+    40.6937787
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_9_3",
+   "col": 9,
+   "row": 3,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -384.0,
+     -1024.0,
+     -5.0
+    ],
+    "max": [
+     -256.0,
+     -896.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9935431,
+    40.6937787,
+    -73.9920288,
+    40.6949314
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_9_4",
+   "col": 9,
+   "row": 4,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -384.0,
+     -896.0,
+     -5.0
+    ],
+    "max": [
+     -256.0,
+     -768.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9935432,
+    40.6949313,
+    -73.9920289,
+    40.696084
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_9_5",
+   "col": 9,
+   "row": 5,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -384.0,
+     -768.0,
+     -5.0
+    ],
+    "max": [
+     -256.0,
+     -640.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9935433,
+    40.696084,
+    -73.9920289,
+    40.6972367
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_9_6",
+   "col": 9,
+   "row": 6,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -916,9 +3616,9 @@
    "content": []
   },
   {
-   "tile_id": "t_4_1",
-   "col": 4,
-   "row": 1,
+   "tile_id": "t_9_7",
+   "col": 9,
+   "row": 7,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -943,9 +3643,9 @@
    "content": []
   },
   {
-   "tile_id": "t_4_2",
-   "col": 4,
-   "row": 2,
+   "tile_id": "t_9_8",
+   "col": 9,
+   "row": 8,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -970,9 +3670,9 @@
    "content": []
   },
   {
-   "tile_id": "t_4_3",
-   "col": 4,
-   "row": 3,
+   "tile_id": "t_9_9",
+   "col": 9,
+   "row": 9,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -997,9 +3697,9 @@
    "content": []
   },
   {
-   "tile_id": "t_4_4",
-   "col": 4,
-   "row": 4,
+   "tile_id": "t_9_10",
+   "col": 9,
+   "row": 10,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1024,9 +3724,9 @@
    "content": []
   },
   {
-   "tile_id": "t_4_5",
-   "col": 4,
-   "row": 5,
+   "tile_id": "t_9_11",
+   "col": 9,
+   "row": 11,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1051,9 +3751,9 @@
    "content": []
   },
   {
-   "tile_id": "t_4_6",
-   "col": 4,
-   "row": 6,
+   "tile_id": "t_9_12",
+   "col": 9,
+   "row": 12,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1078,9 +3778,9 @@
    "content": []
   },
   {
-   "tile_id": "t_4_7",
-   "col": 4,
-   "row": 7,
+   "tile_id": "t_9_13",
+   "col": 9,
+   "row": 13,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1105,9 +3805,171 @@
    "content": []
   },
   {
-   "tile_id": "t_5_0",
-   "col": 5,
+   "tile_id": "t_10_0",
+   "col": 10,
    "row": 0,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -256.0,
+     -1408.0,
+     -5.0
+    ],
+    "max": [
+     -128.0,
+     -1280.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9920286,
+    40.6903208,
+    -73.9905143,
+    40.6914734
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_10_1",
+   "col": 10,
+   "row": 1,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -256.0,
+     -1280.0,
+     -5.0
+    ],
+    "max": [
+     -128.0,
+     -1152.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9920286,
+    40.6914734,
+    -73.9905143,
+    40.6926261
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_10_2",
+   "col": 10,
+   "row": 2,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -256.0,
+     -1152.0,
+     -5.0
+    ],
+    "max": [
+     -128.0,
+     -1024.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9920287,
+    40.6926261,
+    -73.9905144,
+    40.6937788
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_10_3",
+   "col": 10,
+   "row": 3,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -256.0,
+     -1024.0,
+     -5.0
+    ],
+    "max": [
+     -128.0,
+     -896.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9920287,
+    40.6937787,
+    -73.9905144,
+    40.6949314
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_10_4",
+   "col": 10,
+   "row": 4,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -256.0,
+     -896.0,
+     -5.0
+    ],
+    "max": [
+     -128.0,
+     -768.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9920288,
+    40.6949314,
+    -73.9905144,
+    40.6960841
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_10_5",
+   "col": 10,
+   "row": 5,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -256.0,
+     -768.0,
+     -5.0
+    ],
+    "max": [
+     -128.0,
+     -640.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9920289,
+    40.696084,
+    -73.9905145,
+    40.6972367
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_10_6",
+   "col": 10,
+   "row": 6,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1132,9 +3994,9 @@
    "content": []
   },
   {
-   "tile_id": "t_5_1",
-   "col": 5,
-   "row": 1,
+   "tile_id": "t_10_7",
+   "col": 10,
+   "row": 7,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1159,9 +4021,9 @@
    "content": []
   },
   {
-   "tile_id": "t_5_2",
-   "col": 5,
-   "row": 2,
+   "tile_id": "t_10_8",
+   "col": 10,
+   "row": 8,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1186,9 +4048,9 @@
    "content": []
   },
   {
-   "tile_id": "t_5_3",
-   "col": 5,
-   "row": 3,
+   "tile_id": "t_10_9",
+   "col": 10,
+   "row": 9,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1213,9 +4075,9 @@
    "content": []
   },
   {
-   "tile_id": "t_5_4",
-   "col": 5,
-   "row": 4,
+   "tile_id": "t_10_10",
+   "col": 10,
+   "row": 10,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1240,9 +4102,9 @@
    "content": []
   },
   {
-   "tile_id": "t_5_5",
-   "col": 5,
-   "row": 5,
+   "tile_id": "t_10_11",
+   "col": 10,
+   "row": 11,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1267,9 +4129,9 @@
    "content": []
   },
   {
-   "tile_id": "t_5_6",
-   "col": 5,
-   "row": 6,
+   "tile_id": "t_10_12",
+   "col": 10,
+   "row": 12,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1294,9 +4156,9 @@
    "content": []
   },
   {
-   "tile_id": "t_5_7",
-   "col": 5,
-   "row": 7,
+   "tile_id": "t_10_13",
+   "col": 10,
+   "row": 13,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1321,9 +4183,171 @@
    "content": []
   },
   {
-   "tile_id": "t_6_0",
-   "col": 6,
+   "tile_id": "t_11_0",
+   "col": 11,
    "row": 0,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -128.0,
+     -1408.0,
+     -5.0
+    ],
+    "max": [
+     0.0,
+     -1280.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9905143,
+    40.6903208,
+    -73.989,
+    40.6914735
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_11_1",
+   "col": 11,
+   "row": 1,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -128.0,
+     -1280.0,
+     -5.0
+    ],
+    "max": [
+     0.0,
+     -1152.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9905143,
+    40.6914734,
+    -73.989,
+    40.6926261
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_11_2",
+   "col": 11,
+   "row": 2,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -128.0,
+     -1152.0,
+     -5.0
+    ],
+    "max": [
+     0.0,
+     -1024.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9905143,
+    40.6926261,
+    -73.989,
+    40.6937788
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_11_3",
+   "col": 11,
+   "row": 3,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -128.0,
+     -1024.0,
+     -5.0
+    ],
+    "max": [
+     0.0,
+     -896.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9905144,
+    40.6937788,
+    -73.989,
+    40.6949314
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_11_4",
+   "col": 11,
+   "row": 4,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -128.0,
+     -896.0,
+     -5.0
+    ],
+    "max": [
+     0.0,
+     -768.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9905144,
+    40.6949314,
+    -73.989,
+    40.6960841
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_11_5",
+   "col": 11,
+   "row": 5,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     -128.0,
+     -768.0,
+     -5.0
+    ],
+    "max": [
+     0.0,
+     -640.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9905144,
+    40.6960841,
+    -73.989,
+    40.6972367
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_11_6",
+   "col": 11,
+   "row": 6,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1348,9 +4372,9 @@
    "content": []
   },
   {
-   "tile_id": "t_6_1",
-   "col": 6,
-   "row": 1,
+   "tile_id": "t_11_7",
+   "col": 11,
+   "row": 7,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1375,9 +4399,9 @@
    "content": []
   },
   {
-   "tile_id": "t_6_2",
-   "col": 6,
-   "row": 2,
+   "tile_id": "t_11_8",
+   "col": 11,
+   "row": 8,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1402,9 +4426,9 @@
    "content": []
   },
   {
-   "tile_id": "t_6_3",
-   "col": 6,
-   "row": 3,
+   "tile_id": "t_11_9",
+   "col": 11,
+   "row": 9,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1429,9 +4453,9 @@
    "content": []
   },
   {
-   "tile_id": "t_6_4",
-   "col": 6,
-   "row": 4,
+   "tile_id": "t_11_10",
+   "col": 11,
+   "row": 10,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1456,9 +4480,9 @@
    "content": []
   },
   {
-   "tile_id": "t_6_5",
-   "col": 6,
-   "row": 5,
+   "tile_id": "t_11_11",
+   "col": 11,
+   "row": 11,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1483,9 +4507,9 @@
    "content": []
   },
   {
-   "tile_id": "t_6_6",
-   "col": 6,
-   "row": 6,
+   "tile_id": "t_11_12",
+   "col": 11,
+   "row": 12,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1510,9 +4534,9 @@
    "content": []
   },
   {
-   "tile_id": "t_6_7",
-   "col": 6,
-   "row": 7,
+   "tile_id": "t_11_13",
+   "col": 11,
+   "row": 13,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1537,9 +4561,171 @@
    "content": []
   },
   {
-   "tile_id": "t_7_0",
-   "col": 7,
+   "tile_id": "t_12_0",
+   "col": 12,
    "row": 0,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     0.0,
+     -1408.0,
+     -5.0
+    ],
+    "max": [
+     128.0,
+     -1280.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.989,
+    40.6903208,
+    -73.9874857,
+    40.6914734
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_12_1",
+   "col": 12,
+   "row": 1,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     0.0,
+     -1280.0,
+     -5.0
+    ],
+    "max": [
+     128.0,
+     -1152.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.989,
+    40.6914735,
+    -73.9874857,
+    40.6926261
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_12_2",
+   "col": 12,
+   "row": 2,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     0.0,
+     -1152.0,
+     -5.0
+    ],
+    "max": [
+     128.0,
+     -1024.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.989,
+    40.6926261,
+    -73.9874856,
+    40.6937788
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_12_3",
+   "col": 12,
+   "row": 3,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     0.0,
+     -1024.0,
+     -5.0
+    ],
+    "max": [
+     128.0,
+     -896.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.989,
+    40.6937788,
+    -73.9874856,
+    40.6949314
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_12_4",
+   "col": 12,
+   "row": 4,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     0.0,
+     -896.0,
+     -5.0
+    ],
+    "max": [
+     128.0,
+     -768.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.989,
+    40.6949314,
+    -73.9874856,
+    40.6960841
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_12_5",
+   "col": 12,
+   "row": 5,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     0.0,
+     -768.0,
+     -5.0
+    ],
+    "max": [
+     128.0,
+     -640.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.989,
+    40.6960841,
+    -73.9874855,
+    40.6972367
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_12_6",
+   "col": 12,
+   "row": 6,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1564,9 +4750,9 @@
    "content": []
   },
   {
-   "tile_id": "t_7_1",
-   "col": 7,
-   "row": 1,
+   "tile_id": "t_12_7",
+   "col": 12,
+   "row": 7,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1591,9 +4777,9 @@
    "content": []
   },
   {
-   "tile_id": "t_7_2",
-   "col": 7,
-   "row": 2,
+   "tile_id": "t_12_8",
+   "col": 12,
+   "row": 8,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1618,9 +4804,9 @@
    "content": []
   },
   {
-   "tile_id": "t_7_3",
-   "col": 7,
-   "row": 3,
+   "tile_id": "t_12_9",
+   "col": 12,
+   "row": 9,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1645,9 +4831,9 @@
    "content": []
   },
   {
-   "tile_id": "t_7_4",
-   "col": 7,
-   "row": 4,
+   "tile_id": "t_12_10",
+   "col": 12,
+   "row": 10,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1672,9 +4858,9 @@
    "content": []
   },
   {
-   "tile_id": "t_7_5",
-   "col": 7,
-   "row": 5,
+   "tile_id": "t_12_11",
+   "col": 12,
+   "row": 11,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1699,9 +4885,9 @@
    "content": []
   },
   {
-   "tile_id": "t_7_6",
-   "col": 7,
-   "row": 6,
+   "tile_id": "t_12_12",
+   "col": 12,
+   "row": 12,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1726,9 +4912,9 @@
    "content": []
   },
   {
-   "tile_id": "t_7_7",
-   "col": 7,
-   "row": 7,
+   "tile_id": "t_12_13",
+   "col": 12,
+   "row": 13,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1753,9 +4939,171 @@
    "content": []
   },
   {
-   "tile_id": "t_8_0",
-   "col": 8,
+   "tile_id": "t_13_0",
+   "col": 13,
    "row": 0,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     128.0,
+     -1408.0,
+     -5.0
+    ],
+    "max": [
+     256.0,
+     -1280.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9874857,
+    40.6903208,
+    -73.9859714,
+    40.6914734
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_13_1",
+   "col": 13,
+   "row": 1,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     128.0,
+     -1280.0,
+     -5.0
+    ],
+    "max": [
+     256.0,
+     -1152.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9874857,
+    40.6914734,
+    -73.9859713,
+    40.6926261
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_13_2",
+   "col": 13,
+   "row": 2,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     128.0,
+     -1152.0,
+     -5.0
+    ],
+    "max": [
+     256.0,
+     -1024.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9874857,
+    40.6926261,
+    -73.9859713,
+    40.6937787
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_13_3",
+   "col": 13,
+   "row": 3,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     128.0,
+     -1024.0,
+     -5.0
+    ],
+    "max": [
+     256.0,
+     -896.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9874856,
+    40.6937788,
+    -73.9859712,
+    40.6949314
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_13_4",
+   "col": 13,
+   "row": 4,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     128.0,
+     -896.0,
+     -5.0
+    ],
+    "max": [
+     256.0,
+     -768.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9874856,
+    40.6949314,
+    -73.9859711,
+    40.696084
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_13_5",
+   "col": 13,
+   "row": 5,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     128.0,
+     -768.0,
+     -5.0
+    ],
+    "max": [
+     256.0,
+     -640.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9874856,
+    40.6960841,
+    -73.9859711,
+    40.6972367
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_13_6",
+   "col": 13,
+   "row": 6,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1780,9 +5128,9 @@
    "content": []
   },
   {
-   "tile_id": "t_8_1",
-   "col": 8,
-   "row": 1,
+   "tile_id": "t_13_7",
+   "col": 13,
+   "row": 7,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1807,9 +5155,9 @@
    "content": []
   },
   {
-   "tile_id": "t_8_2",
-   "col": 8,
-   "row": 2,
+   "tile_id": "t_13_8",
+   "col": 13,
+   "row": 8,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1834,9 +5182,9 @@
    "content": []
   },
   {
-   "tile_id": "t_8_3",
-   "col": 8,
-   "row": 3,
+   "tile_id": "t_13_9",
+   "col": 13,
+   "row": 9,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1861,9 +5209,9 @@
    "content": []
   },
   {
-   "tile_id": "t_8_4",
-   "col": 8,
-   "row": 4,
+   "tile_id": "t_13_10",
+   "col": 13,
+   "row": 10,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1888,9 +5236,9 @@
    "content": []
   },
   {
-   "tile_id": "t_8_5",
-   "col": 8,
-   "row": 5,
+   "tile_id": "t_13_11",
+   "col": 13,
+   "row": 11,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1915,9 +5263,9 @@
    "content": []
   },
   {
-   "tile_id": "t_8_6",
-   "col": 8,
-   "row": 6,
+   "tile_id": "t_13_12",
+   "col": 13,
+   "row": 12,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1942,9 +5290,9 @@
    "content": []
   },
   {
-   "tile_id": "t_8_7",
-   "col": 8,
-   "row": 7,
+   "tile_id": "t_13_13",
+   "col": 13,
+   "row": 13,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1969,9 +5317,171 @@
    "content": []
   },
   {
-   "tile_id": "t_9_0",
-   "col": 9,
+   "tile_id": "t_14_0",
+   "col": 14,
    "row": 0,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     256.0,
+     -1408.0,
+     -5.0
+    ],
+    "max": [
+     384.0,
+     -1280.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9859714,
+    40.6903208,
+    -73.984457,
+    40.6914734
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_14_1",
+   "col": 14,
+   "row": 1,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     256.0,
+     -1280.0,
+     -5.0
+    ],
+    "max": [
+     384.0,
+     -1152.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9859714,
+    40.6914734,
+    -73.984457,
+    40.692626
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_14_2",
+   "col": 14,
+   "row": 2,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     256.0,
+     -1152.0,
+     -5.0
+    ],
+    "max": [
+     384.0,
+     -1024.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9859713,
+    40.6926261,
+    -73.9844569,
+    40.6937787
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_14_3",
+   "col": 14,
+   "row": 3,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     256.0,
+     -1024.0,
+     -5.0
+    ],
+    "max": [
+     384.0,
+     -896.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9859713,
+    40.6937787,
+    -73.9844568,
+    40.6949313
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_14_4",
+   "col": 14,
+   "row": 4,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     256.0,
+     -896.0,
+     -5.0
+    ],
+    "max": [
+     384.0,
+     -768.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9859712,
+    40.6949314,
+    -73.9844567,
+    40.696084
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_14_5",
+   "col": 14,
+   "row": 5,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     256.0,
+     -768.0,
+     -5.0
+    ],
+    "max": [
+     384.0,
+     -640.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9859711,
+    40.696084,
+    -73.9844566,
+    40.6972366
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_14_6",
+   "col": 14,
+   "row": 6,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -1996,9 +5506,9 @@
    "content": []
   },
   {
-   "tile_id": "t_9_1",
-   "col": 9,
-   "row": 1,
+   "tile_id": "t_14_7",
+   "col": 14,
+   "row": 7,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2023,9 +5533,9 @@
    "content": []
   },
   {
-   "tile_id": "t_9_2",
-   "col": 9,
-   "row": 2,
+   "tile_id": "t_14_8",
+   "col": 14,
+   "row": 8,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2050,9 +5560,9 @@
    "content": []
   },
   {
-   "tile_id": "t_9_3",
-   "col": 9,
-   "row": 3,
+   "tile_id": "t_14_9",
+   "col": 14,
+   "row": 9,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2077,9 +5587,9 @@
    "content": []
   },
   {
-   "tile_id": "t_9_4",
-   "col": 9,
-   "row": 4,
+   "tile_id": "t_14_10",
+   "col": 14,
+   "row": 10,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2104,9 +5614,9 @@
    "content": []
   },
   {
-   "tile_id": "t_9_5",
-   "col": 9,
-   "row": 5,
+   "tile_id": "t_14_11",
+   "col": 14,
+   "row": 11,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2131,9 +5641,9 @@
    "content": []
   },
   {
-   "tile_id": "t_9_6",
-   "col": 9,
-   "row": 6,
+   "tile_id": "t_14_12",
+   "col": 14,
+   "row": 12,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2158,9 +5668,9 @@
    "content": []
   },
   {
-   "tile_id": "t_9_7",
-   "col": 9,
-   "row": 7,
+   "tile_id": "t_14_13",
+   "col": 14,
+   "row": 13,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2185,9 +5695,171 @@
    "content": []
   },
   {
-   "tile_id": "t_10_0",
-   "col": 10,
+   "tile_id": "t_15_0",
+   "col": 15,
    "row": 0,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     384.0,
+     -1408.0,
+     -5.0
+    ],
+    "max": [
+     512.0,
+     -1280.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9844571,
+    40.6903207,
+    -73.9829427,
+    40.6914733
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_15_1",
+   "col": 15,
+   "row": 1,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     384.0,
+     -1280.0,
+     -5.0
+    ],
+    "max": [
+     512.0,
+     -1152.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.984457,
+    40.6914734,
+    -73.9829426,
+    40.692626
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_15_2",
+   "col": 15,
+   "row": 2,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     384.0,
+     -1152.0,
+     -5.0
+    ],
+    "max": [
+     512.0,
+     -1024.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.984457,
+    40.692626,
+    -73.9829425,
+    40.6937786
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_15_3",
+   "col": 15,
+   "row": 3,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     384.0,
+     -1024.0,
+     -5.0
+    ],
+    "max": [
+     512.0,
+     -896.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9844569,
+    40.6937787,
+    -73.9829424,
+    40.6949313
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_15_4",
+   "col": 15,
+   "row": 4,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     384.0,
+     -896.0,
+     -5.0
+    ],
+    "max": [
+     512.0,
+     -768.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9844568,
+    40.6949313,
+    -73.9829423,
+    40.6960839
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_15_5",
+   "col": 15,
+   "row": 5,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     384.0,
+     -768.0,
+     -5.0
+    ],
+    "max": [
+     512.0,
+     -640.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9844567,
+    40.696084,
+    -73.9829422,
+    40.6972366
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_15_6",
+   "col": 15,
+   "row": 6,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2212,9 +5884,9 @@
    "content": []
   },
   {
-   "tile_id": "t_10_1",
-   "col": 10,
-   "row": 1,
+   "tile_id": "t_15_7",
+   "col": 15,
+   "row": 7,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2239,9 +5911,9 @@
    "content": []
   },
   {
-   "tile_id": "t_10_2",
-   "col": 10,
-   "row": 2,
+   "tile_id": "t_15_8",
+   "col": 15,
+   "row": 8,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2266,9 +5938,9 @@
    "content": []
   },
   {
-   "tile_id": "t_10_3",
-   "col": 10,
-   "row": 3,
+   "tile_id": "t_15_9",
+   "col": 15,
+   "row": 9,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2293,9 +5965,9 @@
    "content": []
   },
   {
-   "tile_id": "t_10_4",
-   "col": 10,
-   "row": 4,
+   "tile_id": "t_15_10",
+   "col": 15,
+   "row": 10,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2320,9 +5992,9 @@
    "content": []
   },
   {
-   "tile_id": "t_10_5",
-   "col": 10,
-   "row": 5,
+   "tile_id": "t_15_11",
+   "col": 15,
+   "row": 11,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2347,9 +6019,9 @@
    "content": []
   },
   {
-   "tile_id": "t_10_6",
-   "col": 10,
-   "row": 6,
+   "tile_id": "t_15_12",
+   "col": 15,
+   "row": 12,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2374,9 +6046,9 @@
    "content": []
   },
   {
-   "tile_id": "t_10_7",
-   "col": 10,
-   "row": 7,
+   "tile_id": "t_15_13",
+   "col": 15,
+   "row": 13,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2401,9 +6073,171 @@
    "content": []
   },
   {
-   "tile_id": "t_11_0",
-   "col": 11,
+   "tile_id": "t_16_0",
+   "col": 16,
    "row": 0,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     512.0,
+     -1408.0,
+     -5.0
+    ],
+    "max": [
+     640.0,
+     -1280.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9829428,
+    40.6903206,
+    -73.9814284,
+    40.6914732
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_16_1",
+   "col": 16,
+   "row": 1,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     512.0,
+     -1280.0,
+     -5.0
+    ],
+    "max": [
+     640.0,
+     -1152.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9829427,
+    40.6914733,
+    -73.9814283,
+    40.6926259
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_16_2",
+   "col": 16,
+   "row": 2,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     512.0,
+     -1152.0,
+     -5.0
+    ],
+    "max": [
+     640.0,
+     -1024.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9829426,
+    40.692626,
+    -73.9814281,
+    40.6937785
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_16_3",
+   "col": 16,
+   "row": 3,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     512.0,
+     -1024.0,
+     -5.0
+    ],
+    "max": [
+     640.0,
+     -896.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9829425,
+    40.6937786,
+    -73.981428,
+    40.6949312
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_16_4",
+   "col": 16,
+   "row": 4,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     512.0,
+     -896.0,
+     -5.0
+    ],
+    "max": [
+     640.0,
+     -768.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9829424,
+    40.6949313,
+    -73.9814279,
+    40.6960838
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_16_5",
+   "col": 16,
+   "row": 5,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     512.0,
+     -768.0,
+     -5.0
+    ],
+    "max": [
+     640.0,
+     -640.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9829423,
+    40.6960839,
+    -73.9814277,
+    40.6972365
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_16_6",
+   "col": 16,
+   "row": 6,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2428,9 +6262,9 @@
    "content": []
   },
   {
-   "tile_id": "t_11_1",
-   "col": 11,
-   "row": 1,
+   "tile_id": "t_16_7",
+   "col": 16,
+   "row": 7,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2455,9 +6289,9 @@
    "content": []
   },
   {
-   "tile_id": "t_11_2",
-   "col": 11,
-   "row": 2,
+   "tile_id": "t_16_8",
+   "col": 16,
+   "row": 8,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2482,9 +6316,9 @@
    "content": []
   },
   {
-   "tile_id": "t_11_3",
-   "col": 11,
-   "row": 3,
+   "tile_id": "t_16_9",
+   "col": 16,
+   "row": 9,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2509,9 +6343,9 @@
    "content": []
   },
   {
-   "tile_id": "t_11_4",
-   "col": 11,
-   "row": 4,
+   "tile_id": "t_16_10",
+   "col": 16,
+   "row": 10,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2536,9 +6370,9 @@
    "content": []
   },
   {
-   "tile_id": "t_11_5",
-   "col": 11,
-   "row": 5,
+   "tile_id": "t_16_11",
+   "col": 16,
+   "row": 11,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2563,9 +6397,9 @@
    "content": []
   },
   {
-   "tile_id": "t_11_6",
-   "col": 11,
-   "row": 6,
+   "tile_id": "t_16_12",
+   "col": 16,
+   "row": 12,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2585,14 +6419,14 @@
     -73.9814268,
     40.7053051
    ],
-   "zone": "context",
+   "zone": "walkable",
    "asset_count": 0,
    "content": []
   },
   {
-   "tile_id": "t_11_7",
-   "col": 11,
-   "row": 7,
+   "tile_id": "t_16_13",
+   "col": 16,
+   "row": 13,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2617,9 +6451,171 @@
    "content": []
   },
   {
-   "tile_id": "t_12_0",
-   "col": 12,
+   "tile_id": "t_17_0",
+   "col": 17,
    "row": 0,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     640.0,
+     -1408.0,
+     -5.0
+    ],
+    "max": [
+     768.0,
+     -1280.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9814285,
+    40.6903206,
+    -73.9799141,
+    40.6914731
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_17_1",
+   "col": 17,
+   "row": 1,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     640.0,
+     -1280.0,
+     -5.0
+    ],
+    "max": [
+     768.0,
+     -1152.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9814284,
+    40.6914732,
+    -73.9799139,
+    40.6926258
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_17_2",
+   "col": 17,
+   "row": 2,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     640.0,
+     -1152.0,
+     -5.0
+    ],
+    "max": [
+     768.0,
+     -1024.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9814283,
+    40.6926259,
+    -73.9799138,
+    40.6937784
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_17_3",
+   "col": 17,
+   "row": 3,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     640.0,
+     -1024.0,
+     -5.0
+    ],
+    "max": [
+     768.0,
+     -896.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9814281,
+    40.6937785,
+    -73.9799136,
+    40.6949311
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_17_4",
+   "col": 17,
+   "row": 4,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     640.0,
+     -896.0,
+     -5.0
+    ],
+    "max": [
+     768.0,
+     -768.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.981428,
+    40.6949312,
+    -73.9799134,
+    40.6960837
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_17_5",
+   "col": 17,
+   "row": 5,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     640.0,
+     -768.0,
+     -5.0
+    ],
+    "max": [
+     768.0,
+     -640.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9814279,
+    40.6960838,
+    -73.9799133,
+    40.6972364
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_17_6",
+   "col": 17,
+   "row": 6,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2644,9 +6640,9 @@
    "content": []
   },
   {
-   "tile_id": "t_12_1",
-   "col": 12,
-   "row": 1,
+   "tile_id": "t_17_7",
+   "col": 17,
+   "row": 7,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2671,9 +6667,9 @@
    "content": []
   },
   {
-   "tile_id": "t_12_2",
-   "col": 12,
-   "row": 2,
+   "tile_id": "t_17_8",
+   "col": 17,
+   "row": 8,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2698,9 +6694,9 @@
    "content": []
   },
   {
-   "tile_id": "t_12_3",
-   "col": 12,
-   "row": 3,
+   "tile_id": "t_17_9",
+   "col": 17,
+   "row": 9,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2725,9 +6721,9 @@
    "content": []
   },
   {
-   "tile_id": "t_12_4",
-   "col": 12,
-   "row": 4,
+   "tile_id": "t_17_10",
+   "col": 17,
+   "row": 10,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2752,9 +6748,9 @@
    "content": []
   },
   {
-   "tile_id": "t_12_5",
-   "col": 12,
-   "row": 5,
+   "tile_id": "t_17_11",
+   "col": 17,
+   "row": 11,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2779,9 +6775,9 @@
    "content": []
   },
   {
-   "tile_id": "t_12_6",
-   "col": 12,
-   "row": 6,
+   "tile_id": "t_17_12",
+   "col": 17,
+   "row": 12,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2801,14 +6797,14 @@
     -73.9799122,
     40.7053049
    ],
-   "zone": "context",
+   "zone": "walkable",
    "asset_count": 0,
    "content": []
   },
   {
-   "tile_id": "t_12_7",
-   "col": 12,
-   "row": 7,
+   "tile_id": "t_17_13",
+   "col": 17,
+   "row": 13,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2833,9 +6829,171 @@
    "content": []
   },
   {
-   "tile_id": "t_13_0",
-   "col": 13,
+   "tile_id": "t_18_0",
+   "col": 18,
    "row": 0,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     768.0,
+     -1408.0,
+     -5.0
+    ],
+    "max": [
+     896.0,
+     -1280.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9799142,
+    40.6903204,
+    -73.9783997,
+    40.691473
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_18_1",
+   "col": 18,
+   "row": 1,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     768.0,
+     -1280.0,
+     -5.0
+    ],
+    "max": [
+     896.0,
+     -1152.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9799141,
+    40.6914731,
+    -73.9783996,
+    40.6926256
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_18_2",
+   "col": 18,
+   "row": 2,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     768.0,
+     -1152.0,
+     -5.0
+    ],
+    "max": [
+     896.0,
+     -1024.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9799139,
+    40.6926258,
+    -73.9783994,
+    40.6937783
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_18_3",
+   "col": 18,
+   "row": 3,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     768.0,
+     -1024.0,
+     -5.0
+    ],
+    "max": [
+     896.0,
+     -896.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9799138,
+    40.6937784,
+    -73.9783992,
+    40.6949309
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_18_4",
+   "col": 18,
+   "row": 4,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     768.0,
+     -896.0,
+     -5.0
+    ],
+    "max": [
+     896.0,
+     -768.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9799136,
+    40.6949311,
+    -73.978399,
+    40.6960836
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_18_5",
+   "col": 18,
+   "row": 5,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     768.0,
+     -768.0,
+     -5.0
+    ],
+    "max": [
+     896.0,
+     -640.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9799134,
+    40.6960837,
+    -73.9783988,
+    40.6972362
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_18_6",
+   "col": 18,
+   "row": 6,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2860,9 +7018,9 @@
    "content": []
   },
   {
-   "tile_id": "t_13_1",
-   "col": 13,
-   "row": 1,
+   "tile_id": "t_18_7",
+   "col": 18,
+   "row": 7,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2887,9 +7045,9 @@
    "content": []
   },
   {
-   "tile_id": "t_13_2",
-   "col": 13,
-   "row": 2,
+   "tile_id": "t_18_8",
+   "col": 18,
+   "row": 8,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2909,14 +7067,14 @@
     -73.9783983,
     40.7006942
    ],
-   "zone": "context",
+   "zone": "walkable",
    "asset_count": 0,
    "content": []
   },
   {
-   "tile_id": "t_13_3",
-   "col": 13,
-   "row": 3,
+   "tile_id": "t_18_9",
+   "col": 18,
+   "row": 9,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2936,14 +7094,14 @@
     -73.9783981,
     40.7018469
    ],
-   "zone": "context",
+   "zone": "walkable",
    "asset_count": 0,
    "content": []
   },
   {
-   "tile_id": "t_13_4",
-   "col": 13,
-   "row": 4,
+   "tile_id": "t_18_10",
+   "col": 18,
+   "row": 10,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2963,14 +7121,14 @@
     -73.9783979,
     40.7029995
    ],
-   "zone": "context",
+   "zone": "walkable",
    "asset_count": 0,
    "content": []
   },
   {
-   "tile_id": "t_13_5",
-   "col": 13,
-   "row": 5,
+   "tile_id": "t_18_11",
+   "col": 18,
+   "row": 11,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -2990,14 +7148,14 @@
     -73.9783977,
     40.7041522
    ],
-   "zone": "context",
+   "zone": "walkable",
    "asset_count": 0,
    "content": []
   },
   {
-   "tile_id": "t_13_6",
-   "col": 13,
-   "row": 6,
+   "tile_id": "t_18_12",
+   "col": 18,
+   "row": 12,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -3017,14 +7175,14 @@
     -73.9783976,
     40.7053048
    ],
-   "zone": "context",
+   "zone": "walkable",
    "asset_count": 0,
    "content": []
   },
   {
-   "tile_id": "t_13_7",
-   "col": 13,
-   "row": 7,
+   "tile_id": "t_18_13",
+   "col": 18,
+   "row": 13,
    "bbox": {
     "frame": "nyc-harbor-enu",
     "min": [
@@ -3047,16 +7205,394 @@
    "zone": "context",
    "asset_count": 0,
    "content": []
+  },
+  {
+   "tile_id": "t_19_0",
+   "col": 19,
+   "row": 0,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     896.0,
+     -1408.0,
+     -5.0
+    ],
+    "max": [
+     1024.0,
+     -1280.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9783999,
+    40.6903203,
+    -73.9768854,
+    40.6914728
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_19_1",
+   "col": 19,
+   "row": 1,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     896.0,
+     -1280.0,
+     -5.0
+    ],
+    "max": [
+     1024.0,
+     -1152.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9783997,
+    40.691473,
+    -73.9768852,
+    40.6926255
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_19_2",
+   "col": 19,
+   "row": 2,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     896.0,
+     -1152.0,
+     -5.0
+    ],
+    "max": [
+     1024.0,
+     -1024.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9783996,
+    40.6926256,
+    -73.976885,
+    40.6937781
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_19_3",
+   "col": 19,
+   "row": 3,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     896.0,
+     -1024.0,
+     -5.0
+    ],
+    "max": [
+     1024.0,
+     -896.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9783994,
+    40.6937783,
+    -73.9768848,
+    40.6949308
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_19_4",
+   "col": 19,
+   "row": 4,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     896.0,
+     -896.0,
+     -5.0
+    ],
+    "max": [
+     1024.0,
+     -768.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9783992,
+    40.6949309,
+    -73.9768846,
+    40.6960834
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_19_5",
+   "col": 19,
+   "row": 5,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     896.0,
+     -768.0,
+     -5.0
+    ],
+    "max": [
+     1024.0,
+     -640.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.978399,
+    40.6960836,
+    -73.9768844,
+    40.6972361
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_19_6",
+   "col": 19,
+   "row": 6,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     896.0,
+     -640.0,
+     -5.0
+    ],
+    "max": [
+     1024.0,
+     -512.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9783988,
+    40.6972362,
+    -73.9768842,
+    40.6983888
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_19_7",
+   "col": 19,
+   "row": 7,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     896.0,
+     -512.0,
+     -5.0
+    ],
+    "max": [
+     1024.0,
+     -384.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9783987,
+    40.6983889,
+    -73.976884,
+    40.6995414
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_19_8",
+   "col": 19,
+   "row": 8,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     896.0,
+     -384.0,
+     -5.0
+    ],
+    "max": [
+     1024.0,
+     -256.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9783985,
+    40.6995416,
+    -73.9768838,
+    40.7006941
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_19_9",
+   "col": 19,
+   "row": 9,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     896.0,
+     -256.0,
+     -5.0
+    ],
+    "max": [
+     1024.0,
+     -128.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9783983,
+    40.7006942,
+    -73.9768835,
+    40.7018467
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_19_10",
+   "col": 19,
+   "row": 10,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     896.0,
+     -128.0,
+     -5.0
+    ],
+    "max": [
+     1024.0,
+     0.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9783981,
+    40.7018469,
+    -73.9768833,
+    40.7029994
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_19_11",
+   "col": 19,
+   "row": 11,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     896.0,
+     0.0,
+     -5.0
+    ],
+    "max": [
+     1024.0,
+     128.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9783979,
+    40.7029995,
+    -73.9768831,
+    40.704152
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_19_12",
+   "col": 19,
+   "row": 12,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     896.0,
+     128.0,
+     -5.0
+    ],
+    "max": [
+     1024.0,
+     256.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9783977,
+    40.7041522,
+    -73.9768829,
+    40.7053047
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
+  },
+  {
+   "tile_id": "t_19_13",
+   "col": 19,
+   "row": 13,
+   "bbox": {
+    "frame": "nyc-harbor-enu",
+    "min": [
+     896.0,
+     256.0,
+     -5.0
+    ],
+    "max": [
+     1024.0,
+     384.0,
+     120.0
+    ]
+   },
+   "bbox_geodetic": [
+    -73.9783976,
+    40.7053048,
+    -73.9768827,
+    40.7064573
+   ],
+   "zone": "context",
+   "asset_count": 0,
+   "content": []
   }
  ],
  "provenance": {
   "module_id": "dumbo-district",
   "generated_by": "dumbo-district-3d/scripts@1.0.0",
-  "generated_at": "2026-08-09T19:48:21+00:00",
+  "generated_at": "2026-08-10T12:43:20+00:00",
   "source_documents": [
    {
     "path": "DUMBO-GEOSPATIAL-CONTROL.md",
-    "sha256": "647184b0c8d520e4c7501af54bfc57b6f07931390283126ab4bc30aea94c363d"
+    "sha256": "f49d173b258f5d2a16c2e7c50280c9e199c2376ec75f9a13f4756a57557f75c7"
    }
   ]
  }

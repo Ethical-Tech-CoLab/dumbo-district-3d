@@ -10,9 +10,9 @@
    "kind": "tileset",
    "tile_index_url": "./tile-index.json",
    "bbox_geodetic": [
-    -73.9985,
-    40.6975,
-    -73.98,
+    -74.0045,
+    40.6915,
+    -73.978,
     40.706
    ],
    "tags": [
@@ -196,6 +196,108 @@
      "osm_type": "node",
      "osm_id": 1437051166,
      "kind": "ferry_terminal"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:landmark_granite_prospect",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_granite_prospect",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_granite_prospect",
+    "display_name": "Granite Prospect",
+    "category": "landmark",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "landmark"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      -710.56,
+      -111.56,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "node",
+     "osm_id": 3351167989,
+     "kind": "viewpoint"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:landmark_manhattan_bridge_viewpoint",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_manhattan_bridge_viewpoint",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_manhattan_bridge_viewpoint",
+    "display_name": "Manhattan Bridge Viewpoint",
+    "category": "landmark",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "landmark"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      77.61,
+      227.4,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "node",
+     "osm_id": 4631363792,
+     "kind": "viewpoint"
     },
     "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
    }
@@ -1272,6 +1374,210 @@
    }
   },
   {
+   "asset_id": "urn:d3d:dumbo-district:landmark_pier_5",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_pier_5",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_pier_5",
+    "display_name": "Pier 5",
+    "category": "landmark",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "landmark"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      -1069.07,
+      -901.02,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "way",
+     "osm_id": 424972751,
+     "kind": "pier"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:landmark_pier_6",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_pier_6",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_pier_6",
+    "display_name": "Pier 6",
+    "category": "landmark",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "landmark"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      -1153.17,
+      -1084.53,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "way",
+     "osm_id": 424974232,
+     "kind": "pier"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:landmark_pier_3",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_pier_3",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_pier_3",
+    "display_name": "Pier 3",
+    "category": "landmark",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "landmark"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      -904.01,
+      -559.53,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "way",
+     "osm_id": 424977974,
+     "kind": "pier"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  },
+  {
+   "asset_id": "urn:d3d:dumbo-district:landmark_john_street",
+   "kind": "single",
+   "tags": [
+    "landmark",
+    "photo_spot"
+   ],
+   "metadata": {
+    "asset_id": "urn:d3d:dumbo-district:landmark_john_street",
+    "module_id": "dumbo-district",
+    "local_id": "landmark_john_street",
+    "display_name": "John Street",
+    "category": "park",
+    "taxonomy": {
+     "system": "landmarks",
+     "path": [
+      "landmarks",
+      "park"
+     ]
+    },
+    "source_basis": [
+     "official_dataset"
+    ],
+    "source_refs": [
+     "DSRC-007"
+    ],
+    "confidence": "B",
+    "basis_confidence": "B",
+    "control_refs": [
+     "DCTL-001",
+     "DCTL-002"
+    ],
+    "review_status": "unreviewed",
+    "last_modified_by": "dumbo-district-3d/scripts@1.0.0",
+    "units": "meters",
+    "anchor": {
+     "frame": "nyc-harbor-enu",
+     "xyz": [
+      138.51,
+      200.97,
+      0.0
+     ]
+    },
+    "attributes": {
+     "osm_type": "way",
+     "osm_id": 1255157561,
+     "kind": "park"
+    },
+    "notes": "Position from OpenStreetMap, graded B: consistent community mapping, not a survey. Used as a tour target and a map label, never as control geometry."
+   }
+  },
+  {
    "asset_id": "urn:d3d:dumbo-district:landmark_main_street",
    "kind": "single",
    "tags": [
@@ -1530,11 +1836,11 @@
  "provenance": {
   "module_id": "dumbo-district",
   "generated_by": "dumbo-district-3d/scripts@1.0.0",
-  "generated_at": "2026-08-10T12:31:41+00:00",
+  "generated_at": "2026-08-10T12:58:27+00:00",
   "source_documents": [
    {
     "path": "DUMBO-GEOSPATIAL-CONTROL.md",
-    "sha256": "3ee479ce2372c9f0d61de7f16a0d55a2ed9ea6eabd2b26f4b4102decae02963e"
+    "sha256": "f49d173b258f5d2a16c2e7c50280c9e199c2376ec75f9a13f4756a57557f75c7"
    }
   ]
  }

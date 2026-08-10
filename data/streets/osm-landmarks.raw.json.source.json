@@ -1,10 +1,10 @@
 {
   "source_id": "DSRC-007",
-  "query": "[out:json][timeout:180];(node[\"tourism\"](40.6975,-73.9985,40.706,-73.98);way[\"tourism\"](40.6975,-73.9985,40.706,-73.98);node[\"historic\"](40.6975,-73.9985,40.706,-73.98);way[\"historic\"](40.6975,-73.9985,40.706,-73.98);way[\"leisure\"=\"park\"](40.6975,-73.9985,40.706,-73.98);node[\"leisure\"=\"park\"](40.6975,-73.9985,40.706,-73.98);node[\"amenity\"~\"^(theatre|arts_centre|marketplace|cafe|restaurant|ferry_terminal)$\"](40.6975,-73.9985,40.706,-73.98);way[\"amenity\"~\"^(theatre|arts_centre|marketplace|ferry_terminal)$\"](40.6975,-73.9985,40.706,-73.98);node[\"man_made\"=\"pier\"](40.6975,-73.9985,40.706,-73.98);way[\"man_made\"=\"pier\"](40.6975,-73.9985,40.706,-73.98);node[\"railway\"=\"subway_entrance\"](40.6975,-73.9985,40.706,-73.98);way[\"bridge\"][\"name\"](40.6975,-73.9985,40.706,-73.98););out center tags;",
-  "fetched_at": "2026-08-09T14:44:49+00:00",
+  "query": "[out:json][timeout:180];(node[\"tourism\"](40.6915,-74.0045,40.706,-73.978);way[\"tourism\"](40.6915,-74.0045,40.706,-73.978);node[\"historic\"](40.6915,-74.0045,40.706,-73.978);way[\"historic\"](40.6915,-74.0045,40.706,-73.978);way[\"leisure\"=\"park\"](40.6915,-74.0045,40.706,-73.978);node[\"leisure\"=\"park\"](40.6915,-74.0045,40.706,-73.978);node[\"amenity\"~\"^(theatre|arts_centre|marketplace|cafe|restaurant|ferry_terminal)$\"](40.6915,-74.0045,40.706,-73.978);way[\"amenity\"~\"^(theatre|arts_centre|marketplace|ferry_terminal)$\"](40.6915,-74.0045,40.706,-73.978);node[\"man_made\"=\"pier\"](40.6915,-74.0045,40.706,-73.978);way[\"man_made\"=\"pier\"](40.6915,-74.0045,40.706,-73.978);node[\"railway\"=\"subway_entrance\"](40.6915,-74.0045,40.706,-73.978);way[\"bridge\"][\"name\"](40.6915,-74.0045,40.706,-73.978););out center tags;",
+  "fetched_at": "2026-08-10T12:44:18+00:00",
   "fetched_by": "dumbo-district-3d/scripts@1.0.0",
-  "bytes": 91628,
-  "sha256": "43f81c0a23377cbc0cd3959297ee42f99b039b8e5b2886347599707da5330809",
-  "record_count": 181,
+  "bytes": 154210,
+  "sha256": "a66c1479d039aff3aa5305aa1419b46d4f7920eef16c1c07fb668c71c424d6f8",
+  "record_count": 297,
   "note": "OpenStreetMap contributors, ODbL."
 }

@@ -52,15 +52,26 @@ export interface FacadeStyle {
   floors?: number;
   /**
    * "inferred" when the appearance came from building class and age, "observed" when a photograph
-   * of the building supplied it. Observed styles are held against the procedural pass rather than
-   * being regenerated, so a real facade is never silently replaced by a guess.
+   * of the building supplied it, "designated" when the city's landmark register named the material.
+   * Observed styles are held against the procedural pass rather than being regenerated, so a real
+   * facade is never silently replaced by a guess.
    */
-  basis?: 'inferred' | 'observed';
+  basis?: 'inferred' | 'observed' | 'designated';
   observed_grade?: string;
   observation_id?: string;
   attribution_text?: string;
   observed_distance_m?: number;
   colour_source?: string;
+  /**
+   * Bay pitch in metres: the spacing of the punched openings across the facade. From the city's
+   * designation register, which names the building type, and the single number that most decides
+   * whether a wall reads as a row house or a factory.
+   */
+  bay_m?: number;
+  material?: string;
+  designated_style?: string;
+  designated_type?: string;
+  designation?: string;
 }
 
 export interface FacadeDocument {
@@ -421,9 +432,26 @@ function proceduralPrototype(prototype: ScenePrototype): THREE.BufferGeometry[] 
       return [trunk, lower, upper];
     }
     case 'bench': {
-      const seat = new THREE.BoxGeometry(sx, 0.08, sz * 0.4);
+      // Seat, legs and a back. It was a single floating slab before, which from across a plaza read
+      // as litter dropped on the pavement rather than as somewhere to sit -- and there are 354 of
+      // them, so the mistake was 354 times over.
+      const depth = sz * 0.42;
+      const seat = new THREE.BoxGeometry(sx, 0.07, depth);
       seat.translate(0, 0.45, 0);
-      return [seat];
+
+      const parts: THREE.BufferGeometry[] = [seat];
+      for (const side of [-0.42, 0.42]) {
+        const leg = new THREE.BoxGeometry(0.07, 0.45, depth * 0.85);
+        leg.translate(sx * side, 0.225, 0);
+        parts.push(leg);
+      }
+
+      const back = new THREE.BoxGeometry(sx, 0.42, 0.06);
+      back.rotateX(-0.12);
+      back.translate(0, 0.7, -depth * 0.42);
+      parts.push(back);
+
+      return parts;
     }
     case 'lamp': {
       const post = new THREE.CylinderGeometry(0.06, 0.08, sz, 6);
@@ -653,7 +681,33 @@ export function facadeBandFactor(
   return inWindow ? 1 - Math.min(0.62, 0.28 + style.glazing * 0.8) : 1.06;
 }
 
-export function parseColor(hex: string, fallback: number): number {
-  const match = /#?([0-9a-f]{6})/i.exec(hex);
+/**
+ * How much of a window band survives at this point *across* a bay: 1 in the middle of the opening,
+ * 0 on the pier between openings.
+ *
+ * This is the other half of the window. `facadeBandFactor` says which horizontal courses are glazed;
+ * without this the result is a continuous ribbon at every storey, which reads as a striped box
+ * rather than a building. Masonry piers between punched openings are what give a wall its vertical
+ * rhythm, and the rhythm is most of what tells you a row house from a warehouse at a glance.
+ *
+ * Returned as a multiplier rather than a hard mask so the transition covers a whole bay smoothly;
+ * the geometry is only a few quads wide per bay and a step edge would alias badly at distance.
+ */
+export function facadeBayFactor(
+  acrossFraction: number,
+  bays: number,
+  style: FacadeStyle | undefined,
+): number {
+  if (!style || bays < 2) return 1;
+  const within = acrossFraction * bays - Math.floor(acrossFraction * bays);
+  // Wider openings for glassier buildings; a Federal row house keeps a lot of wall.
+  const openHalf = Math.min(0.42, 0.16 + style.glazing * 0.55);
+  const distance = Math.abs(within - 0.5);
+  if (distance >= openHalf) return 0;
+  // Ease the last 25% so the pier edge does not shimmer when the bay is only a few pixels wide.
+  return Math.min(1, (openHalf - distance) / (openHalf * 0.25));
+}
+
+export function parseColor(hex: string, fallback: number): number {  const match = /#?([0-9a-f]{6})/i.exec(hex);
   return match ? parseInt(match[1], 16) : fallback;
 }

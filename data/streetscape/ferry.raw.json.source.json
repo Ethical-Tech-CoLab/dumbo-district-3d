@@ -1,7 +1,7 @@
 {
   "source_id": "DSRC-012",
   "query": "[out:json][timeout:180];(node[\"amenity\"=\"ferry_terminal\"](40.680,-74.045,40.745,-73.955);way[\"amenity\"=\"ferry_terminal\"](40.680,-74.045,40.745,-73.955);way[\"route\"=\"ferry\"](40.680,-74.045,40.745,-73.955););out geom;",
-  "fetched_at": "2026-08-09T18:09:19+00:00",
+  "fetched_at": "2026-08-10T12:46:10+00:00",
   "fetched_by": "dumbo-district-3d/scripts@1.0.0",
   "bytes": 93150,
   "sha256": "2dc5432c7370c16f9c521e902cf63ad113cc69dc8244ce1554e6518b4c55af96",

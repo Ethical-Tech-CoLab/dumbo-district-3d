@@ -1,10 +1,10 @@
 {
   "source_id": "DSRC-017",
-  "query": "[out:json][timeout:180];(node[\"shop\"](40.6975,-73.9985,40.706,-73.98);way[\"shop\"](40.6975,-73.9985,40.706,-73.98);node[\"amenity\"~\"^(cafe|restaurant|bar|pub|fast_food|bank|pharmacy|ice_cream|bakery|cinema|theatre)$\"](40.6975,-73.9985,40.706,-73.98);way[\"amenity\"~\"^(cafe|restaurant|bar|pub|fast_food|bank|pharmacy|ice_cream|bakery|cinema|theatre)$\"](40.6975,-73.9985,40.706,-73.98););out center tags;",
-  "fetched_at": "2026-08-10T04:30:11+00:00",
+  "query": "[out:json][timeout:180];(node[\"shop\"](40.6915,-74.0045,40.706,-73.978);way[\"shop\"](40.6915,-74.0045,40.706,-73.978);node[\"amenity\"~\"^(cafe|restaurant|bar|pub|fast_food|bank|pharmacy|ice_cream|bakery|cinema|theatre)$\"](40.6915,-74.0045,40.706,-73.978);way[\"amenity\"~\"^(cafe|restaurant|bar|pub|fast_food|bank|pharmacy|ice_cream|bakery|cinema|theatre)$\"](40.6915,-74.0045,40.706,-73.978););out center tags;",
+  "fetched_at": "2026-08-10T12:45:32+00:00",
   "fetched_by": "dumbo-district-3d/scripts@1.0.0",
-  "bytes": 80828,
-  "sha256": "d638eac97746a9545f7ee951ab5280b4f11b8b4fae369edbabce31e25e0a740b",
-  "record_count": 166,
+  "bytes": 207863,
+  "sha256": "8c3ecd903519fd8398e04d5e6d7026c028d45a107936b5ed41f78379a3360b03",
+  "record_count": 432,
   "note": "OpenStreetMap contributors, ODbL. Attribution is mandatory wherever this is rendered."
 }

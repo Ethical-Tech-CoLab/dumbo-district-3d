@@ -1,0 +1,10 @@
+{
+  "source_id": "DSRC-018",
+  "query": "within_box on the district envelope",
+  "fetched_at": "2026-08-10T12:48:41+00:00",
+  "fetched_by": "dumbo-district-3d/scripts@1.0.0",
+  "bytes": 2464681,
+  "sha256": "0bee722268f03041c5c53f539b696e2e555a49eea5166920047cf914667ecf41",
+  "record_count": 1386,
+  "note": "NYC Landmarks Preservation Commission, via NYC Open Data. NYC Open Data Terms of Use."
+}

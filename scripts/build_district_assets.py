@@ -1221,6 +1221,28 @@ def build_source_register(control: DistrictControl) -> dict:
                     "is graded D."
                 ),
             },
+            {
+                "source_id": "DSRC-018",
+                "title": "NYC landmark building register (LPC)",
+                "tier": "A",
+                "publisher": "NYC Landmarks Preservation Commission, via NYC Open Data",
+                "url": "https://data.cityofnewyork.us/resource/gpmc-yuvp",
+                "accessed": "2026-08-10",
+                "license": "NYC Open Data Terms of Use",
+                "attribution_required": True,
+                "attribution_text": "Landmark designations: NYC Landmarks Preservation Commission",
+                "grants_confidence": "A",
+                "verified": True,
+                "notes": (
+                    "1,386 designated buildings with the primary material, architectural style, "
+                    "building type and date published per address. The strongest architectural "
+                    "evidence in the project: everything else infers a facade from a tax class, "
+                    "this states it. Drives facade material, glazing ratio by style, and bay pitch "
+                    "by building type. It also corrected the district boundary, which had excluded "
+                    "ten designated buildings on Hudson Avenue -- the row the Vinegar Hill Historic "
+                    "District exists to protect."
+                ),
+            },
         ],
         "provenance": provenance(control),
     }

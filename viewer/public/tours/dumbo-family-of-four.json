@@ -63,7 +63,7 @@
  "route_source": {
   "provider": "internal_router",
   "profile": "walking",
-  "generated_at": "2026-08-09T19:48:38+00:00",
+  "generated_at": "2026-08-10T12:58:57+00:00",
   "attribution_text": "Route computed on OpenStreetMap data \u00a9 OpenStreetMap contributors, ODbL",
   "notes": "A* over the district walk network, split into maneuver steps at turns over 35 degrees and at street-name changes. Replace with a Google, Bing or Apple directions response by rewriting scripts/build_tour.py::route_leg and nothing else."
  },

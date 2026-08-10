@@ -26,6 +26,7 @@ import {
   buildPaving,
   buildProps,
   facadeBandFactor,
+  facadeBayFactor,
   parseColor,
   type FacadeDocument,
   type FacadeStyle,
@@ -482,6 +483,15 @@ export class DistrictScene {
         // cannot show banding at all.
         const courses = style ? Math.max(4, Math.min(28, Math.round(height / 1.75))) : 1;
 
+        // ...and into vertical bays, which is what stops a facade reading as a striped box. Courses
+        // alone give continuous ribbons at every storey; real windows are punched openings with
+        // masonry piers between them, and the pier is the thing the eye uses to judge a building's
+        // width and scale. The pitch comes from the city's designation register where it has an
+        // opinion -- a row house's two-bay front and a daylight factory's wide industrial opening are
+        // genuinely different -- and falls back to a warehouse-ish 4 m where it does not.
+        const bayPitch = style?.bay_m ?? 4.0;
+        const bays = style ? Math.max(1, Math.min(24, Math.round(len / bayPitch))) : 1;
+
         for (let c = 0; c < courses; c++) {
           const f0 = c / courses;
           const f1 = (c + 1) / courses;
@@ -489,16 +499,29 @@ export class DistrictScene {
           const z1 = baseZ + height * f1;
 
           const band = facadeBandFactor((f0 + f1) / 2, style, height);
-          color.setHex(tint).multiplyScalar(shade * band);
 
-          const quad = [
-            [ax, z0, ay], [bx, z0, by], [bx, z1, by],
-            [ax, z0, ay], [bx, z1, by], [ax, z1, ay],
-          ];
-          for (const [vx, vy, vy2] of quad) {
-            positions.push(vx, vy, -vy2);
-            normals.push(nx, 0, nz);
-            colors.push(color.r, color.g, color.b);
+          for (let s = 0; s < bays; s++) {
+            const g0 = s / bays;
+            const g1 = (s + 1) / bays;
+            const px0 = ax + dx * g0;
+            const py0 = ay + dy * g0;
+            const px1 = ax + dx * g1;
+            const py1 = ay + dy * g1;
+
+            // Only the middle of a bay is glazed; the edges are the pier between openings. When the
+            // course is not a window course this is 1 and the whole bay renders as plain wall.
+            const pier = bays > 1 ? facadeBayFactor((g0 + g1) / 2, bays, style) : 1;
+            color.setHex(tint).multiplyScalar(shade * (band < 1 ? 1 - (1 - band) * pier : band));
+
+            const quad = [
+              [px0, z0, py0], [px1, z0, py1], [px1, z1, py1],
+              [px0, z0, py0], [px1, z1, py1], [px0, z1, py0],
+            ];
+            for (const [vx, vy, vy2] of quad) {
+              positions.push(vx, vy, -vy2);
+              normals.push(nx, 0, nz);
+              colors.push(color.r, color.g, color.b);
+            }
           }
         }
       }
