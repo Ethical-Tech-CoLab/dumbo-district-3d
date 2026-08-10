@@ -8,14 +8,89 @@
  "surfaces": {
   "paving": {
    "label": "cobblestone, granite sett and asphalt",
-   "observations": 47,
-   "mean_hex": "#6a6866",
-   "mean_coverage": 0.509,
+   "observations": 75,
+   "mean_hex": "#676664",
+   "mean_coverage": 0.533,
    "samples": [
     {
-     "observation_id": "obs-88aaea8e9464",
-     "hex": "#81807f",
-     "coverage": 0.22
+     "observation_id": "obs-c6fbcbd2dbc2",
+     "hex": "#444343",
+     "coverage": 0.367
+    },
+    {
+     "observation_id": "obs-63a7c904ed30",
+     "hex": "#7c7b7c",
+     "coverage": 0.517
+    },
+    {
+     "observation_id": "obs-15957c9a8ffc",
+     "hex": "#858581",
+     "coverage": 0.337
+    },
+    {
+     "observation_id": "obs-02f8c81231f9",
+     "hex": "#6d6965",
+     "coverage": 0.608
+    },
+    {
+     "observation_id": "obs-868164f9db75",
+     "hex": "#636364",
+     "coverage": 0.77
+    },
+    {
+     "observation_id": "obs-db01d801e3e2",
+     "hex": "#777665",
+     "coverage": 0.515
+    },
+    {
+     "observation_id": "obs-bca6f962a107",
+     "hex": "#585550",
+     "coverage": 0.245
+    },
+    {
+     "observation_id": "obs-fa0cc692f132",
+     "hex": "#595d55",
+     "coverage": 0.726
+    },
+    {
+     "observation_id": "obs-152c0f414167",
+     "hex": "#5f5a53",
+     "coverage": 0.357
+    },
+    {
+     "observation_id": "obs-92d4b603a5fc",
+     "hex": "#4e4f4b",
+     "coverage": 0.531
+    },
+    {
+     "observation_id": "obs-e69fe7342027",
+     "hex": "#545150",
+     "coverage": 0.456
+    },
+    {
+     "observation_id": "obs-4d4762cc71ca",
+     "hex": "#545958",
+     "coverage": 0.775
+    },
+    {
+     "observation_id": "obs-ec339bd29588",
+     "hex": "#51514e",
+     "coverage": 0.331
+    },
+    {
+     "observation_id": "obs-bf230b2dbd99",
+     "hex": "#4d4747",
+     "coverage": 0.522
+    },
+    {
+     "observation_id": "obs-1e8bc1c21e9c",
+     "hex": "#827d7a",
+     "coverage": 0.53
+    },
+    {
+     "observation_id": "obs-e7e471c5809e",
+     "hex": "#86848b",
+     "coverage": 0.531
     },
     {
      "observation_id": "obs-ebbef9bf7a55",
@@ -31,16 +106,6 @@
      "observation_id": "obs-eb65ac53b11c",
      "hex": "#615e5b",
      "coverage": 0.364
-    },
-    {
-     "observation_id": "obs-c6fbcbd2dbc2",
-     "hex": "#444343",
-     "coverage": 0.367
-    },
-    {
-     "observation_id": "obs-63a7c904ed30",
-     "hex": "#7c7b7c",
-     "coverage": 0.517
     },
     {
      "observation_id": "obs-785e2f6603ee",
@@ -78,11 +143,6 @@
      "coverage": 0.561
     },
     {
-     "observation_id": "obs-15957c9a8ffc",
-     "hex": "#858581",
-     "coverage": 0.337
-    },
-    {
      "observation_id": "obs-79581618b280",
      "hex": "#7c7b79",
      "coverage": 0.689
@@ -103,19 +163,9 @@
      "coverage": 0.52
     },
     {
-     "observation_id": "obs-02f8c81231f9",
-     "hex": "#6d6965",
-     "coverage": 0.608
-    },
-    {
      "observation_id": "obs-3ef3c94ddb2e",
      "hex": "#68695f",
      "coverage": 0.899
-    },
-    {
-     "observation_id": "obs-868164f9db75",
-     "hex": "#636364",
-     "coverage": 0.77
     },
     {
      "observation_id": "obs-a7d01c63a7ae",
@@ -128,34 +178,9 @@
      "coverage": 0.423
     },
     {
-     "observation_id": "obs-cb2a590d9453",
-     "hex": "#97938b",
-     "coverage": 0.95
-    },
-    {
      "observation_id": "obs-506635aa5c14",
      "hex": "#5a5951",
      "coverage": 0.532
-    },
-    {
-     "observation_id": "obs-3adeee768da0",
-     "hex": "#564d48",
-     "coverage": 0.271
-    },
-    {
-     "observation_id": "obs-db01d801e3e2",
-     "hex": "#777665",
-     "coverage": 0.515
-    },
-    {
-     "observation_id": "obs-0295b7dff49d",
-     "hex": "#5a524b",
-     "coverage": 0.343
-    },
-    {
-     "observation_id": "obs-bc9b6a77f765",
-     "hex": "#6b6467",
-     "coverage": 0.364
     },
     {
      "observation_id": "obs-357d75078d17",
@@ -173,19 +198,9 @@
      "coverage": 0.156
     },
     {
-     "observation_id": "obs-bca6f962a107",
-     "hex": "#585550",
-     "coverage": 0.245
-    },
-    {
      "observation_id": "obs-e7a1001aeced",
      "hex": "#696b6e",
      "coverage": 0.36
-    },
-    {
-     "observation_id": "obs-755c70f795ab",
-     "hex": "#646564",
-     "coverage": 0.541
     },
     {
      "observation_id": "obs-7eee892bf259",
@@ -203,14 +218,114 @@
      "coverage": 0.39
     },
     {
-     "observation_id": "obs-0d1c994ff86b",
-     "hex": "#716f70",
-     "coverage": 0.444
+     "observation_id": "obs-b0f96ef6a425",
+     "hex": "#6a6a6a",
+     "coverage": 0.818
     },
     {
-     "observation_id": "obs-1e8bc1c21e9c",
-     "hex": "#827d7a",
-     "coverage": 0.53
+     "observation_id": "obs-8f83ad8b6aab",
+     "hex": "#6a5b68",
+     "coverage": 0.23
+    },
+    {
+     "observation_id": "obs-d81a48ef4b51",
+     "hex": "#6b6c68",
+     "coverage": 0.678
+    },
+    {
+     "observation_id": "obs-4d47af1a78e8",
+     "hex": "#6d6c66",
+     "coverage": 0.792
+    },
+    {
+     "observation_id": "obs-2b93ff708f93",
+     "hex": "#4b4c50",
+     "coverage": 0.235
+    },
+    {
+     "observation_id": "obs-0e6f9732b227",
+     "hex": "#6b645f",
+     "coverage": 0.519
+    },
+    {
+     "observation_id": "obs-b7be5b7dafb2",
+     "hex": "#68696c",
+     "coverage": 0.321
+    },
+    {
+     "observation_id": "obs-d3a377f3eec3",
+     "hex": "#787573",
+     "coverage": 0.694
+    },
+    {
+     "observation_id": "obs-8d5375aa1197",
+     "hex": "#47464e",
+     "coverage": 0.751
+    },
+    {
+     "observation_id": "obs-88e6f438def1",
+     "hex": "#424850",
+     "coverage": 0.437
+    },
+    {
+     "observation_id": "obs-1467e21a4f9f",
+     "hex": "#857f76",
+     "coverage": 0.747
+    },
+    {
+     "observation_id": "obs-450ccc49d8ce",
+     "hex": "#59524d",
+     "coverage": 0.356
+    },
+    {
+     "observation_id": "obs-4010968eb587",
+     "hex": "#6e777b",
+     "coverage": 0.862
+    },
+    {
+     "observation_id": "obs-b4873becdfd1",
+     "hex": "#63655e",
+     "coverage": 0.488
+    },
+    {
+     "observation_id": "obs-8abe8c82ba5d",
+     "hex": "#5b5856",
+     "coverage": 0.254
+    },
+    {
+     "observation_id": "obs-7dbd457ff9db",
+     "hex": "#6a6d68",
+     "coverage": 0.625
+    },
+    {
+     "observation_id": "obs-a8634d7d9f09",
+     "hex": "#656a6b",
+     "coverage": 0.858
+    },
+    {
+     "observation_id": "obs-8cbd784871d4",
+     "hex": "#626462",
+     "coverage": 0.681
+    },
+    {
+     "observation_id": "obs-604156ebdb11",
+     "hex": "#6e7468",
+     "coverage": 0.888
+    },
+    {
+     "observation_id": "obs-47a5a49f1166",
+     "hex": "#796f6f",
+     "coverage": 0.231
+    },
+    {
+     "observation_id": "obs-3b27402c3b5d",
+     "hex": "#807e7f",
+     "coverage": 0.482
+    },
+    {
+     "observation_id": "obs-4fc40a18967f",
+     "hex": "#696864",
+     "coverage": 0.697
     },
     {
      "observation_id": "obs-49629d3af4e2",
@@ -228,28 +343,53 @@
      "coverage": 0.555
     },
     {
-     "observation_id": "obs-b0f96ef6a425",
-     "hex": "#6a6a6a",
-     "coverage": 0.818
+     "observation_id": "obs-88aaea8e9464",
+     "hex": "#81807f",
+     "coverage": 0.22
     },
     {
-     "observation_id": "obs-8f83ad8b6aab",
-     "hex": "#6a5b68",
-     "coverage": 0.23
+     "observation_id": "obs-cb2a590d9453",
+     "hex": "#97938b",
+     "coverage": 0.95
     },
     {
-     "observation_id": "obs-d81a48ef4b51",
-     "hex": "#6b6c68",
-     "coverage": 0.678
+     "observation_id": "obs-3adeee768da0",
+     "hex": "#564d48",
+     "coverage": 0.271
+    },
+    {
+     "observation_id": "obs-0295b7dff49d",
+     "hex": "#5a524b",
+     "coverage": 0.343
+    },
+    {
+     "observation_id": "obs-bc9b6a77f765",
+     "hex": "#6b6467",
+     "coverage": 0.364
+    },
+    {
+     "observation_id": "obs-755c70f795ab",
+     "hex": "#646564",
+     "coverage": 0.541
     },
     {
      "observation_id": "obs-a953b248d5fa",
      "hex": "#8a8781",
      "coverage": 0.769
+    },
+    {
+     "observation_id": "obs-bad744573e50",
+     "hex": "#545457",
+     "coverage": 0.901
+    },
+    {
+     "observation_id": "obs-0d1c994ff86b",
+     "hex": "#716f70",
+     "coverage": 0.444
     }
    ],
    "range_hex": [
-    "#444343",
+    "#424850",
     "#97938b"
    ],
    "credits": [
@@ -261,22 +401,129 @@
     "BQE BB split jeh.jpg by Jim.henderson, CC0-1.0, via Wikimedia Commons",
     "Belgium Blocks vs. City Streets.jpg by Cmcm1205, CC-BY-SA-4.0, via Wikimedia Commons",
     "Brooklyn (7031591563).jpg by Andr\u00e9s Nieto Porras from Palma de Mallorca, Espa\u00f1a, CC-BY-SA-2.0, via Wikimedia Commons",
+    "Brooklyn, New York, United States (Unsplash E68j7MQ4u3Q).jpg by London Scout scoutthecity, CC0-1.0, via Wikimedia Commons",
+    "Building on corner of Hudson and Plymouth.jpg by UNIXlike, CC0-1.0, via Wikimedia Commons",
     "By the Brooklyn Bridge 2.jpg by Aaron Barlow, CC-BY-SA-4.0, via Wikimedia Commons",
     "City Streets.jpg by Jkoss6, CC-BY-SA-4.0, via Wikimedia Commons",
-    "DUMBO from Bridge.JPG by Jared Kofsky, CC-BY-SA-3.0, via Wikimedia Commons",
-    "Dumbo - Brooklyn, NYC.jpg by Adjoajo, CC-BY-SA-4.0, via Wikimedia Commons",
-    "Dumbo Brooklyn October 2021 006.jpg by Kidfly182, CC-BY-SA-4.0, via Wikimedia Commons",
-    "Dumbo Brooklyn October 2021 007.jpg by Kidfly182, CC-BY-SA-4.0, via Wikimedia Commons",
+    "Cobblestone Road.JPG by Mariamkamagate, CC-BY-SA-4.0, via Wikimedia Commons",
+    "Complex Corner of Bridge & Water.JPG by MichelleC28, CC-BY-SA-4.0, via Wikimedia Commons",
+    "Corner of Gold & Water St.jpg by MichelleC28, CC-BY-SA-4.0, via Wikimedia Commons",
+    "DUMBO from Bridge.JPG by Jared Kofsky, CC-BY-SA-3.0, via Wikimedia Commons"
+   ]
+  },
+  "foliage": {
+   "label": "street tree canopy",
+   "observations": 8,
+   "mean_hex": "#53623c",
+   "mean_coverage": 0.194,
+   "samples": [
+    {
+     "observation_id": "obs-63a7c904ed30",
+     "hex": "#3b452a",
+     "coverage": 0.06
+    },
+    {
+     "observation_id": "obs-bca6f962a107",
+     "hex": "#354020",
+     "coverage": 0.215
+    },
+    {
+     "observation_id": "obs-fa0cc692f132",
+     "hex": "#616f50",
+     "coverage": 0.11
+    },
+    {
+     "observation_id": "obs-152c0f414167",
+     "hex": "#3b4930",
+     "coverage": 0.173
+    },
+    {
+     "observation_id": "obs-92d4b603a5fc",
+     "hex": "#606d4d",
+     "coverage": 0.167
+    },
+    {
+     "observation_id": "obs-bf230b2dbd99",
+     "hex": "#343a25",
+     "coverage": 0.204
+    },
+    {
+     "observation_id": "obs-1e8bc1c21e9c",
+     "hex": "#70884f",
+     "coverage": 0.275
+    },
+    {
+     "observation_id": "obs-e7e471c5809e",
+     "hex": "#687c47",
+     "coverage": 0.344
+    }
+   ],
+   "range_hex": [
+    "#343a25",
+    "#70884f"
+   ],
+   "credits": [
+    "Brooklyn, New York, United States (Unsplash E68j7MQ4u3Q).jpg by London Scout scoutthecity, CC0-1.0, via Wikimedia Commons",
     "Emergency telephone NYC 1.jpg by Superbass, CC-BY-SA-3.0, via Wikimedia Commons",
-    "Fulton Ferry Pier with Manhattan.JPG by Wusel007, CC-BY-SA-3.0, via Wikimedia Commons"
+    "HFA in the park (27648404420).jpg by Nat Welch from NYC, United States, CC-BY-SA-2.0, via Wikimedia Commons",
+    "Thomson Meter Co Water Meters building in DUMBO, Brooklyn.jpg by (User:Wgreaves), CC-BY-SA-4.0, via Wikimedia Commons",
+    "Vinegar Hill Brooklyn June 2025 001.jpg by Kidfly182, CC-BY-4.0, via Wikimedia Commons",
+    "Vinegar Hill Brooklyn June 2025 006.jpg by Kidfly182, CC-BY-4.0, via Wikimedia Commons",
+    "Vinegar Hill Brooklyn June 2025 011.jpg by Kidfly182, CC-BY-4.0, via Wikimedia Commons",
+    "Vinegar Hill Historic District, Brooklyn, New York, US.jpg by Clyde Charles Brown, CC-BY-SA-4.0, via Wikimedia Commons"
    ]
   },
   "brick": {
    "label": "brick and terracotta masonry",
-   "observations": 27,
-   "mean_hex": "#755341",
-   "mean_coverage": 0.253,
+   "observations": 45,
+   "mean_hex": "#765244",
+   "mean_coverage": 0.257,
    "samples": [
+    {
+     "observation_id": "obs-15957c9a8ffc",
+     "hex": "#a87158",
+     "coverage": 0.182
+    },
+    {
+     "observation_id": "obs-868164f9db75",
+     "hex": "#432f28",
+     "coverage": 0.245
+    },
+    {
+     "observation_id": "obs-bca6f962a107",
+     "hex": "#81604f",
+     "coverage": 0.334
+    },
+    {
+     "observation_id": "obs-fa0cc692f132",
+     "hex": "#82625d",
+     "coverage": 0.098
+    },
+    {
+     "observation_id": "obs-92d4b603a5fc",
+     "hex": "#956559",
+     "coverage": 0.245
+    },
+    {
+     "observation_id": "obs-e69fe7342027",
+     "hex": "#986864",
+     "coverage": 0.377
+    },
+    {
+     "observation_id": "obs-4d4762cc71ca",
+     "hex": "#846360",
+     "coverage": 0.074
+    },
+    {
+     "observation_id": "obs-ec339bd29588",
+     "hex": "#42332a",
+     "coverage": 0.09
+    },
+    {
+     "observation_id": "obs-736847837273",
+     "hex": "#7c5942",
+     "coverage": 0.192
+    },
     {
      "observation_id": "obs-a127fda12a03",
      "hex": "#84594e",
@@ -298,11 +545,6 @@
      "coverage": 0.329
     },
     {
-     "observation_id": "obs-15957c9a8ffc",
-     "hex": "#a87158",
-     "coverage": 0.182
-    },
-    {
      "observation_id": "obs-79581618b280",
      "hex": "#9a7063",
      "coverage": 0.396
@@ -311,11 +553,6 @@
      "observation_id": "obs-3ef3c94ddb2e",
      "hex": "#5b4939",
      "coverage": 0.096
-    },
-    {
-     "observation_id": "obs-868164f9db75",
-     "hex": "#432f28",
-     "coverage": 0.245
     },
     {
      "observation_id": "obs-7442559702cc",
@@ -363,19 +600,9 @@
      "coverage": 0.267
     },
     {
-     "observation_id": "obs-bca6f962a107",
-     "hex": "#81604f",
-     "coverage": 0.334
-    },
-    {
      "observation_id": "obs-e7a1001aeced",
      "hex": "#5b3f33",
      "coverage": 0.199
-    },
-    {
-     "observation_id": "obs-736847837273",
-     "hex": "#7c5942",
-     "coverage": 0.192
     },
     {
      "observation_id": "obs-ac3e4b9ae648",
@@ -398,11 +625,6 @@
      "coverage": 0.125
     },
     {
-     "observation_id": "obs-b92795967ff2",
-     "hex": "#7e6d5b",
-     "coverage": 0.061
-    },
-    {
      "observation_id": "obs-8f83ad8b6aab",
      "hex": "#825645",
      "coverage": 0.234
@@ -411,18 +633,91 @@
      "observation_id": "obs-516bb801f206",
      "hex": "#96796d",
      "coverage": 0.072
+    },
+    {
+     "observation_id": "obs-4d47af1a78e8",
+     "hex": "#88645a",
+     "coverage": 0.266
+    },
+    {
+     "observation_id": "obs-0e6f9732b227",
+     "hex": "#624337",
+     "coverage": 0.463
+    },
+    {
+     "observation_id": "obs-b7be5b7dafb2",
+     "hex": "#95635e",
+     "coverage": 0.116
+    },
+    {
+     "observation_id": "obs-8d5375aa1197",
+     "hex": "#554236",
+     "coverage": 0.07
+    },
+    {
+     "observation_id": "obs-88e6f438def1",
+     "hex": "#593b34",
+     "coverage": 0.4
+    },
+    {
+     "observation_id": "obs-1467e21a4f9f",
+     "hex": "#654c40",
+     "coverage": 0.136
+    },
+    {
+     "observation_id": "obs-450ccc49d8ce",
+     "hex": "#5d463e",
+     "coverage": 0.283
+    },
+    {
+     "observation_id": "obs-b4873becdfd1",
+     "hex": "#4c3830",
+     "coverage": 0.268
+    },
+    {
+     "observation_id": "obs-8abe8c82ba5d",
+     "hex": "#5b3b37",
+     "coverage": 0.38
+    },
+    {
+     "observation_id": "obs-7dbd457ff9db",
+     "hex": "#624b47",
+     "coverage": 0.123
+    },
+    {
+     "observation_id": "obs-a8634d7d9f09",
+     "hex": "#85625e",
+     "coverage": 0.076
+    },
+    {
+     "observation_id": "obs-47a5a49f1166",
+     "hex": "#884d42",
+     "coverage": 0.567
+    },
+    {
+     "observation_id": "obs-b92795967ff2",
+     "hex": "#7e6d5b",
+     "coverage": 0.061
+    },
+    {
+     "observation_id": "obs-e30bf34df269",
+     "hex": "#9a7257",
+     "coverage": 0.701
     }
    ],
    "range_hex": [
-    "#432f28",
+    "#42332a",
     "#a87158"
    ],
    "credits": [
     "Bakery in Vinegar Hill.jpg by Staceybattice, CC-BY-SA-4.0, via Wikimedia Commons",
     "Brooklyn Bridge from Brooklyn Bridge Park.jpg by Fredverillo, CC-BY-SA-3.0, via Wikimedia Commons",
     "Brooklyn Round-a-bout (6214820803).jpg by Tony Hisgett from Birmingham, UK, CC-BY-2.0, via Wikimedia Commons",
+    "Building on corner of Hudson and Plymouth.jpg by UNIXlike, CC0-1.0, via Wikimedia Commons",
     "By the Brooklyn Bridge 2.jpg by Aaron Barlow, CC-BY-SA-4.0, via Wikimedia Commons",
     "City Streets.jpg by Jkoss6, CC-BY-SA-4.0, via Wikimedia Commons",
+    "Close up of the Church of the Open Door.JPG by Kyra Cuevas, CC-BY-SA-4.0, via Wikimedia Commons",
+    "Corner of Gold & Water St.jpg by MichelleC28, CC-BY-SA-4.0, via Wikimedia Commons",
     "DUMBO Brooklyn at night.jpg by LWYang from USA, CC-BY-2.0, via Wikimedia Commons",
     "DUMBO from Bridge.JPG by Jared Kofsky, CC-BY-SA-3.0, via Wikimedia Commons",
     "DUMBO, Front St at night as viewed from Manhattan Bridge.JPG by IlyaSukhanov, CC-BY-SA-3.0, via Wikimedia Commons",
@@ -430,48 +725,13 @@
     "Dumbo - Brooklyn, NYC.jpg by Adjoajo, CC-BY-SA-4.0, via Wikimedia Commons",
     "Henry Street, Brooklyn, New York, US.jpg by Clyde Charles Brown, CC-BY-SA-4.0, via Wikimedia Commons",
     "Hotel St. George, Brooklyn, New York, US.jpg by Clyde Charles Brown, CC-BY-SA-4.0, via Wikimedia Commons",
-    "Jane's Carousel 2.jpg by Kiah Ankoor (@IOTAGLOBAL), CC-BY-2.0, via Wikimedia Commons",
-    "Manhattan Bridge -1.jpg by Shah Ronak S, CC-BY-SA-4.0, via Wikimedia Commons",
-    "Manhattan Bridge and Empire State Building from Washington Street, Dumbo, Brooklyn, New York.jpg by Christian David, CC-BY-SA-4.0, via Wikimedia Commons",
-    "New York (11600531215).jpg by Mack Male from Edmonton, AB, Canada, CC-BY-SA-2.0, via Wikimedia Commons"
-   ]
-  },
-  "foliage": {
-   "label": "street tree canopy",
-   "observations": 3,
-   "mean_hex": "#536438",
-   "mean_coverage": 0.183,
-   "samples": [
-    {
-     "observation_id": "obs-63a7c904ed30",
-     "hex": "#3b452a",
-     "coverage": 0.06
-    },
-    {
-     "observation_id": "obs-bca6f962a107",
-     "hex": "#354020",
-     "coverage": 0.215
-    },
-    {
-     "observation_id": "obs-1e8bc1c21e9c",
-     "hex": "#70884f",
-     "coverage": 0.275
-    }
-   ],
-   "range_hex": [
-    "#354020",
-    "#70884f"
-   ],
-   "credits": [
-    "Emergency telephone NYC 1.jpg by Superbass, CC-BY-SA-3.0, via Wikimedia Commons",
-    "HFA in the park (27648404420).jpg by Nat Welch from NYC, United States, CC-BY-SA-2.0, via Wikimedia Commons",
-    "Thomson Meter Co Water Meters building in DUMBO, Brooklyn.jpg by (User:Wgreaves), CC-BY-SA-4.0, via Wikimedia Commons"
+    "Houses on Hudson Street in Vinegar Hill.jpg by dumbonyc, CC-BY-SA-2.0, via Wikimedia Commons"
    ]
   }
  },
  "provenance": {
   "module_id": "dumbo-district",
   "generated_by": "dumbo-district-3d/scripts@1.0.0 (dumbo-district-3d/scripts@1.0.0)",
-  "generated_at": "2026-08-10T15:06:09+00:00"
+  "generated_at": "2026-08-10T17:05:23+00:00"
  }
 }

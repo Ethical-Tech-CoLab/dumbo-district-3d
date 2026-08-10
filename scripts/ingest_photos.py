@@ -26,6 +26,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import html
 import json
 import re
@@ -36,7 +37,7 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 
-from district_control import AGENT_ID, DistrictControl
+from district_control import AGENT_ID, DistrictControl, point_in_ring
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DATA = REPO_ROOT / "data"
@@ -215,6 +216,22 @@ SUBJECTS: list[dict] = [
     {"subject": "railings_promenade", "commons_category": None,
      "openverse": "Brooklyn Bridge Park promenade railing fence waterfront",
      "aspects": ["street_furniture", "paving_material"]},
+
+    # Third sweep. The first two exhausted their categories -- 414 of their files are in the
+    # do-not-source ledger -- so this one goes at categories not yet touched, chosen by checking
+    # which actually exist and how many files they hold rather than by guessing at names.
+    {"subject": "heights_promenade", "commons_category": "Brooklyn Heights Promenade",
+     "openverse": "Brooklyn Heights Promenade railing bench view",
+     "aspects": ["street_furniture", "paving_material", "tree_size", "condition"]},
+    {"subject": "water_street", "commons_category": "Water Street (Brooklyn)",
+     "openverse": "Water Street DUMBO Brooklyn cobblestone",
+     "aspects": ["facade_material", "facade_colour", "paving_material", "storefront", "awning"]},
+    {"subject": "washington_street_cat", "commons_category": "Washington Street (Brooklyn)",
+     "openverse": "Washington Street DUMBO Brooklyn",
+     "aspects": ["facade_material", "facade_colour", "paving_material", "window_pattern"]},
+    {"subject": "squibb_bridge", "commons_category": "Squibb Park Bridge",
+     "openverse": "Squibb Park Bridge Brooklyn Bridge Park",
+     "aspects": ["street_furniture", "tree_size", "condition"]},
 ]
 
 
@@ -396,6 +413,56 @@ def refresh_small_thumbnails(width: int = 480) -> int:
     return 0
 
 
+def load_kept_by_review() -> set[str]:
+    """Source URLs of photographs a reviewer explicitly accepted.
+
+    These are exempt from every automatic screen. A person who has looked at a photograph and said
+    it shows DUMBO outranks a coordinate, and this is not hypothetical: screening on the source's
+    own position removed a kept photograph that was carrying the district's foliage colour, because
+    Commons had geotagged it at its subject rather than at the camera. An automatic filter may
+    shorten a reviewer's queue; it may never overturn their answer.
+
+    The observation id is `obs-<sha256(page_url)[:12]>`, the same identity the corpus builder uses,
+    so a decision can be matched to a candidate here without loading the survey.
+    """
+    path = DATA / "photos" / "review-decisions.json"
+    if not path.exists():
+        return set()
+    try:
+        decisions = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return set()
+    return {
+        observation_id
+        for observation_id, verdict in decisions.items()
+        if str(verdict).startswith("use")
+    }
+
+
+def observation_id_for(record: dict) -> str:
+    """The identity build_photo_corpus.py will give this candidate."""
+    page = (record.get("page_url") or record.get("image_url") or "").split("?", 1)[0]
+    return "obs-" + hashlib.sha256(page.encode("utf-8")).hexdigest()[:12]
+
+
+def _published_position(record: dict) -> tuple[float, float] | None:
+    """The coordinate the SOURCE published for a photograph, as (lon, lat), or None.
+
+    Deliberately only the source's own number. This project has already learned that a Commons
+    coordinate often names the photograph's *subject* rather than the camera, so it is not proof of
+    where the photographer stood — but it is a reliable enough statement of what part of the world
+    the picture is about to decide whether the picture is about this district at all.
+    """
+    lon = record.get("lon")
+    lat = record.get("lat")
+    if lon is None or lat is None:
+        return None
+    try:
+        return float(lon), float(lat)
+    except (TypeError, ValueError):
+        return None
+
+
 def load_rejection_ledger() -> dict[str, dict]:
     """Photographs a reviewer has already turned down.
 
@@ -471,6 +538,11 @@ def main() -> int:
     fresh = 0
     rejected_licence = 0
     already_refused = 0
+    outside_district = 0
+    ring = control.boundary_ring
+    kept_by_review = load_kept_by_review()
+    if kept_by_review:
+        print(f"[merge] {len(kept_by_review)} photograph(s) accepted by review; exempt from screening")
     for record in raw:
         key = record.get("image_url") or record.get("page_url") or record.get("title")
         if not key:
@@ -481,6 +553,22 @@ def main() -> int:
         page = (record.get("page_url") or record.get("image_url") or "").split("?", 1)[0]
         if page in rejected:
             already_refused += 1
+            continue
+        # Drop anything the source itself places outside the district. A category sweep pulls in a
+        # neighbourhood's worth of material -- "Brooklyn Heights Promenade" brought back Clinton
+        # Street, the Clark Street subway entrance and a church -- and asking a reviewer to say no to
+        # sixty photographs of somewhere we do not model is how a reviewer is lost.
+        #
+        # Only applied where the source published a coordinate. An unlocated photograph might be of
+        # anywhere, including here, so it still goes to review; that is a question a person can
+        # answer and this cannot.
+        geo = _published_position(record)
+        if (
+            geo
+            and observation_id_for(record) not in kept_by_review
+            and not point_in_ring(geo, ring)
+        ):
+            outside_district += 1
             continue
         if key not in merged:
             fresh += 1
@@ -495,6 +583,19 @@ def main() -> int:
             del merged[key]
             purged += 1
 
+    # Same for anything already on disk that the district's own boundary now excludes, so widening
+    # or narrowing the boundary is enough to correct the corpus. Never applied to a photograph a
+    # reviewer accepted.
+    for key in list(merged):
+        geo = _published_position(merged[key])
+        if (
+            geo
+            and observation_id_for(merged[key]) not in kept_by_review
+            and not point_in_ring(geo, ring)
+        ):
+            del merged[key]
+            outside_district += 1
+
     accepted = list(merged.values())
 
     print()
@@ -503,6 +604,8 @@ def main() -> int:
     print(f"rejected licence : {rejected_licence}")
     if already_refused or purged:
         print(f"refused by review: {already_refused} not re-added, {purged} purged from disk")
+    if outside_district:
+        print(f"outside district : {outside_district} dropped on the source's own coordinates")
     print(f"corpus total     : {len(accepted)}")
     families: dict[str, int] = {}
     sources: dict[str, int] = {}

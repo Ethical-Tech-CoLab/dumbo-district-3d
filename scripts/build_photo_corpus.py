@@ -868,7 +868,21 @@ def build_palette(observations: list[dict], limit: int) -> dict:
     hits: dict[str, list[dict]] = {}
     downloaded = 0
     undecided = 0
+
+    # Decode the scarce materials first. The download cap is a safety valve, not a sampling
+    # strategy, and with a reviewed corpus of a hundred-plus photographs an arbitrary order lets the
+    # sixty-odd facade photographs crowd out the handful tagged greenery -- which is exactly how the
+    # measured foliage colour silently reverted between two builds that differed in nothing else.
+    demand: dict[str, int] = {}
     for observation in observations:
+        for material in reviewed.get(observation["observation_id"]) or []:
+            demand[material] = demand.get(material, 0) + 1
+
+    def scarcity(observation: dict) -> int:
+        materials = reviewed.get(observation["observation_id"]) or []
+        return min((demand.get(material, 0) for material in materials), default=10**6)
+
+    for observation in sorted(observations, key=scarcity):
         materials = reviewed.get(observation["observation_id"])
         if materials is None:
             if decisions:
@@ -931,7 +945,7 @@ def build_palette(observations: list[dict], limit: int) -> dict:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--palette-limit", type=int, default=60,
+    parser.add_argument("--palette-limit", type=int, default=250,
                         help="Maximum thumbnails to download for palette derivation.")
     parser.add_argument("--attach-radius", type=float, default=60.0,
                         help="Metres within which a located photo is taken to show a building.")
