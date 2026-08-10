@@ -2,21 +2,21 @@
  "source_id": "DSRC-015",
  "query": "Wikimedia Commons geosearch + categories; Openverse commercial,modification",
  "fetched_by": "dumbo-district-3d/scripts@1.0.0",
- "corpus_total": 62,
- "rejected_for_licence_this_run": 1,
+ "corpus_total": 269,
+ "rejected_for_licence_this_run": 2,
  "refused_by_review": 274,
  "licence_families": {
-  "CC-BY-2.0": 10,
-  "CC-BY-4.0": 1,
-  "CC-BY-SA-2.0": 8,
-  "CC-BY-SA-3.0": 8,
-  "CC0-1.0": 3,
-  "CC-BY-3.0": 5,
-  "CC-BY-SA-4.0": 24,
-  "public-domain": 3
+  "CC-BY-2.0": 44,
+  "CC-BY-4.0": 26,
+  "CC-BY-SA-2.0": 15,
+  "CC-BY-SA-3.0": 15,
+  "CC0-1.0": 18,
+  "CC-BY-3.0": 9,
+  "CC-BY-SA-4.0": 129,
+  "public-domain": 13
  },
  "collections": {
-  "Wikimedia Commons": 62
+  "Wikimedia Commons": 269
  },
  "note": "Only images already published under a reuse-permitting licence. Anything without an explicit licence is rejected rather than assumed. Share-alike images are marked derive_appearance: measurements may be taken from them, the images are not vendored."
 }

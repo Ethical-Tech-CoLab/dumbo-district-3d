@@ -104,6 +104,26 @@ MATERIAL_GATES: dict[str, dict] = {
         "min_coverage": 0.08,
         "label": "East River surface",
     },
+    "grass": {
+        # Lower in frame than foliage and lighter: a lawn is lit from above, a canopy shades itself.
+        # Same hue window, so the region and lightness are what separate them.
+        "region": (0.05, 0.50, 0.95, 1.00),
+        "hue": (0.18, 0.42),
+        "sat": (0.14, 1.00),
+        "light": (0.18, 0.70),
+        "min_coverage": 0.08,
+        "label": "park lawn and planting",
+    },
+    "riprap": {
+        # The armour stone at the water's edge. Neutral like paving but darker and coarser, and low
+        # in frame; the saturation ceiling is what keeps sunlit sand out of it.
+        "region": (0.05, 0.55, 0.95, 1.00),
+        "hue": None,
+        "sat": (0.00, 0.20),
+        "light": (0.10, 0.50),
+        "min_coverage": 0.10,
+        "label": "shoreline rock and riprap",
+    },
 }
 
 # Which materials each campaign subject is worth searching for. A waterfront photo may evidence
@@ -430,6 +450,29 @@ REVIEW_CATEGORIES: dict[str, dict] = {
         "materials": [],
         "attaches": False,
     },
+    # Added for the second campaign. The first eight categories described a street; these describe
+    # the waterfront, which is where most visitors actually stand and which had no evidence at all.
+    "waterside": {
+        "label": "Water's edge",
+        "hint": "Rocks, riprap, the beach, where the land stops and the river starts.",
+        "aspects": ["paving_material", "condition"],
+        "materials": ["riprap"],
+        "attaches": False,
+    },
+    "lawn": {
+        "label": "Grass and lawn",
+        "hint": "Park lawns, planted beds, grass meeting paving.",
+        "aspects": ["tree_size", "condition"],
+        "materials": ["grass", "foliage"],
+        "attaches": False,
+    },
+    "railing": {
+        "label": "Railings and fences",
+        "hint": "The promenade guard rail, park fences, handrails.",
+        "aspects": ["street_furniture"],
+        "materials": [],
+        "attaches": False,
+    },
 }
 
 DEFAULT_CATEGORY = "facade"
@@ -638,6 +681,14 @@ def attach_to_buildings(control: DistrictControl, observations: list[dict],
 
         if observation["position_source"] == "unknown":
             continue
+
+        if verdict != "use" and decisions:
+            # Same rule as the palette: once a reviewer is in the loop, an unreviewed photograph
+            # waits for them. Attaching it anyway is how a bridge's paint ended up on a warehouse,
+            # and the first review threw out two thirds of what this pass proposed.
+            observation["review"]["status"] = "auto_screened"
+            continue
+
         lon, lat = observation["position"]["lon"], observation["position"]["lat"]
         x, y, _ = control.geodetic_to_enu(lon, lat)
 
@@ -816,9 +867,18 @@ def build_palette(observations: list[dict], limit: int) -> dict:
 
     hits: dict[str, list[dict]] = {}
     downloaded = 0
+    undecided = 0
     for observation in observations:
         materials = reviewed.get(observation["observation_id"])
         if materials is None:
+            if decisions:
+                # A review loop exists, so an unreviewed photograph is a *candidate*, not evidence.
+                # It used to fall back to the materials implied by the search query that found it,
+                # which meant a fresh campaign silently repainted the district before anyone had
+                # looked at a single frame -- and the first campaign's review rejected two thirds of
+                # what the automatic pass had proposed. Waiting is the honest behaviour.
+                undecided += 1
+                continue
             materials = SUBJECT_MATERIALS.get(observation.get("_subject") or "", [])
         if not materials or downloaded >= limit:
             continue
@@ -860,6 +920,8 @@ def build_palette(observations: list[dict], limit: int) -> dict:
               f"(mean coverage {surfaces[material]['mean_coverage']:.2f})")
 
     print(f"    decoded {downloaded} thumbnails")
+    if undecided:
+        print(f"    {undecided} photograph(s) awaiting review and contributing nothing until then")
     return {"available": True, "surfaces": surfaces}
 
 

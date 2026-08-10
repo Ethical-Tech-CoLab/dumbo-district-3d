@@ -184,6 +184,37 @@ SUBJECTS: list[dict] = [
     {"subject": "washington_street", "commons_category": None,
      "openverse": "Washington Street DUMBO Manhattan Bridge view",
      "aspects": ["facade_material", "facade_colour", "paving_material", "roofline"]},
+
+    # Second campaign, aimed at what the first one left thin. Foliage rested on two photographs and
+    # street furniture on almost none, and the waterfront edge -- the rocks, the beach, the grass
+    # meeting the paving -- had no evidence at all despite being where most visitors actually stand.
+    {"subject": "park_lawn", "commons_category": "Brooklyn Bridge Park",
+     "openverse": "Brooklyn Bridge Park lawn grass picnic",
+     "aspects": ["tree_size", "tree_species", "paving_material", "condition"]},
+    {"subject": "park_benches", "commons_category": None,
+     "openverse": "Brooklyn Bridge Park bench seating waterfront",
+     "aspects": ["street_furniture", "paving_material"]},
+    {"subject": "waterside_carousel", "commons_category": "Jane's Carousel",
+     "openverse": "Jane's Carousel waterfront railing East River",
+     "aspects": ["street_furniture", "condition", "other"]},
+    {"subject": "rocks_shoreline", "commons_category": None,
+     "openverse": "Brooklyn Bridge Park rocks riprap shoreline East River",
+     "aspects": ["paving_material", "condition", "other"]},
+    {"subject": "pebble_beach", "commons_category": None,
+     "openverse": "Pebble Beach Brooklyn Bridge Park DUMBO sand",
+     "aspects": ["paving_material", "condition", "other"]},
+    {"subject": "main_street_lot", "commons_category": None,
+     "openverse": "Main Street Park DUMBO Brooklyn waterfront",
+     "aspects": ["tree_size", "paving_material", "street_furniture"]},
+    {"subject": "vinegar_hill", "commons_category": "Vinegar Hill, Brooklyn",
+     "openverse": "Vinegar Hill Brooklyn Hudson Avenue row houses",
+     "aspects": ["facade_material", "facade_colour", "window_pattern", "entrance"]},
+    {"subject": "north_point_walk", "commons_category": None,
+     "openverse": "John Street Park DUMBO Brooklyn river edge",
+     "aspects": ["facade_material", "paving_material", "tree_size", "street_furniture"]},
+    {"subject": "railings_promenade", "commons_category": None,
+     "openverse": "Brooklyn Bridge Park promenade railing fence waterfront",
+     "aspects": ["street_furniture", "paving_material"]},
 ]
 
 

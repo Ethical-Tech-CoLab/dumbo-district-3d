@@ -104,6 +104,7 @@
  "obs-carousel-fbfbbb4315": "skip",
  "obs-cb2a590d9453": "use:furniture",
  "obs-d8a39c5ff5a7": "use:facade,bridge",
+ "obs-db01d801e3e2": "use:bridge,greenery",
  "obs-district-streetscape-01ed1c7787": "skip",
  "obs-district-streetscape-0218cc5cc2": "skip",
  "obs-district-streetscape-03843a45d7": "skip",
@@ -179,7 +180,6 @@
  "obs-district-streetscape-6c5edb16be": "skip",
  "obs-district-streetscape-6d05f1e4d5": "skip",
  "obs-district-streetscape-6d9396680c": "skip",
- "obs-district-streetscape-6e7d62263c": "use",
  "obs-district-streetscape-6ea7c28504": "skip",
  "obs-district-streetscape-6f1faaf39c": "skip",
  "obs-district-streetscape-705ba5f3e5": "skip",
@@ -334,6 +334,5 @@
  "obs-waterfront-park-cd1e3018f1": "skip",
  "obs-waterfront-park-d8d2ae9d64": "skip",
  "obs-waterfront-park-df60cc0092": "skip",
- "obs-waterfront-park-efad285c94": "skip",
- "obs-db01d801e3e2": "use:bridge,greenery"
+ "obs-waterfront-park-efad285c94": "skip"
 }
