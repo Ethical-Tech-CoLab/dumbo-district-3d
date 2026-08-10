@@ -1,0 +1,10 @@
+{
+  "source_id": "DSRC-017",
+  "query": "[out:json][timeout:180];(node[\"shop\"](40.6975,-73.9985,40.706,-73.98);way[\"shop\"](40.6975,-73.9985,40.706,-73.98);node[\"amenity\"~\"^(cafe|restaurant|bar|pub|fast_food|bank|pharmacy|ice_cream|bakery|cinema|theatre)$\"](40.6975,-73.9985,40.706,-73.98);way[\"amenity\"~\"^(cafe|restaurant|bar|pub|fast_food|bank|pharmacy|ice_cream|bakery|cinema|theatre)$\"](40.6975,-73.9985,40.706,-73.98););out center tags;",
+  "fetched_at": "2026-08-10T04:30:11+00:00",
+  "fetched_by": "dumbo-district-3d/scripts@1.0.0",
+  "bytes": 80828,
+  "sha256": "d638eac97746a9545f7ee951ab5280b4f11b8b4fae369edbabce31e25e0a740b",
+  "record_count": 166,
+  "note": "OpenStreetMap contributors, ODbL. Attribution is mandatory wherever this is rendered."
+}

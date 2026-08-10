@@ -363,6 +363,40 @@ Position is grade A — these are surveyed or traced from imagery by mappers on 
 else is grade C: OSM says a bench is *there*, not what it looks like, so heights, colours and forms
 are conventional values chosen per type. That split is the whole point of the grade.
 
+### DSRC-017 — OpenStreetMap ground-floor businesses · Tier B · grants A for position
+
+| | |
+|---|---|
+| Publisher | OpenStreetMap contributors, via Overpass API |
+| Accessed | 2026-08-10 |
+| License | **ODbL 1.0** |
+| Attribution | **Required** — "© OpenStreetMap contributors" wherever this is rendered |
+| Native CRS | EPSG:4326 |
+| Verified | Yes |
+
+166 shops, cafes, restaurants and bars inside the district, 164 of them named. **137 awnings** were
+placed from them; 2 businesses had no building within 30 m and were skipped rather than guessed at.
+
+A DUMBO warehouse at street level is a row of shopfronts under a brick wall, and without them every
+building meets the pavement as a blank face — the most obvious remaining tell that the model is a
+model.
+
+**PLUTO cannot answer this question**, which is why a second source is needed for a fact it looks
+like it should already hold. PLUTO's building class describes a whole building, so a cafe on the
+ground floor of a residential block is invisible to it, and the ground floor is exactly the part a
+walker sees. The ingest this project already runs does not carry `retailarea` either. OSM maps the
+business itself, which is the thing visible from the pavement.
+
+The work is in the placement rather than the geometry. An OSM node sits somewhere *inside* a
+business, so each awning is projected onto the nearest facade edge and turned to face outward, away
+from the footprint's interior. Hanging it at the node would leave awnings in the middle of rooms;
+guessing the facing would put half of them inside the wall. The outward direction is chosen by
+testing against the footprint's own centroid rather than by ring winding, because the published
+footprints do not all wind the same way — the same trap that made whole planimetric layers vanish.
+
+Graded **D**. The business is real and the wall is real; that it has an awning at all, and the size
+and colour of that awning, are decoration.
+
 ---
 
 ## 3. Definition sources

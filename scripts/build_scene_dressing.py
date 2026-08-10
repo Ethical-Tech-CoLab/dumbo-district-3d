@@ -257,6 +257,10 @@ def build_props(control: DistrictControl, index: dict) -> dict:
     prototypes.extend(furniture_prototypes)
     instances.extend(furniture_instances)
 
+    storefront_prototypes, storefront_instances = build_storefronts(control, index)
+    prototypes.extend(storefront_prototypes)
+    instances.extend(storefront_instances)
+
     return {
         "contract_version": CONTRACT_VERSION,
         "module_id": MODULE_ID,
@@ -406,7 +410,159 @@ def build_street_furniture(control: DistrictControl, index: dict) -> tuple[list[
     return prototypes, instances
 
 
+# Awning canvas, varied so a parade of shopfronts is not one colour. Assigned deterministically from
+# the OSM id: DUMBO's storefront awnings are overwhelmingly dark canvas, and these are the four that
+# actually recur along Front and Water Street.
+AWNING_TINT = ["#2f4438", "#3a2f2c", "#4a2b2f", "#2c3644"]
+
+# Ground floor of a DUMBO warehouse is tall; the awning hangs below the first-floor sill.
+AWNING_HEIGHT_M = 3.0
+AWNING_WIDTH_M = 3.4
+AWNING_DEPTH_M = 1.5
+
+# Past this a business and a building are not the same address. Deliberately generous: OSM often
+# places a node at the middle of a unit rather than at its door.
+STOREFRONT_MATCH_RADIUS_M = 30.0
+
+
+def build_storefronts(control: DistrictControl, index: dict) -> tuple[list[dict], list[dict]]:
+    """Awnings over the ground-floor businesses, hung on the facade they belong to.
+
+    A DUMBO warehouse at street level is a row of shopfronts under a brick wall. Without them every
+    building meets the pavement as a blank face, which is the single most obvious way the model still
+    reads as a model.
+
+    The work is in the placement rather than the geometry. An OSM node sits *somewhere inside* a
+    business, so the awning is projected onto the nearest facade edge and turned to face outward,
+    away from the footprint's interior. Hanging it at the node itself would leave awnings floating in
+    the middle of rooms, and guessing the facing would put half of them inside the building.
+
+    Graded D. The business is real and its building is real; that it has an awning at all, and the
+    size and colour of that awning, are decoration.
+    """
+    path = DATA / "streets" / "osm-storefronts.raw.json"
+    if not path.exists():
+        print("    no storefront source; run ingest_sources.py --storefronts")
+        return [], []
+
+    shops = load(path)
+    ring = control.boundary_ring
+    size = index["scheme"]["tile_size_m"]
+    ox, oy = index["scheme"]["origin_xy_m"]
+
+    # Project every footprint edge once.
+    edges: list[tuple[tuple[float, float], tuple[float, float], tuple[float, float]]] = []
+    cell = 40.0
+    grid: dict[tuple[int, int], list[int]] = {}
+    for record in load(DATA / "footprints" / "footprints.raw.json"):
+        for polygon in _rings_of(record.get("the_geom")):
+            projected = [control.geodetic_to_enu(float(p[0]), float(p[1]))[:2] for p in polygon]
+            if len(projected) < 3:
+                continue
+            cx = sum(p[0] for p in projected) / len(projected)
+            cy = sum(p[1] for p in projected) / len(projected)
+            for a, b in zip(projected, projected[1:]):
+                if math.hypot(b[0] - a[0], b[1] - a[1]) < 1.0:
+                    continue
+                edges.append((a, b, (cx, cy)))
+                key = (int(math.floor((a[0] + b[0]) / 2 / cell)), int(math.floor((a[1] + b[1]) / 2 / cell)))
+                grid.setdefault(key, []).append(len(edges) - 1)
+
+    instances: list[dict] = []
+    used: dict[str, int] = {}
+    unmatched = 0
+
+    for shop in shops:
+        lon, lat = float(shop["lon"]), float(shop["lat"])
+        if not point_in_ring((lon, lat), ring):
+            continue
+        sx, sy, _ = control.geodetic_to_enu(lon, lat)
+
+        best = None
+        base = (int(math.floor(sx / cell)), int(math.floor(sy / cell)))
+        for dx in (-1, 0, 1):
+            for dy in (-1, 0, 1):
+                for idx in grid.get((base[0] + dx, base[1] + dy), ()):
+                    a, b, centroid = edges[idx]
+                    distance = _point_segment_distance(sx, sy, a, b)
+                    if best is None or distance < best[0]:
+                        best = (distance, a, b, centroid)
+        if best is None or best[0] > STOREFRONT_MATCH_RADIUS_M:
+            unmatched += 1
+            continue
+
+        _, a, b, centroid = best
+        ax, ay = a
+        bx, by = b
+        ex, ey = bx - ax, by - ay
+        span = math.hypot(ex, ey)
+        if span < 1e-6:
+            continue
+        # Foot of the perpendicular: where on this wall the shop actually is.
+        t = max(0.0, min(1.0, ((sx - ax) * ex + (sy - ay) * ey) / (span * span)))
+        px, py = ax + ex * t, ay + ey * t
+
+        # Outward normal: the one that points away from the footprint's middle. Choosing by winding
+        # would need every ring to wind the same way, and the published footprints do not.
+        nx, ny = -ey / span, ex / span
+        if (px + nx - centroid[0]) ** 2 + (py + ny - centroid[1]) ** 2 < (px - centroid[0]) ** 2 + (py - centroid[1]) ** 2:
+            nx, ny = -nx, -ny
+
+        variant = int(shop["osm_id"]) % len(AWNING_TINT)
+        form = f"awning_{variant}"
+        used[form] = used.get(form, 0) + 1
+        # Yaw so that the prototype's local +Z lands on the outward normal, because the canopy is
+        # authored projecting along +Z. Rotation about render +Y by t maps local +Z to scene
+        # (sin t, -cos t), so t = atan2(nx, -ny); local +X then falls along the wall, as it must for
+        # the canopy's width. Getting this backwards hangs every awning inside the building.
+        yaw = math.degrees(math.atan2(nx, -ny))
+        col = int(math.floor((px - ox) / size))
+        row = int(math.floor((py - oy) / size))
+        instances.append(
+            {
+                "p": f"prop_{form}",
+                "xy": [round(px, 2), round(py, 2)],
+                "r": round(yaw % 360, 1),
+                "tile": f"t_{col}_{row}",
+            }
+        )
+
+    prototypes = []
+    for form in sorted(used):
+        variant = int(form.rsplit("_", 1)[1])
+        prototypes.append(
+            {
+                "prototype_id": f"prop_{form}",
+                "kind": "awning",
+                "label": "Shopfront awning",
+                "format": "procedural",
+                "size_m": [AWNING_WIDTH_M, AWNING_DEPTH_M, AWNING_HEIGHT_M],
+                "billboard": False,
+                "casts_shadow": False,
+                "source_basis": ["official_dataset", "inferred"],
+                "source_refs": ["DSRC-017", "DSRC-001"],
+                "confidence": "D",
+                "notes": (
+                    "Awning over a ground-floor business. The business and the wall it hangs on are "
+                    "real; that it has an awning, and its size and colour, are decoration, so this "
+                    f"is graded D. Tint {AWNING_TINT[variant]}."
+                ),
+            }
+        )
+
+    print(f"    {len(instances)} awnings on {len(prototypes)} canvas variants, {unmatched} unmatched")
+    return prototypes, instances
+
+
 def _as_float(value: object) -> float | None:
+    try:
+        result = float(str(value))
+        return result if math.isfinite(result) else None
+    except (TypeError, ValueError):
+        return None
+
+
+
     try:
         result = float(str(value))
         return result if math.isfinite(result) else None

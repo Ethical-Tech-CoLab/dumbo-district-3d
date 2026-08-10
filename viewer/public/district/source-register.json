@@ -245,16 +245,30 @@
    "grants_confidence": "A",
    "verified": true,
    "notes": "Railings, lamps, benches, bollards, bike racks, bins, hydrants and signals. 7.4 km of barrier line, which is what gives the Brooklyn Bridge Park promenade an edge instead of ending at the water with nothing there. Note that not one feature in the district uses the documented barrier=railing tag: the waterfront guard rail is barrier=fence with fence_type=railing, so the ingest reads fence_type first. Position grade A; heights, colours and forms are conventional per type and graded C."
+  },
+  {
+   "source_id": "DSRC-017",
+   "title": "OpenStreetMap ground-floor businesses",
+   "tier": "B",
+   "publisher": "OpenStreetMap contributors",
+   "url": "https://www.openstreetmap.org/",
+   "accessed": "2026-08-10",
+   "license": "ODbL-1.0",
+   "attribution_required": true,
+   "attribution_text": "Ground-floor businesses: \u00a9 OpenStreetMap contributors, ODbL",
+   "grants_confidence": "A",
+   "verified": true,
+   "notes": "166 shops, cafes, restaurants and bars, 164 of them named, used to hang awnings on the facades that have a business behind them. PLUTO cannot answer this: its building class describes a whole building, so a cafe on the ground floor of a residential block is invisible to it, and the ground floor is precisely what a walker sees. The business and its wall are real; the awning is decoration and is graded D."
   }
  ],
  "provenance": {
   "module_id": "dumbo-district",
   "generated_by": "dumbo-district-3d/scripts@1.0.0",
-  "generated_at": "2026-08-10T03:55:52+00:00",
+  "generated_at": "2026-08-10T04:36:15+00:00",
   "source_documents": [
    {
     "path": "DUMBO-GEOSPATIAL-CONTROL.md",
-    "sha256": "13a8ea3926db0f9c18456f395872ca8474fcc426d7e28cb89885e88d65e834bc"
+    "sha256": "3ee479ce2372c9f0d61de7f16a0d55a2ed9ea6eabd2b26f4b4102decae02963e"
    }
   ]
  }

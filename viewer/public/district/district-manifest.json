@@ -52,7 +52,8 @@
   "Elevation: USGS 3D Elevation Program (3DEP)",
   "Hydrography: NYC Open Data (OTI)",
   "Photographs: Wikimedia Commons contributors, see photo-survey.json",
-  "Street furniture: \u00a9 OpenStreetMap contributors, ODbL"
+  "Street furniture: \u00a9 OpenStreetMap contributors, ODbL",
+  "Ground-floor businesses: \u00a9 OpenStreetMap contributors, ODbL"
  ],
  "not_implemented_yet": [
   "roof form modelling; all roofs are flat at the dataset roof height (DOQ-002)",
@@ -64,11 +65,11 @@
  "provenance": {
   "module_id": "dumbo-district",
   "generated_by": "dumbo-district-3d/scripts@1.0.0",
-  "generated_at": "2026-08-10T03:55:52+00:00",
+  "generated_at": "2026-08-10T04:36:15+00:00",
   "source_documents": [
    {
     "path": "DUMBO-GEOSPATIAL-CONTROL.md",
-    "sha256": "13a8ea3926db0f9c18456f395872ca8474fcc426d7e28cb89885e88d65e834bc"
+    "sha256": "3ee479ce2372c9f0d61de7f16a0d55a2ed9ea6eabd2b26f4b4102decae02963e"
    }
   ]
  }

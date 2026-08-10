@@ -344,6 +344,59 @@ def fetch_street_furniture(control: DistrictControl) -> None:
     )
 
 
+def fetch_storefronts(control: DistrictControl) -> None:
+    """DSRC-017. Ground-floor businesses, used to place awnings and shopfronts.
+
+    A DUMBO warehouse at street level is a row of shopfronts under a brick wall, and without them
+    every building meets the pavement as a blank face. PLUTO knows a lot about these lots but not
+    which ones have a shop at the bottom: its building class describes the whole building, so a cafe
+    on the ground floor of a residential block is invisible to it. OSM maps the business itself,
+    which is exactly the thing that is visible from the pavement.
+    """
+    print("[DSRC-017] OpenStreetMap ground-floor businesses")
+    west, south, east, north = control.bbox
+    bbox = f"{south},{west},{north},{east}"
+    amenities = "^(cafe|restaurant|bar|pub|fast_food|bank|pharmacy|ice_cream|bakery|cinema|theatre)$"
+    selectors = [
+        'node["shop"]', 'way["shop"]',
+        f'node["amenity"~"{amenities}"]', f'way["amenity"~"{amenities}"]',
+    ]
+    query = (
+        "[out:json][timeout:180];("
+        + "".join(f"{selector}({bbox});" for selector in selectors)
+        + ");out center tags;"
+    )
+    result = _overpass(query)
+
+    shops = []
+    for element in result.get("elements", []):
+        tags = element.get("tags") or {}
+        lat = element.get("lat") or (element.get("center") or {}).get("lat")
+        lon = element.get("lon") or (element.get("center") or {}).get("lon")
+        if lat is None or lon is None:
+            continue
+        shops.append(
+            {
+                "osm_type": element["type"],
+                "osm_id": element["id"],
+                "name": tags.get("name"),
+                "shop": tags.get("shop"),
+                "amenity": tags.get("amenity"),
+                "lon": float(lon),
+                "lat": float(lat),
+                "tags": tags,
+            }
+        )
+    print(f"    {len(shops)} businesses, {sum(1 for s in shops if s['name'])} named")
+    _write(
+        DATA / "streets" / "osm-storefronts.raw.json",
+        shops,
+        query=query,
+        source_id="DSRC-017",
+        note="OpenStreetMap contributors, ODbL. Attribution is mandatory wherever this is rendered.",
+    )
+
+
 def fetch_landmarks(control: DistrictControl) -> None:
     """DSRC-007. Named places used as tour stops and map labels."""
     print("[DSRC-007] OpenStreetMap named landmarks")
@@ -743,6 +796,7 @@ def main() -> int:
     parser.add_argument("--streets", action="store_true")
     parser.add_argument("--landmarks", action="store_true")
     parser.add_argument("--furniture", action="store_true")
+    parser.add_argument("--storefronts", action="store_true")
     parser.add_argument("--nta", action="store_true")
     parser.add_argument("--trees", action="store_true")
     parser.add_argument("--sidewalks", action="store_true")
@@ -767,6 +821,8 @@ def main() -> int:
         jobs.append(fetch_landmarks)
     if args.all or args.furniture:
         jobs.append(fetch_street_furniture)
+    if args.all or args.storefronts:
+        jobs.append(fetch_storefronts)
     if args.all or args.nta:
         jobs.append(fetch_nta)
     if args.all or args.trees:

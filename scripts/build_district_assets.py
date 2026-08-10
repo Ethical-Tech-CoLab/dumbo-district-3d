@@ -1200,6 +1200,27 @@ def build_source_register(control: DistrictControl) -> dict:
                     "per type and graded C."
                 ),
             },
+            {
+                "source_id": "DSRC-017",
+                "title": "OpenStreetMap ground-floor businesses",
+                "tier": "B",
+                "publisher": "OpenStreetMap contributors",
+                "url": "https://www.openstreetmap.org/",
+                "accessed": "2026-08-10",
+                "license": "ODbL-1.0",
+                "attribution_required": True,
+                "attribution_text": "Ground-floor businesses: © OpenStreetMap contributors, ODbL",
+                "grants_confidence": "A",
+                "verified": True,
+                "notes": (
+                    "166 shops, cafes, restaurants and bars, 164 of them named, used to hang awnings "
+                    "on the facades that have a business behind them. PLUTO cannot answer this: its "
+                    "building class describes a whole building, so a cafe on the ground floor of a "
+                    "residential block is invisible to it, and the ground floor is precisely what a "
+                    "walker sees. The business and its wall are real; the awning is decoration and "
+                    "is graded D."
+                ),
+            },
         ],
         "provenance": provenance(control),
     }

@@ -457,6 +457,20 @@ function proceduralPrototype(prototype: ScenePrototype): THREE.BufferGeometry[] 
       }
       return parts;
     }
+    case 'awning': {
+      // A canopy sloping down and away from the wall, plus the valance that hangs off its lip.
+      // Authored along local X like a fence panel, so an instance's yaw aligns it with the facade,
+      // and offset in +Z so it projects outward rather than straddling the wall.
+      const depth = sy || 1.5;
+      const canopy = new THREE.BoxGeometry(sx, 0.08, depth);
+      canopy.rotateX(-0.18);
+      canopy.translate(0, sz, depth * 0.5);
+
+      const valance = new THREE.BoxGeometry(sx, 0.35, 0.06);
+      valance.translate(0, sz - 0.3, depth);
+
+      return [canopy, valance];
+    }
     case 'wall': {
       // Solid, unlike a fence. Rendering a wall with balusters would let a walker see through a
       // retaining wall, which is precisely the thing a wall is there to stop.
