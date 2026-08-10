@@ -11,6 +11,10 @@ import { fileURLToPath, URL } from 'node:url';
 const contractsRoot = fileURLToPath(new URL('../../digital-3d-shared-contracts', import.meta.url));
 
 export default defineConfig({
+  // Relative asset URLs, so the same build works at a domain root and under a project subpath
+  // like /dumbo-district-3d/ on GitHub Pages. Every data fetch in the app is already relative for
+  // the same reason.
+  base: './',
   plugins: [react()],
   resolve: {
     alias: {

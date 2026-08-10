@@ -845,6 +845,9 @@ python scripts/propose_bridge_placement.py --write`}
               </button>
             ))
           )}
+          <a className="review-link" href="review/" title="Review which photographs count as evidence">
+            photo review
+          </a>
         </div>
       </header>
 

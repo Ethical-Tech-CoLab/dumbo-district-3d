@@ -1,0 +1,74 @@
+name: Publish viewer to GitHub Pages
+
+# The viewer is a static site once built, and the whole district ships as JSON alongside it, so
+# Pages is enough to host the thing people are actually asked to look at: the walkable twin, and the
+# photo review sheet that decides which photographs become evidence.
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deployment at a time; cancel a superseded run rather than racing it.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the district
+        uses: actions/checkout@v4
+        with:
+          path: dumbo-district-3d
+
+      # The viewer consumes the shared kernel and contracts straight from the sibling repository
+      # rather than from a published package, so CI has to reproduce that layout exactly.
+      - name: Check out the shared contracts
+        uses: actions/checkout@v4
+        with:
+          repository: Ethical-Tech-CoLab/digital-3d-shared-contracts
+          path: digital-3d-shared-contracts
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install
+        working-directory: dumbo-district-3d/viewer
+        run: npm install
+
+      - name: Typecheck
+        working-directory: dumbo-district-3d/viewer
+        run: npx tsc --noEmit
+
+      - name: Build
+        working-directory: dumbo-district-3d/viewer
+        run: npm run build
+
+      - name: Report what shipped
+        working-directory: dumbo-district-3d/viewer/dist
+        run: |
+          echo "tile payloads : $(ls district/tiles 2>/dev/null | wc -l)"
+          echo "review sheet  : $([ -f review/index.html ] && echo present || echo MISSING)"
+          du -sh .
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dumbo-district-3d/viewer/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

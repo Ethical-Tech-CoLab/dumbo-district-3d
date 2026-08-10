@@ -456,3 +456,16 @@ kbd {
 .compass-needle-tail { fill: #7d8590; }
 .compass-hub { fill: #0d1117; stroke: var(--line); stroke-width: 1.5; }
 .compass-label { font-size: 10px; color: var(--muted); letter-spacing: 0.03em; }
+
+/* Link out to the photo review sheet, which ships alongside the viewer on Pages. */
+.review-link {
+  align-self: center;
+  padding: 5px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.review-link:hover { color: var(--text); border-color: var(--muted); }

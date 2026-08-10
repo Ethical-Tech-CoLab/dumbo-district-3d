@@ -323,6 +323,48 @@ def fetch_openverse(query: str, subject: str, limit: int) -> list[dict]:
 # ------------------------------------------------------------------------ main
 
 
+def refresh_small_thumbnails(width: int = 480) -> int:
+    """Ask Commons for a review-sized thumbnail URL for every record already fetched.
+
+    Wikimedia no longer serves arbitrary widths: substituting a smaller number into a thumbnail path
+    returns 400 unless that exact size happens to have been rendered before, and which sizes exist
+    varies file by file. The API will mint one on request, so the URL has to come from there rather
+    than from string surgery.
+
+    This matters because a review sheet shows hundreds of images at once. At the 1280 px width used
+    for colour measurement that page is hundreds of megabytes; at 480 px it is a few.
+    """
+    path = DATA / "photos" / "photos.raw.json"
+    if not path.exists():
+        print("no candidates yet", file=sys.stderr)
+        return 1
+    records = json.loads(path.read_text(encoding="utf-8"))
+    commons = [r for r in records if r.get("title") and "Commons" in (r.get("source_collection") or "")]
+    print(f"[thumbs] {len(commons)} Commons records, requesting {width}px URLs")
+
+    by_title = {r["title"]: r for r in commons}
+    titles = list(by_title)
+    found = 0
+    for start in range(0, len(titles), 20):
+        batch = titles[start:start + 20]
+        data = _api(COMMONS_API, {
+            "action": "query", "format": "json", "titles": "|".join(batch),
+            "prop": "imageinfo", "iiprop": "url", "iiurlwidth": str(width),
+        })
+        for page in data.get("query", {}).get("pages", {}).values():
+            info = (page.get("imageinfo") or [{}])[0]
+            record = by_title.get(page.get("title"))
+            if record and info.get("thumburl"):
+                record["thumbnail_small_url"] = info["thumburl"]
+                found += 1
+        print(f"    {min(start + 20, len(titles))}/{len(titles)}")
+        time.sleep(1.0)
+
+    path.write_text(json.dumps(records, indent=1), encoding="utf-8")
+    print(f"[thumbs] {found} small thumbnail URLs stored")
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -332,7 +374,12 @@ def main() -> int:
                         help="Run one source only. Results merge into the existing candidate file, "
                              "so a source that rate-limited can be retried without re-fetching the "
                              "others.")
+    parser.add_argument("--thumbs", action="store_true",
+                        help="Only refresh review-sized thumbnail URLs for records already fetched.")
     args = parser.parse_args()
+
+    if args.thumbs:
+        return refresh_small_thumbnails()
 
     control = DistrictControl()
     print(f"district control : {control.path.name} @ {control.sha256[:12]}")

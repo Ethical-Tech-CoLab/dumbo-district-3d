@@ -335,6 +335,25 @@ def looks_outdoor(image_mod, path: Path) -> float | None:
     return round(sky / total, 3)
 
 
+def load_decisions() -> dict[str, str]:
+    """Human review decisions, if any have been made.
+
+    The pipeline's automatic screen is a filter of last resort and is documented as such. Where a
+    person has looked at a photograph and said use or skip, that judgement wins outright: it is the
+    only thing here that can tell an office interior from a street view, or notice that a sharp
+    photograph of a parked car has been quietly colouring four warehouses.
+    """
+    path = DATA / "photos" / "review-decisions.json"
+    if not path.exists():
+        return {}
+    try:
+        decisions = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        print(f"    review decisions unreadable ({exc}); ignoring", file=sys.stderr)
+        return {}
+    return {k: v for k, v in decisions.items() if v in ("use", "skip")}
+
+
 def attach_to_buildings(control: DistrictControl, observations: list[dict],
                         buildings: list[dict], radius_m: float) -> tuple[int, int]:
     """Link each located observation to the buildings it plausibly shows.
@@ -347,22 +366,41 @@ def attach_to_buildings(control: DistrictControl, observations: list[dict],
     attached = 0
     screened = 0
     image_mod = try_pillow()
+    decisions = load_decisions()
+    if decisions:
+        used = sum(1 for v in decisions.values() if v == "use")
+        print(f"    {len(decisions)} human decisions on file ({used} use, "
+              f"{len(decisions) - used} skip); these override the automatic screen")
     rings = [(b, [(p[0], p[1]) for p in b["ring"]] + [(b["ring"][0][0], b["ring"][0][1])])
              for b in buildings]
     for observation in observations:
+        verdict = decisions.get(observation["observation_id"])
+        review = observation["review"]
+
+        if verdict == "skip":
+            screened += 1
+            review["status"] = "rejected"
+            review["reviewer"] = "human"
+            observation["notes"] = (observation.get("notes") or "") + "; rejected by human review"
+            continue
+
         if observation["position_source"] == "unknown":
             continue
         lon, lat = observation["position"]["lon"], observation["position"]["lat"]
         x, y, _ = control.geodetic_to_enu(lon, lat)
 
         reason = None
-        if not is_exterior_subject(observation):
+        if verdict != "use" and not is_exterior_subject(observation):
             reason = "subject is not a building exterior"
         if reason:
             screened += 1
             observation["notes"] = (observation.get("notes") or "") + \
                 f"; screened out of facade evidence: {reason}"
             continue
+
+        if verdict == "use":
+            review["status"] = "accepted"
+            review["reviewer"] = "human"
 
         if image_mod is not None:
             path = fetch_thumbnail(observation.get("thumbnail_url") or "")
