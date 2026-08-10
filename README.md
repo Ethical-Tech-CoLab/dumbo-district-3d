@@ -56,6 +56,42 @@ python scripts/build_scene_dressing.py --facades   # re-run so observed facades 
 cd viewer && npm install && npm run dev     # http://localhost:5178
 ```
 
+### Published
+
+| | |
+|---|---|
+| Viewer | https://ethical-tech-colab.github.io/dumbo-district-3d/ |
+| Photo review sheet | https://ethical-tech-colab.github.io/dumbo-district-3d/review/ |
+
+Both are deployed by `.github/workflows/pages.yml` on every push to `main`. The workflow checks out
+`digital-3d-shared-contracts` alongside this repository, because the viewer consumes the kernel from
+source rather than from a published package.
+
+The Manhattan Bridge does not appear on the published site. Its assets belong to the other module and
+are not ours to republish, so the viewer shows an integration notice and renders the district without
+them — which is the anti-duplication rule behaving exactly as intended.
+
+### Reviewing the photo corpus
+
+The automatic screen cannot reliably tell an office interior from a street view; measured across this
+corpus, sky coverage overlapped almost completely between the two. So the decision is a person's:
+
+```bash
+python scripts/build_review_sheet.py        # writes viewer/public/review/index.html
+```
+
+Open the sheet, tick **use** or **skip** on each photograph, press **Save decisions**, put the
+downloaded `review-decisions.json` in `data/photos/`, then re-run:
+
+```bash
+python scripts/build_photo_corpus.py
+python scripts/build_scene_dressing.py --facades
+```
+
+A human verdict overrides the automatic screen outright and sets `review.status` to `accepted` or
+`rejected`. Decisions are also kept in the browser as you make them, so the review can be done in
+several sittings, or on a phone.
+
 ### Controls
 
 | | Mouse / trackpad | Touch |

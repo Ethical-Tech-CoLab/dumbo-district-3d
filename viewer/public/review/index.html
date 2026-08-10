@@ -102,7 +102,8 @@ function render() {
     flags.push('<span class="flag">' + it.license + '</span>');
     card.innerHTML =
       '<a class="zoom" href="' + it.full + '" target="_blank" rel="noopener" title="Open full size">' +
-      '<img class="thumb" loading="lazy" src="' + it.thumb + '" alt="" ' +
+      '<img class="thumb" ' + (shown <= 12 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"') +
+      ' src="' + it.thumb + '" alt="" ' +
       'onerror="this.classList.add(\'failed\'); this.alt=\'image unavailable — open source\';"></a>' +
       '<div class="meta"><b>' + it.title + '</b>' +
       '<div class="flags">' + flags.join('') + '</div>' +
