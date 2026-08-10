@@ -24,6 +24,7 @@ import argparse
 import html
 import json
 import re
+import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -68,11 +69,14 @@ PAGE_HEAD = """<!doctype html>
            border:1px solid var(--line); margin-right:4px; }}
   .flag.warn {{ color:#d29922; border-color:#493c17; }}
   .flag.good {{ color:var(--ok); border-color:#1c4028; }}
-  .choices {{ display:flex; border-top:1px solid var(--line); }}
-  .choices label {{ flex:1; text-align:center; padding:8px 0; cursor:pointer; font-size:12.5px;
-                    border-right:1px solid var(--line); }}
-  .choices label:last-child {{ border-right:none; }}
-  .choices input {{ margin-right:5px; }}
+  .choices {{ display:flex; flex-wrap:wrap; border-top:1px solid var(--line); }}
+  .choices label {{ flex:1 1 33%; text-align:center; padding:7px 2px; cursor:pointer;
+                    font-size:11.5px; border-right:1px solid var(--line);
+                    border-top:1px solid var(--line); }}
+  .choices label:hover {{ background:#1c2129; }}
+  .choices label.on {{ background:#1f6feb; color:#fff; }}
+  .choices label.off {{ background:#5c2b28; color:#fff; }}
+  .choices input {{ display:none; }}
   a {{ color:#58a6ff; }}
 </style>
 <header>
@@ -87,6 +91,8 @@ PAGE_HEAD = """<!doctype html>
     <select id="filter">
       <option value="all">All {total}</option>
       <option value="undecided">Undecided only</option>
+      <option value="uncategorised">Kept, needs a category</option>
+      <option value="kept">Everything kept</option>
       <option value="attached">Currently used as facade evidence</option>
       <option value="screened">Auto-screened out</option>
     </select>
@@ -101,6 +107,7 @@ PAGE_HEAD = """<!doctype html>
 <script>
 const ITEMS = {items};
 const EXISTING = {existing};
+const CATEGORIES = {categories};
 """
 
 PAGE_TAIL = """
@@ -126,13 +133,16 @@ function render() {
   grid.innerHTML = '';
   let shown = 0;
   for (const it of ITEMS) {
-    if (mode === 'undecided' && state[it.id]) continue;
+    const decision = state[it.id];
+    if (mode === 'undecided' && decision) continue;
+    // "use" with no category is what the first sheet produced: kept, but not yet told what for.
+    if (mode === 'uncategorised' && decision !== 'use') continue;
+    if (mode === 'kept' && (!decision || decision === 'skip')) continue;
     if (mode === 'attached' && !it.attached) continue;
     if (mode === 'screened' && !it.screened) continue;
     shown++;
     const card = document.createElement('div');
-    const decision = state[it.id];
-    card.className = 'card' + (decision === 'use' ? ' inc' : decision === 'skip' ? ' exc' : '');
+    card.className = 'card' + (decision === 'skip' ? ' exc' : decision ? ' inc' : '');
     const flags = [];
     if (it.attached) flags.push('<span class="flag good">used on ' + it.attached + ' building(s)</span>');
     if (it.screened) flags.push('<span class="flag warn">auto-screened out</span>');
@@ -150,9 +160,12 @@ function render() {
       '<div style="margin-top:4px"><a href="' + it.page + '" target="_blank" rel="noopener">source</a></div>' +
       '</div>' +
       '<div class="choices">' +
-      '<label><input type="radio" name="' + it.id + '" value="use"' +
-        (decision === 'use' ? ' checked' : '') + '>use</label>' +
-      '<label><input type="radio" name="' + it.id + '" value="skip"' +
+      CATEGORIES.map((c) =>
+        '<label class="' + (decision === 'use:' + c.key ? 'on' : '') + '" title="' + c.hint + '">' +
+        '<input type="radio" name="' + it.id + '" value="use:' + c.key + '"' +
+          (decision === 'use:' + c.key ? ' checked' : '') + '>' + c.label + '</label>').join('') +
+      '<label class="' + (decision === 'skip' ? 'off' : '') + '" title="Not useful for anything">' +
+      '<input type="radio" name="' + it.id + '" value="skip"' +
         (decision === 'skip' ? ' checked' : '') + '>skip</label>' +
       '</div>';
     card.querySelectorAll('input').forEach((input) => {
@@ -160,11 +173,24 @@ function render() {
     });
     grid.appendChild(card);
   }
-  const used = Object.values(state).filter((v) => v === 'use').length;
-  const skipped = Object.values(state).filter((v) => v === 'skip').length;
+  // Count only what is actually in this sheet. Rejected photographs are purged from the corpus and
+  // tracked in the do-not-source ledger instead, so their decisions outnumber the cards on screen
+  // and tallying the raw decision object gave a negative "undecided".
+  const present = new Set(ITEMS.map((i) => i.id));
+  const live = Object.entries(state).filter(([id]) => present.has(id)).map(([, v]) => v);
+  const used = live.filter((v) => v && v !== 'skip').length;
+  const skipped = live.filter((v) => v === 'skip').length;
+  const tally = {};
+  for (const v of live) {
+    if (!v || v === 'skip') continue;
+    const key = v.split(':')[1] || 'uncategorised';
+    tally[key] = (tally[key] || 0) + 1;
+  }
+  const breakdown = Object.entries(tally).sort((a, b) => b[1] - a[1])
+    .map(([k, n]) => k + ' ' + n).join(' · ');
   document.getElementById('count').textContent =
-    shown + ' shown · ' + used + ' use · ' + skipped + ' skip · ' +
-    (ITEMS.length - used - skipped) + ' undecided';
+    shown + ' shown · ' + used + ' kept · ' + skipped + ' skip · ' +
+    (ITEMS.length - used - skipped) + ' undecided' + (breakdown ? '  |  ' + breakdown : '');
 }
 
 function shownIds() {
@@ -172,7 +198,7 @@ function shownIds() {
     .filter((v, i, a) => a.indexOf(v) === i);
 }
 function bulk(fn) { shownIds().forEach(fn); persist(); render(); }
-document.getElementById('allIn').onclick = () => bulk((id) => state[id] = 'use');
+document.getElementById('allIn').onclick = () => bulk((id) => state[id] = 'use:facade');
 document.getElementById('allOut').onclick = () => bulk((id) => state[id] = 'skip');
 document.getElementById('clear').onclick = () => bulk((id) => delete state[id]);
 filter.onchange = render;
@@ -247,10 +273,20 @@ def main() -> int:
     items.sort(key=lambda i: (-i["attached"], not i["located"], i["title"]))
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
+    # Categories come from the corpus builder so the two cannot drift: the sheet offers exactly the
+    # choices the build knows how to honour.
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from build_photo_corpus import REVIEW_CATEGORIES  # noqa: PLC0415
+
+    categories = [
+        {"key": key, "label": spec["label"], "hint": spec["hint"]}
+        for key, spec in REVIEW_CATEGORIES.items()
+    ]
     page = PAGE_HEAD.format(
         total=len(items),
         items=json.dumps(items),
         existing=json.dumps(existing),
+        categories=json.dumps(categories),
     ) + PAGE_TAIL
     OUT.write_text(page, encoding="utf-8")
 

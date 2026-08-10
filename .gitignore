@@ -19,6 +19,10 @@ data/streetscape/*.raw.json
 data/horizon/*.raw.json
 data/terrain/*.raw.json
 data/photos/*.raw.json
+# NOT ignored, deliberately: data/photos/review-decisions.json and data/photos/rejected.json.
+# Those are human judgement, the one thing here that cannot be re-fetched. The raw candidate list
+# can be rebuilt from a search in minutes; an afternoon spent deciding which 62 of 336 photographs
+# are usable cannot.
 # Cached thumbnails, fetched only to measure colours from. Third-party images are never committed:
 # the corpus references them by URL and records their licence, it does not vendor them.
 data/photos/cache/

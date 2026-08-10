@@ -128,6 +128,15 @@ def load(path: Path) -> object:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def photo_key(url: str) -> str:
+    """Stable identifier for a photograph: a hash of its canonical source page.
+
+    Query strings are stripped first, because Commons appends tracking parameters that vary between
+    fetches and would otherwise make the same image look like a new one every time.
+    """
+    return hashlib.sha256((url or "").split("?", 1)[0].encode()).hexdigest()[:12]
+
+
 def slug(text: str) -> str:
     base = re.sub(r"[^a-z0-9]+", "-", (text or "").lower()).strip("-")[:48]
     return base or "obs"
@@ -228,10 +237,23 @@ def build_observations(control: DistrictControl, records: list[dict]) -> list[di
             position_source = "unknown"
             accuracy = 900.0
 
-        identifier = hashlib.sha256((record.get("image_url") or record.get("page_url") or "")
-                                    .encode()).hexdigest()[:10]
+        # The identifier must depend only on the image, never on the search that happened to find
+        # it. It used to include the campaign subject, which meant the same photograph reached by a
+        # different query got a different id — and every human decision about it was silently lost
+        # on the next ingest. Decisions are the most expensive thing in this pipeline; their key has
+        # to be the one stable fact available.
+        identifier = photo_key(record.get("page_url") or record.get("image_url") or "")
+        # The exact identifier the previous format produced, kept so decisions recorded against it
+        # can be migrated without loss. Reproduced rather than approximated: the old key hashed the
+        # file URL and prefixed the search subject, so nothing about it can be inferred from the new
+        # one.
+        legacy = "obs-{}-{}".format(
+            slug(record.get("subject", "")),
+            hashlib.sha256((record.get("image_url") or record.get("page_url") or "")
+                           .encode()).hexdigest()[:10],
+        )
         observations.append({
-            "observation_id": f"obs-{slug(record.get('subject', ''))}-{identifier}",
+            "observation_id": f"obs-{identifier}",
             "image_url": record.get("page_url") or record.get("image_url"),
             "thumbnail_url": record.get("thumbnail_url") or record.get("image_url"),
             "position": position,
@@ -264,6 +286,7 @@ def build_observations(control: DistrictControl, records: list[dict]) -> list[di
             "notes": f"campaign subject: {record.get('subject')}",
             "_subject": record.get("subject"),
             "_aspects": aspects,
+            "_legacy_id": legacy,
         })
     return observations
 
@@ -335,13 +358,98 @@ def looks_outdoor(image_mod, path: Path) -> float | None:
     return round(sky / total, 3)
 
 
-def load_decisions() -> dict[str, str]:
+# What a photograph can be evidence FOR, chosen by a reviewer.
+#
+# Categories exist because "use" and "skip" turned out to be too blunt. A picture of Jane's Carousel
+# is worthless for a warehouse facade and valuable for the carousel; a 1910 archival shot describes a
+# DUMBO that no longer exists; and a photograph of the Manhattan Bridge is not ours to derive
+# anything from at all, because another module owns that structure. Collapsing all of those into
+# "use" meant either throwing away good material or letting it colour the wrong thing.
+#
+# Each maps to the `aspect` vocabulary already in the photo-survey contract, so a category is a
+# reviewer-facing name for a decision the schema could already express.
+REVIEW_CATEGORIES: dict[str, dict] = {
+    "facade": {
+        "label": "Building facade",
+        "hint": "A building exterior you could read a material or colour from.",
+        "aspects": ["facade_material", "facade_colour", "window_pattern", "storefront",
+                    "awning", "signage", "roofline", "entrance"],
+        "attaches": True,
+    },
+    "surface": {
+        "label": "Street surface",
+        "hint": "Cobblestone, paving, kerbs, the ground underfoot.",
+        "aspects": ["paving_material", "kerb"],
+        "attaches": False,
+    },
+    "greenery": {
+        "label": "Trees and planting",
+        "hint": "Street trees, canopy size, grass.",
+        "aspects": ["tree_size", "tree_species"],
+        "attaches": False,
+    },
+    "furniture": {
+        "label": "Street furniture",
+        "hint": "Benches, lamps, railings, bollards, bike racks.",
+        "aspects": ["street_furniture"],
+        "attaches": False,
+    },
+    "landmark": {
+        "label": "Landmark",
+        "hint": "Jane's Carousel, the Archway, a named thing rather than a generic building.",
+        "aspects": ["condition", "other"],
+        "attaches": True,
+    },
+    "bridge": {
+        "label": "Bridge (another module owns this)",
+        "hint": "Brooklyn or Manhattan Bridge. Kept and credited, never used to derive district geometry.",
+        "aspects": ["other"],
+        "attaches": False,
+        "foreign": True,
+    },
+    "historic": {
+        "label": "Historic",
+        "hint": "Archival. Describes a DUMBO that may no longer exist.",
+        "aspects": ["condition", "other"],
+        "attaches": False,
+        "historic": True,
+    },
+    "context": {
+        "label": "Context only",
+        "hint": "Area designation, maps, signage, wayfinding. Not geometry.",
+        "aspects": ["other"],
+        "attaches": False,
+    },
+}
+
+DEFAULT_CATEGORY = "facade"
+
+
+def parse_verdict(value: str) -> tuple[str, str]:
+    """Split a decision into (verdict, category).
+
+    Accepts the plain `use` and `skip` the first review sheet produced, so an older decisions file
+    still applies cleanly; a bare `use` means the facade category it used to imply.
+    """
+    if not isinstance(value, str):
+        return "", DEFAULT_CATEGORY
+    verdict, _, category = value.partition(":")
+    if verdict not in ("use", "skip"):
+        return "", DEFAULT_CATEGORY
+    return verdict, (category if category in REVIEW_CATEGORIES else DEFAULT_CATEGORY)
+
+
+def load_decisions(observations: list[dict] | None = None) -> dict[str, str]:
     """Human review decisions, if any have been made.
 
     The pipeline's automatic screen is a filter of last resort and is documented as such. Where a
     person has looked at a photograph and said use or skip, that judgement wins outright: it is the
     only thing here that can tell an office interior from a street view, or notice that a sharp
     photograph of a parked car has been quietly colouring four warehouses.
+
+    Decisions recorded against the old subject-dependent ids are migrated on the way in, matching on
+    the URL hash they both end with. Somebody's afternoon of reviewing 336 photographs is not
+    something to lose to a change of key format.
     """
     path = DATA / "photos" / "review-decisions.json"
     if not path.exists():
@@ -351,7 +459,77 @@ def load_decisions() -> dict[str, str]:
     except (OSError, ValueError) as exc:
         print(f"    review decisions unreadable ({exc}); ignoring", file=sys.stderr)
         return {}
-    return {k: v for k, v in decisions.items() if v in ("use", "skip")}
+
+    valid = {k: v for k, v in decisions.items() if parse_verdict(v)[0]}
+    if observations is None:
+        return valid
+
+    known = {o["observation_id"] for o in observations}
+    by_legacy = {o["_legacy_id"]: o["observation_id"] for o in observations if o.get("_legacy_id")}
+    migrated: dict[str, str] = {}
+    stale = 0
+    remapped = 0
+    for key, value in valid.items():
+        if key in known:
+            migrated[key] = value
+        elif key in by_legacy:
+            migrated[by_legacy[key]] = value
+            remapped += 1
+        else:
+            stale += 1
+    if stale:
+        print(f"    {stale} decision(s) refer to photographs not in the corpus "
+              f"(expected: rejected ones are purged and tracked in rejected.json)")
+    if remapped:
+        print(f"    migrated {remapped} decision(s) to stable identifiers")
+        # Persist the migration, or everything downstream — the review sheet above all — keeps
+        # reading the old keys and shows an afternoon of review as untouched. Entries that could not
+        # be matched are carried through untouched rather than dropped.
+        healed = dict(migrated)
+        for key, value in valid.items():
+            if key not in known and key not in by_legacy:
+                healed[key] = value
+        path.write_text(json.dumps(healed, indent=1, sort_keys=True), encoding="utf-8")
+    return migrated
+
+
+def write_rejection_ledger(observations: list[dict], decisions: dict[str, str]) -> int:
+    """Record every rejected photograph by URL, so it cannot be sourced again.
+
+    Decisions are keyed by observation id, which only exists once a corpus has been built. The
+    ingest runs before that and works in URLs, so it needs the rejections in its own terms —
+    otherwise every new search would re-offer the same parked cars and gallery interiors, and
+    somebody would have to reject them a second time.
+
+    The ledger is additive and never forgets: an entry stays even if the photograph drops out of the
+    current corpus, because the reason it was rejected does not expire.
+    """
+    path = DATA / "photos" / "rejected.json"
+    existing: dict[str, dict] = {}
+    if path.exists():
+        try:
+            existing = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            existing = {}
+
+    added = 0
+    for observation in observations:
+        verdict, _ = parse_verdict(decisions.get(observation["observation_id"], ""))
+        if verdict != "skip":
+            continue
+        url = (observation.get("image_url") or "").split("?", 1)[0]
+        if not url or url in existing:
+            continue
+        existing[url] = {
+            "rejected_at": now(),
+            "title": (observation.get("attribution_text") or "").split(" by ")[0][:120],
+            "reason": "not useful for the district model",
+        }
+        added += 1
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(existing, indent=1, sort_keys=True), encoding="utf-8")
+    return added
 
 
 def attach_to_buildings(control: DistrictControl, observations: list[dict],
@@ -366,15 +544,20 @@ def attach_to_buildings(control: DistrictControl, observations: list[dict],
     attached = 0
     screened = 0
     image_mod = try_pillow()
-    decisions = load_decisions()
+    decisions = load_decisions(observations)
     if decisions:
-        used = sum(1 for v in decisions.values() if v == "use")
-        print(f"    {len(decisions)} human decisions on file ({used} use, "
-              f"{len(decisions) - used} skip); these override the automatic screen")
+        tally: dict[str, int] = {}
+        for value in decisions.values():
+            verdict, category = parse_verdict(value)
+            key = "skip" if verdict == "skip" else category
+            tally[key] = tally.get(key, 0) + 1
+        print(f"    {len(decisions)} human decisions on file; these override the automatic screen")
+        print(f"      {dict(sorted(tally.items(), key=lambda kv: -kv[1]))}")
     rings = [(b, [(p[0], p[1]) for p in b["ring"]] + [(b["ring"][0][0], b["ring"][0][1])])
              for b in buildings]
     for observation in observations:
-        verdict = decisions.get(observation["observation_id"])
+        verdict, category = parse_verdict(decisions.get(observation["observation_id"], ""))
+        spec = REVIEW_CATEGORIES[category]
         review = observation["review"]
 
         if verdict == "skip":
@@ -384,23 +567,32 @@ def attach_to_buildings(control: DistrictControl, observations: list[dict],
             observation["notes"] = (observation.get("notes") or "") + "; rejected by human review"
             continue
 
+        if verdict == "use":
+            review["status"] = "accepted"
+            review["reviewer"] = "human"
+            observation["category"] = category
+            if spec.get("foreign"):
+                # The anti-duplication rule, applied to imagery. A photograph of the Manhattan
+                # Bridge is kept and credited, because it is genuinely a picture of DUMBO, but
+                # nothing about that structure is ours to derive: the bridge module owns it.
+                observation["notes"] = (observation.get("notes") or "") + \
+                    "; subject belongs to another module, retained for reference only"
+            if spec.get("historic"):
+                observation["notes"] = (observation.get("notes") or "") + \
+                    "; historic, describes a past state rather than current conditions"
+            if not spec.get("attaches"):
+                continue
+
         if observation["position_source"] == "unknown":
             continue
         lon, lat = observation["position"]["lon"], observation["position"]["lat"]
         x, y, _ = control.geodetic_to_enu(lon, lat)
 
-        reason = None
         if verdict != "use" and not is_exterior_subject(observation):
-            reason = "subject is not a building exterior"
-        if reason:
             screened += 1
             observation["notes"] = (observation.get("notes") or "") + \
-                f"; screened out of facade evidence: {reason}"
+                "; screened out of facade evidence: subject is not a building exterior"
             continue
-
-        if verdict == "use":
-            review["status"] = "accepted"
-            review["reviewer"] = "human"
 
         if image_mod is not None:
             path = fetch_thumbnail(observation.get("thumbnail_url") or "")
@@ -423,9 +615,13 @@ def attach_to_buildings(control: DistrictControl, observations: list[dict],
             if distance <= radius_m:
                 near.append((distance, building))
         near.sort(key=lambda item: item[0])
-        aspects = [a for a in observation["_aspects"]
+        # A reviewed photograph is evidence for what the reviewer said it shows. Only when nobody
+        # has looked does this fall back to the campaign's own guess from the search that found it.
+        candidate = spec["aspects"] if verdict == "use" else observation["_aspects"]
+        aspects = [a for a in candidate
                    if a in ("facade_material", "facade_colour", "window_pattern",
-                            "storefront", "awning", "signage", "roofline", "entrance")]
+                            "storefront", "awning", "signage", "roofline", "entrance",
+                            "condition", "other")]
         if not aspects:
             continue
 
@@ -545,10 +741,50 @@ def build_palette(observations: list[dict], limit: int) -> dict:
         print("    Pillow not installed; skipping palette derivation")
         return {"available": False, "reason": "no image decoder installed", "surfaces": {}}
 
+    # A photograph a reviewer rejected must not colour anything, and one they categorised should
+    # only colour what they said it shows. The palette used to measure the whole corpus, so a
+    # picture of a parked car still contributed to what "DUMBO brick" looks like even after a human
+    # had said no to it — and a cobblestone close-up was asked about brick.
+    decisions = load_decisions(observations)
+    reviewed: dict[str, str] = {}
+    if decisions:
+        before = len(observations)
+        kept = []
+        for observation in observations:
+            verdict, category = parse_verdict(decisions.get(observation["observation_id"], ""))
+            if verdict == "skip":
+                continue
+            if verdict == "use":
+                reviewed[observation["observation_id"]] = category
+            kept.append(observation)
+        observations = kept
+        print(f"    measuring from {len(observations)} reviewed photographs "
+              f"(of {before}); rejects excluded")
+
+    # Which materials each reviewer category is worth searching for.
+    #
+    # A facade photograph is asked about paving as well as brick, because a picture of a building
+    # taken from the street necessarily contains the street. The category says what the image is
+    # *primarily* evidence for and what it may attach to; the hue gate and the coverage threshold
+    # are what stop it contributing nonsense to the rest. Bridge and historic images inform nothing:
+    # one is another module's subject, the other describes a DUMBO that may no longer exist.
+    category_materials = {
+        "facade": ["brick", "paving"],
+        "surface": ["paving"],
+        "greenery": ["foliage", "paving"],
+        "landmark": ["brick"],
+        "furniture": ["paving"],
+        "bridge": [],
+        "historic": [],
+        "context": [],
+    }
+
     hits: dict[str, list[dict]] = {}
     downloaded = 0
     for observation in observations:
-        materials = SUBJECT_MATERIALS.get(observation.get("_subject") or "", [])
+        category = reviewed.get(observation["observation_id"])
+        materials = (category_materials.get(category, [])
+                     if category else SUBJECT_MATERIALS.get(observation.get("_subject") or "", []))
         if not materials or downloaded >= limit:
             continue
         path = fetch_thumbnail(observation.get("thumbnail_url") or "")
@@ -622,6 +858,10 @@ def main() -> int:
     attached, screened = attach_to_buildings(control, observations, buildings, args.attach_radius)
     print(f"    {attached} observations attached to buildings")
     print(f"    {screened} screened out as not building exteriors")
+
+    added = write_rejection_ledger(observations, load_decisions(observations))
+    if added:
+        print(f"    {added} newly rejected photograph(s) added to the do-not-source ledger")
 
     print("[palette]")
     palette = build_palette(observations, args.palette_limit)

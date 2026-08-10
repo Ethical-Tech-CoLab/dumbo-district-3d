@@ -230,13 +230,13 @@
    "attribution_text": "Photographs: Wikimedia Commons contributors, see photo-survey.json",
    "grants_confidence": "B",
    "verified": true,
-   "notes": "First found-imagery campaign, 336 images. Every one carries an explicit reuse licence recorded with its credit line; anything without one is rejected rather than assumed. Share-alike images are marked derive_appearance: colours are measured from them, the images themselves are never vendored into this repository. Photographs never grant A. See DOQ-007 and PHOTO-SURVEY.md."
+   "notes": "First found-imagery campaign: 336 fetched, 62 kept after human review. Every one carries an explicit reuse licence recorded with its credit line; anything without one is rejected rather than assumed. Share-alike images are marked derive_appearance: colours are measured from them, the images themselves are never vendored into this repository. Photographs never grant A. See DOQ-007 and PHOTO-SURVEY.md."
   }
  ],
  "provenance": {
   "module_id": "dumbo-district",
   "generated_by": "dumbo-district-3d/scripts@1.0.0",
-  "generated_at": "2026-08-10T01:48:19+00:00",
+  "generated_at": "2026-08-10T03:05:35+00:00",
   "source_documents": [
    {
     "path": "DUMBO-GEOSPATIAL-CONTROL.md",

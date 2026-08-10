@@ -297,14 +297,26 @@ which way the apron erred.
 | Attribution | **Required per image** — credit lines are carried in `photo-survey.json` |
 | Verified | Yes |
 
-The first found-imagery campaign: **336 photographs**, 185 of them geolocated, 156 good enough to
-grant grade B.
+The first found-imagery campaign: **336 photographs** fetched, of which **62 survived human review**
+— 185 were geolocated, 156 good enough to grant grade B before curation.
 
 Every image was already published under a licence that permits reuse. Nothing was scraped from a
 tourism site, a listing agent or a social feed, because an image whose licence is unknown cannot be
 used here however good it looks — fetching it would create a liability, not an asset. The ingest
 checks each licence against an allowlist and **rejects anything it does not recognise**, so a new or
 oddly spelled variant fails closed.
+
+**Curation is a person's job, and the numbers say why.** The automatic screen had attached 84
+photographs to buildings; a reviewer rejected 56 of them — a two-thirds false-positive rate,
+including a photograph of a parked car that was colouring four warehouses. Every rejection is
+recorded in `data/photos/rejected.json` keyed by source URL, and the ingest consults that ledger
+before adding anything, so the same material is never offered twice.
+
+Each kept photograph carries a **category** saying what it is evidence for, because "use" proved too
+blunt: a picture of Jane's Carousel, an archival view of a demolished wall, and a usable facade are
+all "use", and treating them alike put the wrong colour on the wrong building. Photographs
+categorised `bridge` are kept and credited but **nothing is derived from them** — that structure
+belongs to another module, which is the anti-duplication rule applied to imagery.
 
 What each licence permits is recorded per record rather than assumed in bulk:
 

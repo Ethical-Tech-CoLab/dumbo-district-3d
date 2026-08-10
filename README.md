@@ -80,8 +80,20 @@ corpus, sky coverage overlapped almost completely between the two. So the decisi
 python scripts/build_review_sheet.py        # writes viewer/public/review/index.html
 ```
 
-Open the sheet, tick **use** or **skip** on each photograph, press **Save decisions**, put the
-downloaded `review-decisions.json` in `data/photos/`, then re-run:
+Open the sheet and give each photograph a **category**, or skip it:
+
+| Category | What it informs |
+|---|---|
+| Building facade | Facade material, colour, windows, storefronts, awnings |
+| Street surface | Paving, kerbs, cobblestone |
+| Trees and planting | Canopy size and species |
+| Street furniture | Benches, lamps, railings, bollards |
+| Landmark | Jane's Carousel, the Archway — named things |
+| Bridge | **Another module owns this.** Kept and credited, never derived from |
+| Historic | Describes a DUMBO that may no longer exist |
+| Context only | Area designation, maps, signage |
+
+Press **Save decisions**, put the downloaded `review-decisions.json` in `data/photos/`, then re-run:
 
 ```bash
 python scripts/build_photo_corpus.py
@@ -89,8 +101,14 @@ python scripts/build_scene_dressing.py --facades
 ```
 
 A human verdict overrides the automatic screen outright and sets `review.status` to `accepted` or
-`rejected`. Decisions are also kept in the browser as you make them, so the review can be done in
-several sittings, or on a phone.
+`rejected`. The category then decides what the photograph may inform: a carousel does not colour a
+warehouse, and a bridge colours nothing at all. Decisions are kept in the browser as you make them,
+so a review can be done in several sittings, or on a phone.
+
+**Rejections are permanent.** Every skipped photograph is written to `data/photos/rejected.json`,
+keyed by source URL, and `ingest_photos.py` consults that ledger before adding anything — so
+searching for more pictures never re-offers material you have already turned down. The ledger is
+additive and never forgets, because the reason something was rejected does not expire.
 
 ### Controls
 

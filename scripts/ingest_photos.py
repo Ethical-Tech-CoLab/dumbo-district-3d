@@ -365,6 +365,24 @@ def refresh_small_thumbnails(width: int = 480) -> int:
     return 0
 
 
+def load_rejection_ledger() -> dict[str, dict]:
+    """Photographs a reviewer has already turned down.
+
+    Written by `build_photo_corpus.py` after a review, keyed by source URL because that is the only
+    thing this stage knows about a candidate. Without it every new search would re-offer the same
+    parked cars, gallery interiors and pictures of other cities, and somebody would have to reject
+    them again — which is a good way to lose a reviewer.
+    """
+    path = DATA / "photos" / "rejected.json"
+    if not path.exists():
+        return {}
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        print(f"    rejection ledger unreadable ({exc}); ignoring", file=sys.stderr)
+        return {}
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -414,25 +432,46 @@ def main() -> int:
                 merged[key] = record
         print(f"\n[merge] {len(merged)} records already on disk")
 
+    rejected = load_rejection_ledger()
+    if rejected:
+        print(f"[merge] {len(rejected)} photograph(s) previously rejected by review; "
+              f"they will not be re-sourced")
+
     fresh = 0
-    rejected = 0
+    rejected_licence = 0
+    already_refused = 0
     for record in raw:
         key = record.get("image_url") or record.get("page_url") or record.get("title")
         if not key:
             continue
         if not record.get("usage"):
-            rejected += 1
+            rejected_licence += 1
+            continue
+        page = (record.get("page_url") or record.get("image_url") or "").split("?", 1)[0]
+        if page in rejected:
+            already_refused += 1
             continue
         if key not in merged:
             fresh += 1
         merged[key] = record
+
+    # Anything already on disk that has since been rejected is dropped too, so a ledger written
+    # after an ingest still takes effect without a manual clean-up.
+    purged = 0
+    for key in list(merged):
+        page = (merged[key].get("page_url") or merged[key].get("image_url") or "").split("?", 1)[0]
+        if page in rejected:
+            del merged[key]
+            purged += 1
 
     accepted = list(merged.values())
 
     print()
     print(f"fetched this run : {len(raw)}")
     print(f"new records      : {fresh}")
-    print(f"rejected licence : {rejected}")
+    print(f"rejected licence : {rejected_licence}")
+    if already_refused or purged:
+        print(f"refused by review: {already_refused} not re-added, {purged} purged from disk")
     print(f"corpus total     : {len(accepted)}")
     families: dict[str, int] = {}
     sources: dict[str, int] = {}
@@ -452,7 +491,8 @@ def main() -> int:
         "query": "Wikimedia Commons geosearch + categories; Openverse commercial,modification",
         "fetched_by": AGENT_ID,
         "corpus_total": len(accepted),
-        "rejected_for_licence_this_run": rejected,
+        "rejected_for_licence_this_run": rejected_licence,
+        "refused_by_review": len(rejected),
         "licence_families": families,
         "collections": sources,
         "note": (

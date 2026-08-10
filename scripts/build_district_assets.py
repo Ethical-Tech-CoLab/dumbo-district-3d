@@ -1171,7 +1171,7 @@ def build_source_register(control: DistrictControl) -> dict:
                 "grants_confidence": "B",
                 "verified": True,
                 "notes": (
-                    "First found-imagery campaign, 336 images. Every one carries an explicit reuse "
+                    "First found-imagery campaign: 336 fetched, 62 kept after human review. Every one carries an explicit reuse "
                     "licence recorded with its credit line; anything without one is rejected rather "
                     "than assumed. Share-alike images are marked derive_appearance: colours are "
                     "measured from them, the images themselves are never vendored into this "
