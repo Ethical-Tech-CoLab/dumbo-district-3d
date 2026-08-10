@@ -159,16 +159,50 @@ have and the best available is visible rather than forgotten.
 | | |
 |---|---|
 | Publisher | NYC Parks, via NYC Open Data |
-| Accessed | 2026-08-09 |
+| Accessed | 2026-08-10 |
 | License | NYC Open Data Terms of Use |
 | Attribution | **Required** — "Street trees: NYC Parks Forestry Management System" |
 | Native CRS | EPSG:4326 · dbh in inches |
 | Verified | Yes |
 
-1,252 street trees inside the district, each with position, species and trunk diameter. Position and
-species are grade A. The **rendered canopy is graded C**: it is a procedural form chosen per genus and
-scaled by dbh, not a measured crown. A real tree in the right place with an approximated shape — which
-is exactly the distinction the grade is there to record.
+**1,306 living street trees** inside the district, each with position, species and trunk diameter.
+Position and species are grade A. The **rendered canopy is graded C**: it is a procedural form chosen
+per genus and scaled by dbh, not a measured crown. A real tree in the right place with an
+approximated shape — which is exactly the distinction the grade is there to record.
+
+**49 genera are present and only 9 were being drawn.** Everything else fell through to a single
+generic "street tree", so a cherry, a redbud and a magnolia rendered as the same mid-green blob. The
+genus table now covers 29 of them, which is every genus with more than a handful of individuals.
+
+### Seasons
+
+The census says what species each tree is, and species is what decides what a street looks like in
+November. So each genus carries four colours rather than one: a ginkgo is `#e0b52e` in autumn and
+mid-green the rest of the year, a Callery pear is near-white in April, a honey locust turns clear
+yellow, an oak turns rust. Rendering all of them mid-green all year was the main reason the canopies
+read as identical props rather than as trees.
+
+Winter is not a colour change but a **geometry** change, flagged per genus with `deciduous`. A bare
+tree is a crown of twigs; drawing it as a solid mass of winter brown reads as a dead tree rather than
+a dormant one. Measured at build time, winter costs 188 draw calls against summer's 134 for the same
+7,044 instances, because the canopy lobes are replaced by limbs.
+
+The colours are plausible for the genus rather than measured, so they inherit the same grade `C` as
+the canopy form. The one exception is summer, which is additionally pulled towards the colour
+measured from photographs of DUMBO in leaf (`DSRC-015`) — and *only* summer, since a measurement
+taken in July says nothing about October.
+
+### Maturity
+
+The census records trunk diameter, which ranges from 3 to 40 inches inside the district, and that was
+being thrown away: the old height curve floored at 3 m, so **496 of 1,292 trees came out at exactly
+the same size**. That is most of why a street of them read as one prop repeated. The curve now has
+three segments — a newly planted whip at 2.2–4.0 m, an establishing tree at 4.0–9.0 m, and a mature
+one up to 24 m — which reproduces the real distribution: 496 young, 455 establishing, 355 mature.
+
+`viewer/public/trees/index.html` lays the whole vocabulary out as a fixture sheet: every genus, every
+season, at all three maturities, on one shared scale so the sizes are comparable. Generated from
+`props.json`, so it always shows what the build actually produced.
 
 ### DSRC-010 — NYC Planimetric Database: surfaces underfoot · Tier A · grants A
 

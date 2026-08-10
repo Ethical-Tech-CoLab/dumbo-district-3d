@@ -37,20 +37,90 @@ FRAME_ID = "nyc-harbor-enu"
 
 INCH = 0.0254
 
-# Canopy proportions by genus, from typical mature form. These shape the procedural fallback; they
-# are not measurements, which is why every tree prototype is graded C.
+# Canopy form and seasonal foliage by genus.
+#
+# `spread` and `height` are proportions of the procedural form, from typical mature shape; they are
+# not measurements, which is why every tree prototype stays graded C. The *position*, the *species*
+# and the *trunk diameter* under them are grade A from the Forestry census.
+#
+# The four seasonal colours are the point of this table. A street tree is not one colour: a Callery
+# pear is white in April and crimson in October, a ginkgo is famously pure yellow for about ten days
+# in November, and a London plane goes brown and hangs on. Rendering all of them mid-green all year
+# is the single biggest reason the canopies read as identical props rather than as trees.
+#
+# Winter deliberately carries the *bare* colour -- the twig mass -- and a `bare` flag, because a
+# deciduous street in January is a grey filigree and drawing it in leaf is simply wrong.
 GENUS_FORM = {
-    "Platanus":       {"label": "London plane",      "spread": 1.15, "height": 1.00, "tint": "#4a6b3a"},
-    "Quercus":        {"label": "Oak",               "spread": 1.10, "height": 1.05, "tint": "#43653a"},
-    "Gleditsia":      {"label": "Honey locust",      "spread": 0.95, "height": 0.95, "tint": "#5c7a42"},
-    "Pyrus":          {"label": "Callery pear",      "spread": 0.75, "height": 0.80, "tint": "#557038"},
-    "Tilia":          {"label": "Linden",            "spread": 0.90, "height": 1.00, "tint": "#4d6c3c"},
-    "Ginkgo":         {"label": "Ginkgo",            "spread": 0.80, "height": 1.00, "tint": "#5a763f"},
-    "Styphnolobium":  {"label": "Japanese pagoda",   "spread": 1.00, "height": 0.95, "tint": "#4f6d3d"},
-    "Acer":           {"label": "Maple",             "spread": 1.00, "height": 0.95, "tint": "#476639"},
-    "Zelkova":        {"label": "Zelkova",           "spread": 1.05, "height": 1.00, "tint": "#4c6a3b"},
+    "Platanus":      {"label": "London plane",      "spread": 1.15, "height": 1.00,
+                      "spring": "#7d9b4a", "summer": "#4a6b3a", "autumn": "#8a7238", "winter": "#6b6357", "deciduous": True},
+    "Quercus":       {"label": "Oak",               "spread": 1.10, "height": 1.05,
+                      "spring": "#6f9142", "summer": "#43653a", "autumn": "#8d5a2b", "winter": "#6a5f52", "deciduous": True},
+    "Gleditsia":     {"label": "Honey locust",      "spread": 0.95, "height": 0.95,
+                      "spring": "#86a352", "summer": "#5c7a42", "autumn": "#c9a83f", "winter": "#6d6459", "deciduous": True},
+    "Pyrus":         {"label": "Callery pear",      "spread": 0.75, "height": 0.80,
+                      "spring": "#d8dcc8", "summer": "#557038", "autumn": "#8d3f3a", "winter": "#6b6155", "deciduous": True},
+    "Tilia":         {"label": "Linden",            "spread": 0.90, "height": 1.00,
+                      "spring": "#83a24c", "summer": "#4d6c3c", "autumn": "#c2a63f", "winter": "#6c6357", "deciduous": True},
+    "Ginkgo":        {"label": "Ginkgo",            "spread": 0.80, "height": 1.00,
+                      "spring": "#7fa04d", "summer": "#5a763f", "autumn": "#e0b52e", "winter": "#6e6558", "deciduous": True},
+    "Styphnolobium": {"label": "Japanese pagoda",   "spread": 1.00, "height": 0.95,
+                      "spring": "#7d9c4a", "summer": "#4f6d3d", "autumn": "#b39a3d", "winter": "#6c6357", "deciduous": True},
+    "Acer":          {"label": "Maple",             "spread": 1.00, "height": 0.95,
+                      "spring": "#7a9a46", "summer": "#476639", "autumn": "#c2542c", "winter": "#6a6155", "deciduous": True},
+    "Zelkova":       {"label": "Zelkova",           "spread": 1.05, "height": 1.00,
+                      "spring": "#7b9a48", "summer": "#4c6a3b", "autumn": "#a85c33", "winter": "#6b6256", "deciduous": True},
+    "Prunus":        {"label": "Cherry",            "spread": 0.85, "height": 0.75,
+                      "spring": "#e8c4cf", "summer": "#4f6a3c", "autumn": "#b0642f", "winter": "#6a6054", "deciduous": True},
+    "Cercis":        {"label": "Eastern redbud",    "spread": 0.75, "height": 0.65,
+                      "spring": "#c47fae", "summer": "#4d6b3e", "autumn": "#c4a53c", "winter": "#696054", "deciduous": True},
+    "Koelreuteria":  {"label": "Golden raintree",   "spread": 0.90, "height": 0.80,
+                      "spring": "#87a44f", "summer": "#526f3d", "autumn": "#c9a63a", "winter": "#6b6256", "deciduous": True},
+    "Liquidambar":   {"label": "Sweetgum",          "spread": 0.85, "height": 1.05,
+                      "spring": "#74964a", "summer": "#456739", "autumn": "#9c3f5a", "winter": "#6a6155", "deciduous": True},
+    "Ulmus":         {"label": "Elm",               "spread": 1.10, "height": 1.05,
+                      "spring": "#7c9a49", "summer": "#4a6a3c", "autumn": "#c0a441", "winter": "#6c6357", "deciduous": True},
+    "Gymnocladus":   {"label": "Kentucky coffee",   "spread": 0.95, "height": 1.00,
+                      "spring": "#88a555", "summer": "#54713f", "autumn": "#c3a63e", "winter": "#6d6459", "deciduous": True},
+    "Amelanchier":   {"label": "Serviceberry",      "spread": 0.70, "height": 0.60,
+                      "spring": "#dfe2d2", "summer": "#4f6c3d", "autumn": "#c4622e", "winter": "#696054", "deciduous": True},
+    "Betula":        {"label": "Birch",             "spread": 0.75, "height": 0.90,
+                      "spring": "#84a44e", "summer": "#4f6f3e", "autumn": "#d2b444", "winter": "#8d8578", "deciduous": True},
+    "Fraxinus":      {"label": "Ash",               "spread": 1.00, "height": 1.00,
+                      "spring": "#799748", "summer": "#48683a", "autumn": "#9a7c3a", "winter": "#6b6256", "deciduous": True},
+    "Ostrya":        {"label": "Hophornbeam",       "spread": 0.80, "height": 0.85,
+                      "spring": "#7c9a4a", "summer": "#4c6a3c", "autumn": "#b8963c", "winter": "#6a6155", "deciduous": True},
+    "Carpinus":      {"label": "Hornbeam",          "spread": 0.85, "height": 0.85,
+                      "spring": "#7e9c4b", "summer": "#4b693b", "autumn": "#b5883a", "winter": "#6a6155", "deciduous": True},
+    "Malus":         {"label": "Crabapple",         "spread": 0.75, "height": 0.65,
+                      "spring": "#e3b9c6", "summer": "#4e6b3d", "autumn": "#b0803a", "winter": "#696054", "deciduous": True},
+    "Robinia":       {"label": "Black locust",      "spread": 0.90, "height": 1.00,
+                      "spring": "#8aa757", "summer": "#55733f", "autumn": "#c0a33e", "winter": "#6c6357", "deciduous": True},
+    "Aesculus":      {"label": "Horsechestnut",     "spread": 1.00, "height": 0.95,
+                      "spring": "#749648", "summer": "#456739", "autumn": "#9c7a35", "winter": "#6b6256", "deciduous": True},
+    "Celtis":        {"label": "Hackberry",         "spread": 1.00, "height": 1.00,
+                      "spring": "#7c9a49", "summer": "#4a6a3c", "autumn": "#bfa340", "winter": "#6c6357", "deciduous": True},
+    "Metasequoia":   {"label": "Dawn redwood",      "spread": 0.70, "height": 1.20,
+                      "spring": "#8ab060", "summer": "#547040", "autumn": "#a86a38", "winter": "#6d6459", "deciduous": True},
+    "Pinus":         {"label": "Pine",              "spread": 0.80, "height": 1.10,
+                      "spring": "#3f5f38", "summer": "#3a5936", "autumn": "#3a5936", "winter": "#375434", "deciduous": False},
+    "Picea":         {"label": "Spruce",            "spread": 0.70, "height": 1.15,
+                      "spring": "#3b5b3b", "summer": "#365538", "autumn": "#365538", "winter": "#335034", "deciduous": False},
+    "Ilex":          {"label": "Holly",             "spread": 0.65, "height": 0.70,
+                      "spring": "#3d5f38", "summer": "#385a35", "autumn": "#385a35", "winter": "#365735", "deciduous": False},
+    "Magnolia":      {"label": "Magnolia",          "spread": 0.80, "height": 0.75,
+                      "spring": "#e9dfe4", "summer": "#496a3c", "autumn": "#a8853a", "winter": "#6a6054", "deciduous": True},
+    "Syringa":       {"label": "Lilac",             "spread": 0.65, "height": 0.55,
+                      "spring": "#b995c6", "summer": "#4f6c3d", "autumn": "#a5883c", "winter": "#696054", "deciduous": True},
 }
-DEFAULT_FORM = {"label": "Street tree", "spread": 0.95, "height": 0.95, "tint": "#4e6c3c"}
+DEFAULT_FORM = {"label": "Street tree", "spread": 0.95, "height": 0.95,
+                "spring": "#7d9b4a", "summer": "#4e6c3c", "autumn": "#b08a3a", "winter": "#6b6256",
+                "deciduous": True}
+
+SEASONS = ("spring", "summer", "autumn", "winter")
+
+# Trunk diameter to canopy height. A forestry rule of thumb for street trees is roughly 0.55 m of
+# height per inch of DBH, which holds for the middle of the range and overstates the extremes.
+DBH_TO_HEIGHT_M = 0.55
 
 # Street furniture prototypes. Height and colour are conventional values, not measurements, which is
 # why every one of these is graded C: OSM gives an authoritative *position*, and says nothing about
@@ -181,6 +251,7 @@ def build_props(control: DistrictControl, index: dict) -> dict:
     used_genera: dict[str, int] = {}
     instances: list[dict] = []
     skipped = 0
+    maturities: dict[str, int] = {}
 
     for record in trees:
         location = record.get("location") or {}
@@ -193,7 +264,7 @@ def build_props(control: DistrictControl, index: dict) -> dict:
             continue
 
         structure = (record.get("tpstructure") or "").strip()
-        if structure in {"Stump", "Shaft"}:
+        if structure.startswith("Stump") or structure == "Shaft":
             # Present in the data but not a tree any longer.
             continue
 
@@ -203,9 +274,19 @@ def build_props(control: DistrictControl, index: dict) -> dict:
         used_genera[genus] = used_genera.get(genus, 0) + 1
 
         dbh_in = _as_float(record.get("dbh")) or 6.0
-        # Trunk diameter to canopy height: a rough forestry rule of thumb is that street trees run
-        # about 0.55 m of height per inch of DBH, floored so saplings are still visible.
-        height_m = max(3.0, min(22.0, dbh_in * 0.55))
+        # Trunk diameter to canopy height. The rule of thumb holds through the middle of the range
+        # and overstates both ends, so a young tree is given a young tree's proportions rather than
+        # being clamped to a floor: the old floor of 3 m flattened 496 of 1,292 trees to exactly the
+        # same size, which is most of why a street of them read as one prop repeated.
+        if dbh_in < 6:
+            height_m = 2.2 + dbh_in * 0.30          # 2.2-4.0 m, a newly planted whip
+        elif dbh_in < 14:
+            height_m = 4.0 + (dbh_in - 6) * 0.62    # 4.0-9.0 m, establishing
+        else:
+            height_m = min(24.0, 9.0 + (dbh_in - 14) * 0.42)
+
+        maturity = "young" if dbh_in < 6 else "establishing" if dbh_in < 14 else "mature"
+        maturities[maturity] = maturities.get(maturity, 0) + 1
 
         x, y, _ = control.geodetic_to_enu(lon, lat)
         col = int(math.floor((x - ox) / size))
@@ -226,6 +307,7 @@ def build_props(control: DistrictControl, index: dict) -> dict:
     prototypes = []
     for genus in sorted(used_genera):
         form = GENUS_FORM.get(genus, DEFAULT_FORM)
+        seasons = {season: form[season] for season in SEASONS}
         prototypes.append(
             {
                 "prototype_id": f"tree_{genus.lower()}",
@@ -242,16 +324,19 @@ def build_props(control: DistrictControl, index: dict) -> dict:
                 "source_basis": ["official_dataset", "procedural"],
                 "source_refs": ["DSRC-009"],
                 "confidence": "C",
+                "seasonal_foliage": seasons,
+                "deciduous": form["deciduous"],
                 "notes": (
                     f"{form['label']}. Position, species and trunk diameter are grade A from the "
-                    "Forestry census; the canopy form is a plausible shape for the genus, not a "
-                    f"measurement, so the prop is graded C. Foliage tint {form['tint']}."
+                    "Forestry census; the canopy form and its seasonal colours are plausible for the "
+                    f"genus, not measurements, so the prop is graded C. Summer foliage {seasons['summer']}."
                 ),
             }
         )
 
     print(f"    {len(instances)} trees placed, {len(prototypes)} prototypes, {skipped} skipped")
     print(f"    genera: {dict(sorted(used_genera.items(), key=lambda kv: -kv[1])[:5])}")
+    print(f"    maturity: {maturities}")
 
     furniture_prototypes, furniture_instances = build_street_furniture(control, index)
     prototypes.extend(furniture_prototypes)

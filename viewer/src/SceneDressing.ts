@@ -354,6 +354,52 @@ function signedArea(ring: Array<[number, number]>): number {
   return total / 2;
 }
 
+/**
+ * The four seasons a prop set can be rendered in.
+ *
+ * Imported rather than redefined: `FarField` already owns this vocabulary, because the water scene
+ * picks its sailboats by season. One control should drive the whole scene, not two that agree by
+ * coincidence.
+ */
+import type { Season } from './FarField';
+
+export type { Season };
+
+/** What a genus looks like through the year. First-class on the prototype since contracts v1. */
+interface SeasonalFoliage {
+  seasonal_foliage?: Partial<Record<Season, string>>;
+  deciduous?: boolean;
+}
+
+let currentSeason: Season = 'summer';
+
+/**
+ * Choose the season the scene is dressed for.
+ *
+ * Returns whether anything changed, so a caller can skip a rebuild it does not need. The prop set
+ * has to be rebuilt for a change to take effect: winter is not merely a different colour, because a
+ * deciduous tree in January is a bare crown of twigs and drawing it as a solid mass of brown would
+ * be a worse lie than leaving it green.
+ */
+export function setSeason(season: Season): boolean {
+  if (season === currentSeason) return false;
+  currentSeason = season;
+  return true;
+}
+
+export function getSeason(): Season {
+  return currentSeason;
+}
+
+function seasonalSpec(prototype: ScenePrototype): SeasonalFoliage {
+  return prototype as SeasonalFoliage;
+}
+
+/** True when this prototype should be drawn without leaves in the current season. */
+function isBare(prototype: ScenePrototype): boolean {
+  return currentSeason === 'winter' && seasonalSpec(prototype).deciduous !== false;
+}
+
 function buildQuadPaving(doc: PavingDocument, groundAt: (x: number, y: number) => number): THREE.Group {
   const group = new THREE.Group();
   const byKind = new Map<string, number[]>();
@@ -418,10 +464,41 @@ function proceduralPrototype(prototype: ScenePrototype): THREE.BufferGeometry[] 
 
   switch (prototype.kind) {
     case 'tree': {
-      // Trunk plus a two-lobe canopy. Low-poly on purpose: at 1,252 instances the budget is tight,
-      // and a street tree read at walking distance is mostly silhouette.
-      const trunk = new THREE.CylinderGeometry(sx * 0.035, sx * 0.055, sz * 0.42, 5);
-      trunk.translate(0, sz * 0.21, 0);
+      // Trunk plus canopy. Low-poly on purpose: at 1,300 instances the budget is tight, and a
+      // street tree read at walking distance is mostly silhouette.
+      //
+      // The instance's uniform scale carries its real trunk diameter, so this shape is authored for
+      // a nominal 10 m tree and everything else follows from that one number. What it cannot carry
+      // is *proportion*: a young whip is a thin stick with a small crown high up, a mature plane is
+      // a short trunk under a wide one, and drawing both with the same profile is most of why a
+      // street of them read as one prop repeated.
+      const bare = isBare(prototype);
+      // sz is the prototype's nominal height; the ratio of instance scale to it is unavailable here,
+      // so maturity is expressed through the prototype's own spread instead.
+      const slender = sx < 8;
+
+      const trunk = new THREE.CylinderGeometry(
+        sx * (slender ? 0.028 : 0.038),
+        sx * (slender ? 0.045 : 0.062),
+        sz * (bare ? 0.52 : 0.42),
+        5,
+      );
+      trunk.translate(0, sz * (bare ? 0.26 : 0.21), 0);
+
+      if (bare) {
+        // Winter: a crown of bare limbs rather than a mass. Four angled branches read as filigree
+        // against the sky at distance and cost four boxes, where a solid brown blob would read as a
+        // dead tree.
+        const parts: THREE.BufferGeometry[] = [trunk];
+        for (let i = 0; i < 4; i++) {
+          const limb = new THREE.CylinderGeometry(sx * 0.012, sx * 0.022, sz * 0.42, 4);
+          limb.rotateZ((i % 2 === 0 ? 1 : -1) * 0.55);
+          limb.rotateY((i * Math.PI) / 4);
+          limb.translate(0, sz * 0.72, 0);
+          parts.push(limb);
+        }
+        return parts;
+      }
 
       const lower = new THREE.IcosahedronGeometry(sx * 0.34, 0);
       lower.scale(1, 0.78, 1);
@@ -537,8 +614,13 @@ function proceduralPrototype(prototype: ScenePrototype): THREE.BufferGeometry[] 
   }
 }
 
-/** The tint a prototype was authored with, ignoring any measurement. */
+/** The tint a prototype was authored with for the current season, ignoring any measurement. */
 function authoredTint(prototype: ScenePrototype): number {
+  const seasonal = seasonalSpec(prototype).seasonal_foliage?.[currentSeason];
+  if (seasonal) {
+    const match = /#?([0-9a-f]{6})/i.exec(seasonal);
+    if (match) return parseInt(match[1], 16);
+  }
   const match = /#([0-9a-f]{6})/i.exec(prototype.notes ?? '');
   return match ? parseInt(match[1], 16) : 0x4e6c3c;
 }
@@ -546,10 +628,15 @@ function authoredTint(prototype: ScenePrototype): number {
 /**
  * The tint to render a prototype with: the authored colour, pulled towards the measured foliage
  * hue when the corpus has one and the prototype is a plant.
+ *
+ * The measurement is only applied in summer. It was taken from photographs of DUMBO in leaf, so
+ * using it to tint an October canopy would drag the whole district back to green and throw away the
+ * one thing the seasonal table is for.
  */
 function tintFor(prototype: ScenePrototype): number {
   const original = new THREE.Color(authoredTint(prototype));
-  if (!observedFoliage || (prototype.kind !== 'tree' && prototype.kind !== 'shrub')) {
+  const isPlant = prototype.kind === 'tree' || prototype.kind === 'shrub';
+  if (!observedFoliage || !isPlant || currentSeason !== 'summer') {
     return original.getHex();
   }
   const originalHsl = { h: 0, s: 0, l: 0 };
@@ -612,9 +699,10 @@ export function buildProps(
     const tint = tintFor(prototype);
 
     parts.forEach((geometry, partIndex) => {
-      const isTrunk = prototype.kind === 'tree' && partIndex === 0;
+      // In winter every part of a deciduous tree is wood: the trunk and the bare limbs above it.
+      const woody = prototype.kind === 'tree' && (partIndex === 0 || isBare(prototype));
       const material = new THREE.MeshLambertMaterial({
-        color: isTrunk ? TRUNK_COLOR : tint,
+        color: woody ? TRUNK_COLOR : tint,
         flatShading: true,
       });
       const mesh = new THREE.InstancedMesh(geometry, material, capped.length);

@@ -19,6 +19,7 @@ import { DistrictScene, type TileBuilding } from './DistrictScene';
 import { FrameLoop } from './FrameLoop';
 import { GroundGrid, type GroundGridDocument } from './GroundGrid';
 import { applyObservedFoliage, applyObservedPalette } from './SceneDressing';
+import type { Season } from './FarField';
 import { WalkControls } from './WalkControls';
 import { WalkRouter, type WalkNetwork } from './WalkRouter';
 import MetadataPanel, { type FacadeEvidence } from './components/MetadataPanel';
@@ -71,6 +72,7 @@ export default function App() {
   const [mode, setMode] = useState<ViewerMode>('walk');
   const [selected, setSelected] = useState<AssetMetadata | null>(null);
   const [overlay, setOverlay] = useState(false);
+  const [season, setSeason] = useState<Season>('summer');
   const [attributions, setAttributions] = useState<string[]>([]);
   /**
    * Notices, grouped by code.
@@ -687,6 +689,13 @@ export default function App() {
     setOverlay(next);
   }, []);
 
+  const changeSeason = useCallback((next: Season) => {
+    const state = engine.current;
+    if (!state) return;
+    state.scene.setSeason(next);
+    setSeason(next);
+  }, []);
+
   const startTour = useCallback(
     async (summary: TourSummary) => {
       const state = engine.current;
@@ -840,6 +849,19 @@ python scripts/propose_bridge_placement.py --write`}
           </button>
         </nav>
 
+        <nav className="seasons" aria-label="Season">
+          {(['spring', 'summer', 'autumn', 'winter'] as Season[]).map((candidate) => (
+            <button
+              key={candidate}
+              className={season === candidate ? 'active' : ''}
+              onClick={() => changeSeason(candidate)}
+              title={`Dress the district for ${candidate}`}
+            >
+              {candidate}
+            </button>
+          ))}
+        </nav>
+
         <div className="tour-launcher">
           {activeTour ? (
             <button onClick={stopTour}>exit tour</button>
@@ -852,6 +874,9 @@ python scripts/propose_bridge_placement.py --write`}
           )}
           <a className="review-link" href="review/index.html" title="Review which photographs count as evidence">
             photo review
+          </a>
+          <a className="review-link" href="trees/index.html" title="Every tree prototype, across seasons and maturities">
+            trees
           </a>
         </div>
       </header>

@@ -50,6 +50,11 @@ html, body, #root {
 .modes, .tour-launcher { display: flex; gap: 6px; }
 .tour-launcher { margin-left: auto; }
 
+/* Seasons sit apart from the mode switch: changing the season does not change what you are looking
+   at, only what time of year it is, and running them together read as one long row of modes. */
+.seasons { display: flex; gap: 4px; margin-left: 14px; padding-left: 14px; border-left: 1px solid var(--line); }
+.seasons button { padding: 5px 9px; font-size: 12px; text-transform: capitalize; }
+
 button {
   background: var(--panel-2);
   color: var(--text);

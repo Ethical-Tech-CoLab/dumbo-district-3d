@@ -111,6 +111,28 @@ is what *that wall* looks like". It is the only route that unlocks per-building 
 
 ## What is deliberately not on this list
 
+**Downloaded tree models.** Kenney's Nature Kit (CC0, 330 models, GLB) and Quaternius's stylised
+nature pack are both genuinely free and were checked. They were not adopted, for three reasons that
+are worth stating because "download a nice tree" is the obvious first instinct:
+
+1. **They are stylised, not species.** A CC0 pack gives you "tree A" and "tree B". The census gives
+   1,306 trees with a *species* each, across 49 genera. Mapping a London plane, a ginkgo and an
+   eastern redbud onto three interchangeable stylised meshes throws away the only thing that makes
+   the planting real, and it would look *more* uniform, not less, because a pack has fewer distinct
+   forms than DUMBO has genera.
+2. **Seasons multiply the problem.** Four seasons across 29 genera is 116 variants. No free pack
+   carries that, so the colours would have to be authored anyway — at which point the mesh is the
+   only thing being downloaded, and a procedural crown scaled by real trunk diameter is a better
+   mesh for this purpose than a fixed-size stylised one.
+3. **1,306 instanced draws.** The scene budget is the reason the canopies are low-poly in the first
+   place. A pack model is typically 1–3k triangles; the current crown is 40, and the whole prop set
+   is 134 draw calls.
+
+A downloaded model becomes the right answer at the point where a *specific* tree matters — a named
+specimen in the park, say — rather than 1,306 street trees whose value is in being individually
+sized and correctly speciated. The prototype already carries a `url`, so swapping one in is a
+one-field change.
+
 **Photorealistic textures.** The project's grading discipline says a texture is a claim about a
 specific building, and a stock brick texture on 446 buildings is a claim that is false 446 times.
 Measured colour with honest banding is weaker-looking and more truthful. That trade should only be

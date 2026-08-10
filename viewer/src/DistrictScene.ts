@@ -28,6 +28,7 @@ import {
   facadeBandFactor,
   facadeBayFactor,
   parseColor,
+  setSeason,
   type FacadeDocument,
   type FacadeStyle,
   type PavingDocument,
@@ -115,10 +116,12 @@ export class DistrictScene {
   private groundMesh: THREE.Mesh | null = null;
   private pavingGroup: THREE.Group | null = null;
   private propsGroup: THREE.Group | null = null;
+  private propSet: ScenePropSet | null = null;
   private facades: FacadeDocument | null = null;
   private propStats = { instances: 0, drawCalls: 0 };
   private horizonGroup: THREE.Group | null = null;
   private water: WaterScene | null = null;
+  private waterDoc: WaterDocument | null = null;
 
   constructor(canvas: HTMLCanvasElement, options: SceneOptions) {
     this.options = options;
@@ -166,6 +169,7 @@ export class DistrictScene {
 
   /** Water surface plus ferries and seasonal recreational craft. */
   setWater(doc: WaterDocument, season: Season = seasonForDate()): void {
+    this.waterDoc = doc;
     if (this.water) {
       this.scene.remove(this.water.group);
       this.water.dispose();
@@ -270,8 +274,30 @@ export class DistrictScene {
 
   /** Instanced street furniture and vegetation. */
   setProps(set: ScenePropSet): void {
+    this.propSet = set;
+    this.rebuildProps();
+  }
+
+  /**
+   * Re-dress the scene for a season.
+   *
+   * The prop set has to be rebuilt rather than re-tinted, because winter is not a colour change: a
+   * deciduous tree in January is a bare crown of twigs, so the geometry itself differs. Cheap enough
+   * to do on a click -- it is one pass over 1,306 instances -- and it does not touch the tiles.
+   *
+   * The water is re-dressed at the same time. It already chose its recreational craft by season, so
+   * without this a click could put sailboats on the river under bare trees.
+   */
+  setSeason(season: Season): void {
+    if (!setSeason(season)) return;
+    if (this.propSet) this.rebuildProps();
+    if (this.waterDoc) this.setWater(this.waterDoc, season);
+  }
+
+  private rebuildProps(): void {
+    if (!this.propSet) return;
     if (this.propsGroup) this.scene.remove(this.propsGroup);
-    const result = buildProps(set, (x, y) => this.groundHeightAt(x, y));
+    const result = buildProps(this.propSet, (x, y) => this.groundHeightAt(x, y));
     this.propsGroup = result.group;
     this.propStats = { instances: result.instanceCount, drawCalls: result.drawCalls };
     this.scene.add(this.propsGroup);
