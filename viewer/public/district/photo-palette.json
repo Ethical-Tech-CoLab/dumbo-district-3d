@@ -8,9 +8,9 @@
  "surfaces": {
   "paving": {
    "label": "cobblestone, granite sett and asphalt",
-   "observations": 38,
-   "mean_hex": "#686665",
-   "mean_coverage": 0.498,
+   "observations": 47,
+   "mean_hex": "#6a6866",
+   "mean_coverage": 0.509,
    "samples": [
     {
      "observation_id": "obs-88aaea8e9464",
@@ -21,11 +21,6 @@
      "observation_id": "obs-ebbef9bf7a55",
      "hex": "#84737f",
      "coverage": 0.249
-    },
-    {
-     "observation_id": "obs-23efe304b395",
-     "hex": "#525155",
-     "coverage": 0.199
     },
     {
      "observation_id": "obs-a127fda12a03",
@@ -201,6 +196,56 @@
      "observation_id": "obs-ed9685a89914",
      "hex": "#605b5d",
      "coverage": 0.731
+    },
+    {
+     "observation_id": "obs-96967378269d",
+     "hex": "#5a595d",
+     "coverage": 0.39
+    },
+    {
+     "observation_id": "obs-0d1c994ff86b",
+     "hex": "#716f70",
+     "coverage": 0.444
+    },
+    {
+     "observation_id": "obs-1e8bc1c21e9c",
+     "hex": "#827d7a",
+     "coverage": 0.53
+    },
+    {
+     "observation_id": "obs-49629d3af4e2",
+     "hex": "#6c6863",
+     "coverage": 0.491
+    },
+    {
+     "observation_id": "obs-65057cbc4c9e",
+     "hex": "#75736b",
+     "coverage": 0.309
+    },
+    {
+     "observation_id": "obs-b92795967ff2",
+     "hex": "#67625b",
+     "coverage": 0.555
+    },
+    {
+     "observation_id": "obs-b0f96ef6a425",
+     "hex": "#6a6a6a",
+     "coverage": 0.818
+    },
+    {
+     "observation_id": "obs-8f83ad8b6aab",
+     "hex": "#6a5b68",
+     "coverage": 0.23
+    },
+    {
+     "observation_id": "obs-d81a48ef4b51",
+     "hex": "#6b6c68",
+     "coverage": 0.678
+    },
+    {
+     "observation_id": "obs-a953b248d5fa",
+     "hex": "#8a8781",
+     "coverage": 0.769
     }
    ],
    "range_hex": [
@@ -208,29 +253,29 @@
     "#97938b"
    ],
    "credits": [
+    "20170206 132047 HDR.jpg by JavierX0149, CC-BY-SA-4.0, via Wikimedia Commons",
     "2024-06-15 09 35 38 View west along Interstate 278 (Brooklyn-Queens Expressway) from the Manhattan Bridge in Brooklyn, New York City, New York.jpg by Famartin, CC-BY-SA-4.0, via Wikimedia Commons",
     "55 Washington Street, Brooklyn NY.jpg by (User:Wgreaves), CC-BY-SA-4.0, via Wikimedia Commons",
     "60 Water Street (2022).jpg by ThibautRe, CC-BY-SA-4.0, via Wikimedia Commons",
     "Amazon Prime E-Assisted vehicle in Brooklyn, NY.jpg by Nielsoncaetanosalmeron, CC-BY-4.0, via Wikimedia Commons",
     "BQE BB split jeh.jpg by Jim.henderson, CC0-1.0, via Wikimedia Commons",
+    "Belgium Blocks vs. City Streets.jpg by Cmcm1205, CC-BY-SA-4.0, via Wikimedia Commons",
     "Brooklyn (7031591563).jpg by Andr\u00e9s Nieto Porras from Palma de Mallorca, Espa\u00f1a, CC-BY-SA-2.0, via Wikimedia Commons",
     "By the Brooklyn Bridge 2.jpg by Aaron Barlow, CC-BY-SA-4.0, via Wikimedia Commons",
     "City Streets.jpg by Jkoss6, CC-BY-SA-4.0, via Wikimedia Commons",
-    "DUMBO (41325554841).jpg by Nan Palmero from San Antonio, TX, USA, CC-BY-2.0, via Wikimedia Commons",
     "DUMBO from Bridge.JPG by Jared Kofsky, CC-BY-SA-3.0, via Wikimedia Commons",
     "Dumbo - Brooklyn, NYC.jpg by Adjoajo, CC-BY-SA-4.0, via Wikimedia Commons",
     "Dumbo Brooklyn October 2021 006.jpg by Kidfly182, CC-BY-SA-4.0, via Wikimedia Commons",
     "Dumbo Brooklyn October 2021 007.jpg by Kidfly182, CC-BY-SA-4.0, via Wikimedia Commons",
     "Emergency telephone NYC 1.jpg by Superbass, CC-BY-SA-3.0, via Wikimedia Commons",
-    "Fulton Ferry Pier with Manhattan.JPG by Wusel007, CC-BY-SA-3.0, via Wikimedia Commons",
-    "John Street, DUMBO Brooklyn.jpg by AaronBarlow, CC-BY-SA-4.0, via Wikimedia Commons"
+    "Fulton Ferry Pier with Manhattan.JPG by Wusel007, CC-BY-SA-3.0, via Wikimedia Commons"
    ]
   },
   "brick": {
    "label": "brick and terracotta masonry",
-   "observations": 24,
-   "mean_hex": "#745241",
-   "mean_coverage": 0.27,
+   "observations": 27,
+   "mean_hex": "#755341",
+   "mean_coverage": 0.253,
    "samples": [
     {
      "observation_id": "obs-a127fda12a03",
@@ -293,11 +338,6 @@
      "coverage": 0.558
     },
     {
-     "observation_id": "obs-fd9d5178f280",
-     "hex": "#835855",
-     "coverage": 0.128
-    },
-    {
      "observation_id": "obs-a502b110bef9",
      "hex": "#715449",
      "coverage": 0.158
@@ -351,6 +391,26 @@
      "observation_id": "obs-ed9685a89914",
      "hex": "#695145",
      "coverage": 0.106
+    },
+    {
+     "observation_id": "obs-96967378269d",
+     "hex": "#8d5b4d",
+     "coverage": 0.125
+    },
+    {
+     "observation_id": "obs-b92795967ff2",
+     "hex": "#7e6d5b",
+     "coverage": 0.061
+    },
+    {
+     "observation_id": "obs-8f83ad8b6aab",
+     "hex": "#825645",
+     "coverage": 0.234
+    },
+    {
+     "observation_id": "obs-516bb801f206",
+     "hex": "#96796d",
+     "coverage": 0.072
     }
    ],
    "range_hex": [
@@ -358,29 +418,29 @@
     "#a87158"
    ],
    "credits": [
+    "Bakery in Vinegar Hill.jpg by Staceybattice, CC-BY-SA-4.0, via Wikimedia Commons",
     "Brooklyn Bridge from Brooklyn Bridge Park.jpg by Fredverillo, CC-BY-SA-3.0, via Wikimedia Commons",
     "Brooklyn Round-a-bout (6214820803).jpg by Tony Hisgett from Birmingham, UK, CC-BY-2.0, via Wikimedia Commons",
     "By the Brooklyn Bridge 2.jpg by Aaron Barlow, CC-BY-SA-4.0, via Wikimedia Commons",
     "City Streets.jpg by Jkoss6, CC-BY-SA-4.0, via Wikimedia Commons",
     "DUMBO Brooklyn at night.jpg by LWYang from USA, CC-BY-2.0, via Wikimedia Commons",
-    "DUMBO Historic District street signs.jpg by (User:Wgreaves), CC-BY-SA-4.0, via Wikimedia Commons",
     "DUMBO from Bridge.JPG by Jared Kofsky, CC-BY-SA-3.0, via Wikimedia Commons",
     "DUMBO, Front St at night as viewed from Manhattan Bridge.JPG by IlyaSukhanov, CC-BY-SA-3.0, via Wikimedia Commons",
     "Dumbo (Down Under the Manhattan Bridge Overpass) at Brooklyn - NYC - USA - panoramio.jpg by diego_cue, CC-BY-SA-3.0, via Wikimedia Commons",
     "Dumbo - Brooklyn, NYC.jpg by Adjoajo, CC-BY-SA-4.0, via Wikimedia Commons",
+    "Henry Street, Brooklyn, New York, US.jpg by Clyde Charles Brown, CC-BY-SA-4.0, via Wikimedia Commons",
+    "Hotel St. George, Brooklyn, New York, US.jpg by Clyde Charles Brown, CC-BY-SA-4.0, via Wikimedia Commons",
     "Jane's Carousel 2.jpg by Kiah Ankoor (@IOTAGLOBAL), CC-BY-2.0, via Wikimedia Commons",
     "Manhattan Bridge -1.jpg by Shah Ronak S, CC-BY-SA-4.0, via Wikimedia Commons",
     "Manhattan Bridge and Empire State Building from Washington Street, Dumbo, Brooklyn, New York.jpg by Christian David, CC-BY-SA-4.0, via Wikimedia Commons",
-    "New York (11600531215).jpg by Mack Male from Edmonton, AB, Canada, CC-BY-SA-2.0, via Wikimedia Commons",
-    "New York (11600740003).jpg by Mack Male from Edmonton, AB, Canada, CC-BY-SA-2.0, via Wikimedia Commons",
-    "Pearl & Water Sts red brick jeh.jpg by Jim.henderson, CC-BY-SA-4.0, via Wikimedia Commons"
+    "New York (11600531215).jpg by Mack Male from Edmonton, AB, Canada, CC-BY-SA-2.0, via Wikimedia Commons"
    ]
   },
   "foliage": {
    "label": "street tree canopy",
-   "observations": 2,
-   "mean_hex": "#364122",
-   "mean_coverage": 0.138,
+   "observations": 3,
+   "mean_hex": "#536438",
+   "mean_coverage": 0.183,
    "samples": [
     {
      "observation_id": "obs-63a7c904ed30",
@@ -391,14 +451,20 @@
      "observation_id": "obs-bca6f962a107",
      "hex": "#354020",
      "coverage": 0.215
+    },
+    {
+     "observation_id": "obs-1e8bc1c21e9c",
+     "hex": "#70884f",
+     "coverage": 0.275
     }
    ],
    "range_hex": [
     "#354020",
-    "#3b452a"
+    "#70884f"
    ],
    "credits": [
     "Emergency telephone NYC 1.jpg by Superbass, CC-BY-SA-3.0, via Wikimedia Commons",
+    "HFA in the park (27648404420).jpg by Nat Welch from NYC, United States, CC-BY-SA-2.0, via Wikimedia Commons",
     "Thomson Meter Co Water Meters building in DUMBO, Brooklyn.jpg by (User:Wgreaves), CC-BY-SA-4.0, via Wikimedia Commons"
    ]
   }
@@ -406,6 +472,6 @@
  "provenance": {
   "module_id": "dumbo-district",
   "generated_by": "dumbo-district-3d/scripts@1.0.0 (dumbo-district-3d/scripts@1.0.0)",
-  "generated_at": "2026-08-10T13:19:50+00:00"
+  "generated_at": "2026-08-10T15:06:09+00:00"
  }
 }
