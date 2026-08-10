@@ -24,6 +24,8 @@ export interface PavingSurface {
 export interface PavingPolygon {
   kind: string;
   name: string | null;
+  /** What OSM says the ground is made of, where a way could be matched to this polygon. */
+  surface?: string;
   ring: Array<[number, number]>;
 }
 
@@ -85,6 +87,47 @@ const SURFACE_STYLE: Record<string, { color: number; height: number }> = {
   boardwalk: { color: 0x8a6f4e, height: 0.28 },
 };
 
+/**
+ * Colour by what the ground is made of, where OSM says so.
+ *
+ * The lift still comes from the polygon's kind — a cobbled carriageway is at carriageway height —
+ * but the colour comes from the material, because the whole reason DUMBO looks like DUMBO is that
+ * its streets are Belgian block and the pavements beside them are not.
+ */
+const MATERIAL_STYLE: Record<string, number> = {
+  cobblestone: 0x6a5c4f,
+  paving_stones: 0x8a857c,
+  concrete: 0x928e86,
+  asphalt: 0x3c3a38,
+  wood: 0x8a6f4e,
+  gravel: 0x8d8477,
+};
+
+/**
+ * The colour for a named material, pulled towards the measured paving hue like everything else.
+ *
+ * The blend keeps the material's own lightness for the same reason the surfaces do: cobblestone is
+ * darker and warmer than the concrete beside it, and flattening the two loses the only cue that
+ * tells a walker which is the road.
+ */
+function materialColour(material: string, fallback: number): number {
+  const base = MATERIAL_STYLE[material];
+  if (base === undefined) return fallback;
+  if (!observedPaving) return base;
+  const original = new THREE.Color(base);
+  const originalHsl = { h: 0, s: 0, l: 0 };
+  original.getHSL(originalHsl);
+  const tinted = new THREE.Color().setHSL(
+    observedPaving.h,
+    originalHsl.s + (observedPaving.s - originalHsl.s) * observedPaving.strength,
+    originalHsl.l,
+  );
+  return original.lerp(tinted, observedPaving.strength).getHex();
+}
+
+/** Hue and saturation measured from photographs of DUMBO's paving, if the corpus has any. */
+let observedPaving: { h: number; s: number; strength: number } | null = null;
+
 /** A colour measured from photographs of the district, per surface material. */
 export interface ObservedPalette {
   available?: boolean;
@@ -108,6 +151,9 @@ export function applyObservedPalette(palette: ObservedPalette | null, strength =
   const measured = new THREE.Color(paving.mean_hex);
   const measuredHsl = { h: 0, s: 0, l: 0 };
   measured.getHSL(measuredHsl);
+  // Recorded as well as applied, so the per-material colours can adopt the same measurement without
+  // the two drifting apart.
+  observedPaving = { h: measuredHsl.h, s: measuredHsl.s, strength: strength * 0.6 };
 
   for (const kind of ['roadway', 'sidewalk', 'plaza', 'cycleway', 'steps', 'park', 'boardwalk']) {
     const style = SURFACE_STYLE[kind];
@@ -205,8 +251,7 @@ function buildSurveyedPaving(
   const byKind = new Map<string, number[]>();
 
   for (const polygon of doc.polygons ?? []) {
-    const style = SURFACE_STYLE[polygon.kind] ?? SURFACE_STYLE.roadway;
-    // Normalise winding before triangulating. The published layers do not agree with each other:
+    const style = SURFACE_STYLE[polygon.kind] ?? SURFACE_STYLE.roadway;    // Normalise winding before triangulating. The published layers do not agree with each other:
     // sidewalk rings come back one way round and roadbed the other, and since scene +Y maps to
     // render -Z the handedness flip turns that disagreement into whole layers facing downward and
     // vanishing. Signed area is the only thing that settles it.
@@ -222,12 +267,14 @@ function buildSurveyedPaving(
       continue;
     }
 
-    let positions = byKind.get(polygon.kind);
+    // One mesh per kind *and* material: the lift is a property of the kind, the colour of the
+    // material, and a cobbled carriageway needs both.
+    const key = polygon.surface ? `${polygon.kind}|${polygon.surface}` : polygon.kind;
+    let positions = byKind.get(key);
     if (!positions) {
       positions = [];
-      byKind.set(polygon.kind, positions);
-    }
-    for (const face of faces) {
+      byKind.set(key, positions);
+    }    for (const face of faces) {
       // Scene +Y (north) maps to render -Z, flipping handedness, so the winding produced in plan
       // has to be reversed or every surface faces down and is silently culled.
       for (const index of [face[0], face[2], face[1]]) {
@@ -238,14 +285,16 @@ function buildSurveyedPaving(
     }
   }
 
-  for (const [kind, positions] of byKind) {
+  for (const [key, positions] of byKind) {
     if (!positions.length) continue;
+    const [kind, material] = key.split('|');
     const style = SURFACE_STYLE[kind] ?? SURFACE_STYLE.roadway;
+    const color = material ? materialColour(material, style.color) : style.color;
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
     geometry.computeVertexNormals();
-    const mesh = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({ color: style.color }));
-    mesh.name = `paving:${kind}`;
+    const mesh = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({ color }));
+    mesh.name = `paving:${key}`;
     group.add(mesh);
   }
 

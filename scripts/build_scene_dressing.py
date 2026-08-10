@@ -444,9 +444,129 @@ SURFACE_KIND = {
 }
 
 
-def build_paving(control: DistrictControl) -> dict:
+# What OSM's surface values mean for rendering. Only the ones that actually look different are
+# worth carrying: DUMBO's Belgian block is the whole point of this, and calling it out from the
+# asphalt is the difference between "a street" and "*that* street".
+SURFACE_MATERIAL = {
+    "sett": "cobblestone",
+    "cobblestone": "cobblestone",
+    "cobblestone:flattened": "cobblestone",
+    "unhewn_cobblestone": "cobblestone",
+    "paving_stones": "paving_stones",
+    "paving_stones:30": "paving_stones",
+    "concrete": "concrete",
+    "concrete:plates": "concrete",
+    "concrete:lanes": "concrete",
+    "asphalt": "asphalt",
+    "wood": "wood",
+    "gravel": "gravel",
+    "fine_gravel": "gravel",
+    "compacted": "gravel",
+}
+
+# Which OSM ways may speak for which surveyed polygon. Without this split a pavement polygon takes
+# its material from the carriageway it happens to run beside, and every footway in DUMBO comes out
+# asphalt.
+_VEHICLE_WAYS = {
+    "motorway", "trunk", "primary", "secondary", "tertiary", "residential",
+    "unclassified", "service", "living_street", "road", "busway",
+}
+_FOOT_WAYS = {"footway", "path", "pedestrian", "steps", "cycleway", "track", "corridor"}
+
+_SURFACE_MATCH = {
+    "roadway": _VEHICLE_WAYS,
+    "sidewalk": _FOOT_WAYS,
+    "plaza": _FOOT_WAYS,
+}
+# park and boardwalk are deliberately absent. A park polygon is the lawn, not the path crossing it,
+# and a boardwalk is wood by definition; letting either take its material from the nearest footway
+# paved over both.
+
+# Beyond this a surveyed polygon and an OSM way are not describing the same piece of ground.
+SURFACE_MATCH_RADIUS_M = 18.0
+
+
+def _attach_surfaces(control: DistrictControl, surfaces: list[dict]) -> dict[str, int]:
+    """Give each surveyed polygon the material of the OSM way that runs through it.
+
+    The survey traces where the ground is, to the centimetre, and says nothing about what it is made
+    of. OSM says what it is made of and is vague about where. Joining them keeps the good half of
+    each: surveyed geometry, tagged material.
+
+    Matching is restricted by kind, which matters more than it looks. DUMBO's carriageways are
+    Belgian block while the pavement beside them is concrete; a nearest-way join that ignored the
+    distinction would hand each the other's material, and the cobblestone would end up on the
+    footway.
     """
-    The ground surfaces a walker stands on, from the city's own planimetric survey.
+    path = DATA / "streets" / "osm-ways.raw.json"
+    if not path.exists():
+        return {}
+
+    # Bucket way segments on a coarse grid so each polygon only tests its own neighbourhood.
+    cell = 40.0
+    grid: dict[tuple[int, int], list] = {}
+    for way in load(path):
+        tags = way.get("tags") or {}
+        material = SURFACE_MATERIAL.get((tags.get("surface") or "").strip())
+        if not material:
+            continue
+        highway = (tags.get("highway") or "").strip()
+        if tags.get("footway") or tags.get("sidewalk"):
+            highway = highway or "footway"
+        if not highway:
+            continue
+        geometry = way.get("geometry") or []
+        projected = [control.geodetic_to_enu(float(p["lon"]), float(p["lat"]))[:2] for p in geometry]
+        for a, b in zip(projected, projected[1:]):
+            entry = (a, b, material, highway)
+            for key in {
+                (int(math.floor(p[0] / cell)), int(math.floor(p[1] / cell)))
+                for p in (a, b, ((a[0] + b[0]) / 2, (a[1] + b[1]) / 2))
+            }:
+                grid.setdefault(key, []).append(entry)
+
+    if not grid:
+        return {}
+
+    counts: dict[str, int] = {}
+    for surface in surfaces:
+        allowed = _SURFACE_MATCH.get(surface["kind"])
+        if not allowed:
+            continue
+        ring = surface["ring"]
+        cx = sum(p[0] for p in ring) / len(ring)
+        cy = sum(p[1] for p in ring) / len(ring)
+
+        best: tuple[float, str] | None = None
+        base = (int(math.floor(cx / cell)), int(math.floor(cy / cell)))
+        for dx in (-1, 0, 1):
+            for dy in (-1, 0, 1):
+                for a, b, material, highway in grid.get((base[0] + dx, base[1] + dy), ()):
+                    if highway not in allowed:
+                        continue
+                    distance = _point_segment_distance(cx, cy, a, b)
+                    if best is None or distance < best[0]:
+                        best = (distance, material)
+
+        if best and best[0] <= SURFACE_MATCH_RADIUS_M:
+            surface["surface"] = best[1]
+            counts[best[1]] = counts.get(best[1], 0) + 1
+    return counts
+
+
+def _point_segment_distance(px: float, py: float, a, b) -> float:
+    ax, ay = a
+    bx, by = b
+    dx, dy = bx - ax, by - ay
+    span = dx * dx + dy * dy
+    if span < 1e-9:
+        return math.hypot(px - ax, py - ay)
+    t = max(0.0, min(1.0, ((px - ax) * dx + (py - ay) * dy) / span))
+    return math.hypot(px - (ax + t * dx), py - (ay + t * dy))
+
+
+def build_paving(control: DistrictControl) -> dict:
+    """    The ground surfaces a walker stands on, from the city's own planimetric survey.
 
     Until now these were derived: each street centreline was widened by a typical half-width for its
     class, with a strip either side for a pavement. That reads as a street from a distance and falls
@@ -497,7 +617,10 @@ def build_paving(control: DistrictControl) -> dict:
         return _build_paving_from_centrelines(control)
 
     kerbs = _build_kerbs(control, ring_enu)
+    materials = _attach_surfaces(control, surfaces)
     print(f"    surfaces {counts}; {len(kerbs)} kerb segments")
+    if materials:
+        print(f"    materials from OSM: {dict(sorted(materials.items(), key=lambda kv: -kv[1]))}")
 
     return {
         "contract_version": CONTRACT_VERSION,

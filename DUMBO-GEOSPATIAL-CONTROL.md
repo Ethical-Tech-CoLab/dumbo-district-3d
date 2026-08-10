@@ -308,6 +308,34 @@ polygon, and kerbs from surveyed kerb *lines*.
 A kerb face is worth its own control because it is the strongest cue for reading a street at eye
 level: without one, a pavement is a change of colour and the eye cannot judge distance across it.
 
+### What the ground is made of
+
+The survey traces *where* the ground is, to the centimetre, and is silent on what it is made of.
+OpenStreetMap (`DSRC-007`) tags the material and is vague about where. Joining them keeps the good
+half of each: surveyed geometry, tagged material.
+
+Each surveyed polygon takes the `surface` of the nearest OSM way within 18 m — but only from a way
+of a compatible class. That restriction matters more than it looks. DUMBO's carriageways are Belgian
+block while the pavements beside them are concrete, and a nearest-way join that ignored the
+distinction would hand each the other's material and put the cobblestone on the footway. Carriageway
+polygons may therefore only take their material from vehicle ways, and pavement and plaza polygons
+only from foot ways.
+
+Parks and boardwalks are excluded from the join altogether. A park polygon is the lawn, not the path
+crossing it, and a boardwalk is wood by definition; both were being paved over by the nearest footway
+before the exclusion was added.
+
+| Kind | Matched | Result |
+|---|---:|---|
+| roadway | 295 | 205 asphalt · **62 cobblestone** · 14 paving stones · 1 concrete |
+| sidewalk | 111 | 53 concrete · 6 paving stones · 5 asphalt |
+| plaza | 8 | 3 paving stones · 3 concrete · 1 asphalt |
+
+The geometry stays grade `A`; the material is grade `C`, because a crowd-sourced tag is a claim about
+a street, not a measurement of one. The 62 cobbled carriageways fall on fifteen named streets —
+Washington, Water, Front, Main, Plymouth, Pearl, Dock, Jay, John, Adams, Gold, Hudson, York,
+Elizabeth Place and the Dumbo Archway — which is the Belgian block the district is known for.
+
 ---
 
 ## 7. Open questions
