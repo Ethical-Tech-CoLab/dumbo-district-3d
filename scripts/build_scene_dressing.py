@@ -1017,6 +1017,87 @@ CLASS_STYLE = {
 DEFAULT_STYLE = ("other", "#87705d", 0.20)
 
 
+def apply_measured_variation(facades: dict[str, dict]) -> int:
+    """Spread each building's colour across the range photographs actually show.
+
+    Every inferred and designated facade currently gets the one colour its category maps to, so a
+    street of brick warehouses is one flat tone repeated forty times. Real brick is not: the corpus
+    measures brick across `#42332a` to `#a87158` — nearly black to a pale buff — and publishing only
+    the mean throws that away.
+
+    So each building is nudged to a deterministic point in the measured range, keyed by its own BIN.
+    Deterministic because a district that reshuffles its colours on every build is not a twin of
+    anything, and keyed by BIN so the same building is the same colour in every rebuild and on every
+    machine.
+
+    Observed facades are left alone. A colour measured from a photograph *of that building* is the
+    strongest evidence there is, and spreading it towards a district average would be a downgrade.
+    """
+    palette_path = OUT / "photo-palette.json"
+    if not palette_path.exists():
+        return 0
+    palette = load(palette_path)
+    if not palette.get("available"):
+        return 0
+
+    ranges: dict[str, tuple[tuple[int, int, int], tuple[int, int, int]]] = {}
+    for material, entry in (palette.get("surfaces") or {}).items():
+        span = entry.get("range_hex") or []
+        if len(span) == 2 and entry.get("observations", 0) >= 4:
+            ranges[material] = (_rgb(span[0]), _rgb(span[1]))
+    if not ranges:
+        return 0
+
+    # Which measured material stands in for a rendered facade material.
+    stands_for = {
+        "brick": "brick", "brownstone": "brick", "terracotta": "brick",
+        "stucco": "brick", "stone": "paving", "concrete": "paving",
+    }
+
+    varied = 0
+    for local_id, entry in facades.items():
+        if entry.get("basis") == "observed":
+            continue
+        material = stands_for.get(entry.get("material") or "", "brick")
+        span = ranges.get(material)
+        if not span:
+            continue
+
+        # A hash of the building id, not random: same building, same colour, every build.
+        digest = hashlib.sha256(local_id.encode("utf-8")).digest()
+        # Two independent draws so lightness and warmth vary separately; a single one makes every
+        # dark building the same dark and every pale one the same pale.
+        toward = digest[0] / 255.0
+        warmth = (digest[1] / 255.0 - 0.5) * 0.18
+
+        base = _rgb(entry["color"])
+        low, high = span
+        channels = []
+        for index in range(3):
+            # Blend the category colour towards a point in the measured span, gently: the span's
+            # extremes are single photographs and taking them literally would produce a district of
+            # near-black and near-white walls.
+            target = low[index] + (high[index] - low[index]) * toward
+            value = base[index] + (target - base[index]) * 0.45
+            if index == 0:
+                value *= 1 + warmth
+            elif index == 2:
+                value *= 1 - warmth
+            channels.append(max(0, min(255, int(round(value)))))
+        entry["color"] = "#%02x%02x%02x" % tuple(channels)
+        entry["colour_source"] = f"varied within measured {material} range"
+        varied += 1
+
+    return varied
+
+
+def _rgb(value: str) -> tuple[int, int, int]:
+    text = (value or "").lstrip("#")
+    if len(text) != 6:
+        return (128, 128, 128)
+    return (int(text[0:2], 16), int(text[2:4], 16), int(text[4:6], 16))
+
+
 def build_facades(control: DistrictControl) -> dict:
     """
     Per-building facade appearance, derived from attributes this module already holds.
@@ -1077,12 +1158,15 @@ def build_facades(control: DistrictControl) -> dict:
 
     observed = apply_observed_appearance(facades)
     designated = apply_designations(facades)
+    varied = apply_measured_variation(facades)
 
     print(f"    {len(facades)} facades; families {dict(sorted(histogram.items(), key=lambda kv: -kv[1])[:5])}")
     if designated:
         print(f"    {designated} facades carry the city's designated style and material")
     if observed:
         print(f"    {observed} facades observed from photographs and locked against the procedural pass")
+    if varied:
+        print(f"    {varied} facades spread across the measured colour range")
 
     return {
         "contract_version": CONTRACT_VERSION,
