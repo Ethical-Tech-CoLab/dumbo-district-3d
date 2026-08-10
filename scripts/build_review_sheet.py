@@ -82,10 +82,10 @@ PAGE_HEAD = """<!doctype html>
 <header>
   <h1>DUMBO photo review</h1>
   <div class="sub">
-    Tick <b>use</b> for photographs that genuinely show a DUMBO street or building exterior well
-    enough to take a facade colour from. Tick <b>skip</b> for interiors, close-ups of objects,
-    events, or anything where you cannot tell what building you are looking at.
-    Everything left untouched stays as it is now: auto-screened, and treated as weaker evidence.
+    Give each photograph <b>every</b> category that applies — a street view is often a facade, a
+    pavement and a street tree at once, and each tag lets it inform that one thing. Tick
+    <b>skip</b> for anything not worth keeping. Untouched photographs stay auto-screened, and are
+    treated as weaker evidence.
   </div>
   <div class="bar">
     <select id="filter">
@@ -142,6 +142,9 @@ function render() {
     if (mode === 'screened' && !it.screened) continue;
     shown++;
     const card = document.createElement('div');
+    const tags = decision && decision !== 'skip'
+      ? decision.slice(4).split(',').filter(Boolean)
+      : [];
     card.className = 'card' + (decision === 'skip' ? ' exc' : decision ? ' inc' : '');
     const flags = [];
     if (it.attached) flags.push('<span class="flag good">used on ' + it.attached + ' building(s)</span>');
@@ -161,15 +164,33 @@ function render() {
       '</div>' +
       '<div class="choices">' +
       CATEGORIES.map((c) =>
-        '<label class="' + (decision === 'use:' + c.key ? 'on' : '') + '" title="' + c.hint + '">' +
-        '<input type="radio" name="' + it.id + '" value="use:' + c.key + '"' +
-          (decision === 'use:' + c.key ? ' checked' : '') + '>' + c.label + '</label>').join('') +
+        '<label class="' + (tags.includes(c.key) ? 'on' : '') + '" title="' + c.hint + '">' +
+        '<input type="checkbox" data-id="' + it.id + '" value="' + c.key + '"' +
+          (tags.includes(c.key) ? ' checked' : '') + '>' + c.label + '</label>').join('') +
       '<label class="' + (decision === 'skip' ? 'off' : '') + '" title="Not useful for anything">' +
-      '<input type="radio" name="' + it.id + '" value="skip"' +
+      '<input type="checkbox" data-id="' + it.id + '" value="skip"' +
         (decision === 'skip' ? ' checked' : '') + '>skip</label>' +
       '</div>';
     card.querySelectorAll('input').forEach((input) => {
-      input.addEventListener('change', () => { state[it.id] = input.value; persist(); render(); });
+      input.addEventListener('change', () => {
+        const id = input.dataset.id;
+        const current = state[id] || '';
+        if (input.value === 'skip') {
+          // Skip is exclusive: it means nothing in this photograph is wanted.
+          if (input.checked) state[id] = 'skip'; else delete state[id];
+        } else {
+          const set = current.startsWith('use')
+            ? current.slice(4).split(',').filter(Boolean)
+            : [];
+          const next = input.checked
+            ? [...new Set([...set, input.value])]
+            : set.filter((t) => t !== input.value);
+          if (next.length) state[id] = 'use:' + next.join(',');
+          else delete state[id];
+        }
+        persist();
+        render();
+      });
     });
     grid.appendChild(card);
   }
@@ -183,8 +204,8 @@ function render() {
   const tally = {};
   for (const v of live) {
     if (!v || v === 'skip') continue;
-    const key = v.split(':')[1] || 'uncategorised';
-    tally[key] = (tally[key] || 0) + 1;
+    const tags = v.slice(4).split(',').filter(Boolean);
+    for (const t of (tags.length ? tags : ['uncategorised'])) tally[t] = (tally[t] || 0) + 1;
   }
   const breakdown = Object.entries(tally).sort((a, b) => b[1] - a[1])
     .map(([k, n]) => k + ' ' + n).join(' · ');

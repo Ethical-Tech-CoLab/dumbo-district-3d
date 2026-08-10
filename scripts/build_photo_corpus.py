@@ -374,36 +374,44 @@ REVIEW_CATEGORIES: dict[str, dict] = {
         "hint": "A building exterior you could read a material or colour from.",
         "aspects": ["facade_material", "facade_colour", "window_pattern", "storefront",
                     "awning", "signage", "roofline", "entrance"],
+        # A picture of a building taken from the street necessarily contains the street, so it is
+        # asked about paving too. The hue gate and coverage threshold stop it contributing nonsense.
+        "materials": ["brick", "paving"],
         "attaches": True,
     },
     "surface": {
         "label": "Street surface",
         "hint": "Cobblestone, paving, kerbs, the ground underfoot.",
         "aspects": ["paving_material", "kerb"],
+        "materials": ["paving"],
         "attaches": False,
     },
     "greenery": {
         "label": "Trees and planting",
         "hint": "Street trees, canopy size, grass.",
         "aspects": ["tree_size", "tree_species"],
+        "materials": ["foliage", "paving"],
         "attaches": False,
     },
     "furniture": {
         "label": "Street furniture",
         "hint": "Benches, lamps, railings, bollards, bike racks.",
         "aspects": ["street_furniture"],
+        "materials": ["paving"],
         "attaches": False,
     },
     "landmark": {
         "label": "Landmark",
         "hint": "Jane's Carousel, the Archway, a named thing rather than a generic building.",
         "aspects": ["condition", "other"],
+        "materials": ["brick"],
         "attaches": True,
     },
     "bridge": {
         "label": "Bridge (another module owns this)",
         "hint": "Brooklyn or Manhattan Bridge. Kept and credited, never used to derive district geometry.",
         "aspects": ["other"],
+        "materials": [],
         "attaches": False,
         "foreign": True,
     },
@@ -411,6 +419,7 @@ REVIEW_CATEGORIES: dict[str, dict] = {
         "label": "Historic",
         "hint": "Archival. Describes a DUMBO that may no longer exist.",
         "aspects": ["condition", "other"],
+        "materials": [],
         "attaches": False,
         "historic": True,
     },
@@ -418,6 +427,7 @@ REVIEW_CATEGORIES: dict[str, dict] = {
         "label": "Context only",
         "hint": "Area designation, maps, signage, wayfinding. Not geometry.",
         "aspects": ["other"],
+        "materials": [],
         "attaches": False,
     },
 }
@@ -425,18 +435,60 @@ REVIEW_CATEGORIES: dict[str, dict] = {
 DEFAULT_CATEGORY = "facade"
 
 
-def parse_verdict(value: str) -> tuple[str, str]:
-    """Split a decision into (verdict, category).
+def parse_verdict(value: str) -> tuple[str, list[str]]:
+    """Split a decision into (verdict, categories).
 
-    Accepts the plain `use` and `skip` the first review sheet produced, so an older decisions file
-    still applies cleanly; a bare `use` means the facade category it used to imply.
+    A photograph usually shows several things at once — a street view is a facade, a pavement, a
+    street tree and a bench in one frame — so a decision carries a list rather than a single choice.
+    Written as `use:facade,surface,greenery`.
+
+    Accepts the earlier single-category form, and the plain `use` and `skip` the first review sheet
+    produced, so older decision files still apply cleanly; a bare `use` means the facade category it
+    used to imply.
     """
     if not isinstance(value, str):
-        return "", DEFAULT_CATEGORY
-    verdict, _, category = value.partition(":")
+        return "", [DEFAULT_CATEGORY]
+    verdict, _, rest = value.partition(":")
     if verdict not in ("use", "skip"):
-        return "", DEFAULT_CATEGORY
-    return verdict, (category if category in REVIEW_CATEGORIES else DEFAULT_CATEGORY)
+        return "", [DEFAULT_CATEGORY]
+    categories = [c for c in (part.strip() for part in rest.split(",")) if c in REVIEW_CATEGORIES]
+    return verdict, categories or [DEFAULT_CATEGORY]
+
+
+def merged_spec(categories: list[str]) -> dict:
+    """Combine several categories into one set of permissions.
+
+    Union, deliberately. A photograph tagged `bridge,facade` shows both, and the honest reading is
+    that the facade part is usable and the bridge part is not — which falls out for free, because
+    the bridge category contributes no aspects and no materials to the union. The same trick means a
+    reviewer can add a tag without having to think about interactions.
+
+    `historic` is the exception that is not a union: it contributes aspects, so the photograph can
+    still say what a building looked like, but it contributes no materials, because a colour
+    measured from an archival image describes a wall that may have been repainted twice since.
+    """
+    aspects: list[str] = []
+    materials: list[str] = []
+    attaches = False
+    historic = any(REVIEW_CATEGORIES[c].get("historic") for c in categories)
+    for category in categories:
+        spec = REVIEW_CATEGORIES[category]
+        for aspect in spec["aspects"]:
+            if aspect not in aspects:
+                aspects.append(aspect)
+        if not historic:
+            for material in spec.get("materials", []):
+                if material not in materials:
+                    materials.append(material)
+        attaches = attaches or spec.get("attaches", False)
+    return {
+        "aspects": aspects,
+        "materials": materials,
+        "attaches": attaches,
+        "historic": historic,
+        # Foreign only when there is nothing else in the frame we are allowed to look at.
+        "foreign_only": all(REVIEW_CATEGORIES[c].get("foreign") for c in categories),
+    }
 
 
 def load_decisions(observations: list[dict] | None = None) -> dict[str, str]:
@@ -548,16 +600,16 @@ def attach_to_buildings(control: DistrictControl, observations: list[dict],
     if decisions:
         tally: dict[str, int] = {}
         for value in decisions.values():
-            verdict, category = parse_verdict(value)
-            key = "skip" if verdict == "skip" else category
-            tally[key] = tally.get(key, 0) + 1
+            verdict, categories = parse_verdict(value)
+            for key in (["skip"] if verdict == "skip" else categories):
+                tally[key] = tally.get(key, 0) + 1
         print(f"    {len(decisions)} human decisions on file; these override the automatic screen")
         print(f"      {dict(sorted(tally.items(), key=lambda kv: -kv[1]))}")
     rings = [(b, [(p[0], p[1]) for p in b["ring"]] + [(b["ring"][0][0], b["ring"][0][1])])
              for b in buildings]
     for observation in observations:
-        verdict, category = parse_verdict(decisions.get(observation["observation_id"], ""))
-        spec = REVIEW_CATEGORIES[category]
+        verdict, categories = parse_verdict(decisions.get(observation["observation_id"], ""))
+        spec = merged_spec(categories)
         review = observation["review"]
 
         if verdict == "skip":
@@ -570,17 +622,18 @@ def attach_to_buildings(control: DistrictControl, observations: list[dict],
         if verdict == "use":
             review["status"] = "accepted"
             review["reviewer"] = "human"
-            observation["category"] = category
-            if spec.get("foreign"):
+            observation["category"] = categories[0]
+            observation["categories"] = categories
+            if spec["foreign_only"]:
                 # The anti-duplication rule, applied to imagery. A photograph of the Manhattan
                 # Bridge is kept and credited, because it is genuinely a picture of DUMBO, but
                 # nothing about that structure is ours to derive: the bridge module owns it.
                 observation["notes"] = (observation.get("notes") or "") + \
                     "; subject belongs to another module, retained for reference only"
-            if spec.get("historic"):
+            if spec["historic"]:
                 observation["notes"] = (observation.get("notes") or "") + \
                     "; historic, describes a past state rather than current conditions"
-            if not spec.get("attaches"):
+            if not spec["attaches"]:
                 continue
 
         if observation["position_source"] == "unknown":
@@ -746,45 +799,27 @@ def build_palette(observations: list[dict], limit: int) -> dict:
     # picture of a parked car still contributed to what "DUMBO brick" looks like even after a human
     # had said no to it — and a cobblestone close-up was asked about brick.
     decisions = load_decisions(observations)
-    reviewed: dict[str, str] = {}
+    reviewed: dict[str, list[str]] = {}
     if decisions:
         before = len(observations)
         kept = []
         for observation in observations:
-            verdict, category = parse_verdict(decisions.get(observation["observation_id"], ""))
+            verdict, categories = parse_verdict(decisions.get(observation["observation_id"], ""))
             if verdict == "skip":
                 continue
             if verdict == "use":
-                reviewed[observation["observation_id"]] = category
+                reviewed[observation["observation_id"]] = merged_spec(categories)["materials"]
             kept.append(observation)
         observations = kept
         print(f"    measuring from {len(observations)} reviewed photographs "
               f"(of {before}); rejects excluded")
 
-    # Which materials each reviewer category is worth searching for.
-    #
-    # A facade photograph is asked about paving as well as brick, because a picture of a building
-    # taken from the street necessarily contains the street. The category says what the image is
-    # *primarily* evidence for and what it may attach to; the hue gate and the coverage threshold
-    # are what stop it contributing nonsense to the rest. Bridge and historic images inform nothing:
-    # one is another module's subject, the other describes a DUMBO that may no longer exist.
-    category_materials = {
-        "facade": ["brick", "paving"],
-        "surface": ["paving"],
-        "greenery": ["foliage", "paving"],
-        "landmark": ["brick"],
-        "furniture": ["paving"],
-        "bridge": [],
-        "historic": [],
-        "context": [],
-    }
-
     hits: dict[str, list[dict]] = {}
     downloaded = 0
     for observation in observations:
-        category = reviewed.get(observation["observation_id"])
-        materials = (category_materials.get(category, [])
-                     if category else SUBJECT_MATERIALS.get(observation.get("_subject") or "", []))
+        materials = reviewed.get(observation["observation_id"])
+        if materials is None:
+            materials = SUBJECT_MATERIALS.get(observation.get("_subject") or "", [])
         if not materials or downloaded >= limit:
             continue
         path = fetch_thumbnail(observation.get("thumbnail_url") or "")

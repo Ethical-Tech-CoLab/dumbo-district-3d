@@ -8,34 +8,19 @@
  "surfaces": {
   "paving": {
    "label": "cobblestone, granite sett and asphalt",
-   "observations": 39,
-   "mean_hex": "#666564",
-   "mean_coverage": 0.489,
+   "observations": 31,
+   "mean_hex": "#686765",
+   "mean_coverage": 0.514,
    "samples": [
-    {
-     "observation_id": "obs-0eab6ac76e88",
-     "hex": "#797e75",
-     "coverage": 0.251
-    },
     {
      "observation_id": "obs-88aaea8e9464",
      "hex": "#81807f",
      "coverage": 0.22
     },
     {
-     "observation_id": "obs-2c3ebee8cdbd",
-     "hex": "#656565",
-     "coverage": 0.741
-    },
-    {
      "observation_id": "obs-ebbef9bf7a55",
      "hex": "#84737f",
      "coverage": 0.249
-    },
-    {
-     "observation_id": "obs-23efe304b395",
-     "hex": "#525155",
-     "coverage": 0.199
     },
     {
      "observation_id": "obs-a127fda12a03",
@@ -48,24 +33,9 @@
      "coverage": 0.364
     },
     {
-     "observation_id": "obs-c6fbcbd2dbc2",
-     "hex": "#444343",
-     "coverage": 0.367
-    },
-    {
      "observation_id": "obs-63a7c904ed30",
      "hex": "#7c7b7c",
      "coverage": 0.517
-    },
-    {
-     "observation_id": "obs-785e2f6603ee",
-     "hex": "#757372",
-     "coverage": 0.669
-    },
-    {
-     "observation_id": "obs-a56bea229e24",
-     "hex": "#4f545e",
-     "coverage": 0.565
     },
     {
      "observation_id": "obs-2498375a588f",
@@ -78,6 +48,11 @@
      "coverage": 0.753
     },
     {
+     "observation_id": "obs-f9a775e3a891",
+     "hex": "#7b7771",
+     "coverage": 0.678
+    },
+    {
      "observation_id": "obs-86d66d0079c2",
      "hex": "#686b68",
      "coverage": 0.561
@@ -86,6 +61,11 @@
      "observation_id": "obs-79581618b280",
      "hex": "#7c7b79",
      "coverage": 0.689
+    },
+    {
+     "observation_id": "obs-e22ac3029bcd",
+     "hex": "#7f7974",
+     "coverage": 0.477
     },
     {
      "observation_id": "obs-798c7045e4dc",
@@ -98,11 +78,6 @@
      "coverage": 0.52
     },
     {
-     "observation_id": "obs-aea50dc8f81f",
-     "hex": "#9d9689",
-     "coverage": 0.185
-    },
-    {
      "observation_id": "obs-02f8c81231f9",
      "hex": "#6d6965",
      "coverage": 0.608
@@ -111,11 +86,6 @@
      "observation_id": "obs-868164f9db75",
      "hex": "#636364",
      "coverage": 0.77
-    },
-    {
-     "observation_id": "obs-54bafd6cd02e",
-     "hex": "#5e635c",
-     "coverage": 0.635
     },
     {
      "observation_id": "obs-a7d01c63a7ae",
@@ -188,16 +158,6 @@
      "coverage": 0.541
     },
     {
-     "observation_id": "obs-ac3e4b9ae648",
-     "hex": "#6d7075",
-     "coverage": 0.259
-    },
-    {
-     "observation_id": "obs-f04caf6bcd9a",
-     "hex": "#6d6d6d",
-     "coverage": 0.409
-    },
-    {
      "observation_id": "obs-7eee892bf259",
      "hex": "#626262",
      "coverage": 0.938
@@ -209,39 +169,34 @@
     }
    ],
    "range_hex": [
-    "#444343",
-    "#9d9689"
+    "#504f4c",
+    "#97938b"
    ],
    "credits": [
-    "1950 Census Enumeration District Maps - New York (NY) - Kings County - Brooklyn - ED 24-1 to 3802 - NARA - 24267303 (page 1).jpg by Unknown authorUnknown author or not provided, public-domain, via Wikimedia Commons",
+    "2024-06-15 09 35 38 View west along Interstate 278 (Brooklyn-Queens Expressway) from the Manhattan Bridge in Brooklyn, New York City, New York.jpg by Famartin, CC-BY-SA-4.0, via Wikimedia Commons",
     "55 Washington Street, Brooklyn NY.jpg by (User:Wgreaves), CC-BY-SA-4.0, via Wikimedia Commons",
     "60 Water Street (2022).jpg by ThibautRe, CC-BY-SA-4.0, via Wikimedia Commons",
-    "A frame to match the subject - Flickr - Auslandsoesterreicherflickraccountinhaber.jpg by Auslandsoesterreicherflickraccountinhaber from NY, NY, CC-BY-2.0, via Wikimedia Commons",
     "Amazon Prime E-Assisted vehicle in Brooklyn, NY.jpg by Nielsoncaetanosalmeron, CC-BY-4.0, via Wikimedia Commons",
-    "At the end of the street... (2496766836).jpg by Kenny Louie from Vancouver, Canada, CC-BY-2.0, via Wikimedia Commons",
-    "BQE BB split jeh.jpg by Jim.henderson, CC0-1.0, via Wikimedia Commons",
     "Brooklyn (7031591563).jpg by Andr\u00e9s Nieto Porras from Palma de Mallorca, Espa\u00f1a, CC-BY-SA-2.0, via Wikimedia Commons",
-    "Brooklyn Round-a-bout (6214820803).jpg by Tony Hisgett from Birmingham, UK, CC-BY-2.0, via Wikimedia Commons",
     "City Streets.jpg by Jkoss6, CC-BY-SA-4.0, via Wikimedia Commons",
-    "DETAIL OF PEDIMENT, SECOND FLOOR ENTRANCE, NORTH ELEVATION - Empire Stores, 501-505 State Street, Erie, Erie County, PA HABS PA,25-ERI,9-13.tif by Related names:\n\nCaldwell, Henry\nBaker, Bernhart\nGraham\nIsaac Baker and Sons\nBurns, John A, project manager\nHarris, Emily J, project manager\nLange, Robert S, transmitter\nClaridge, John R, historian\nJuniewicz, Norb, historian\nNelson Photographers, photographer, public-domain, via Wikimedia Commons",
-    "DUMBO (41325554841).jpg by Nan Palmero from San Antonio, TX, USA, CC-BY-2.0, via Wikimedia Commons",
-    "DUMBO (96047423).jpg by BriYYZ from Toronto, Canada, CC-BY-SA-2.0, via Wikimedia Commons",
     "DUMBO from Bridge.JPG by Jared Kofsky, CC-BY-SA-3.0, via Wikimedia Commons",
     "Dumbo - Brooklyn, NYC.jpg by Adjoajo, CC-BY-SA-4.0, via Wikimedia Commons",
-    "Dumbo Brooklyn October 2021 006.jpg by Kidfly182, CC-BY-SA-4.0, via Wikimedia Commons"
+    "Dumbo Brooklyn October 2021 006.jpg by Kidfly182, CC-BY-SA-4.0, via Wikimedia Commons",
+    "Dumbo Brooklyn October 2021 007.jpg by Kidfly182, CC-BY-SA-4.0, via Wikimedia Commons",
+    "EW Bliss Company Torpedo Works ca 1910-1915.jpg by Bain News Service, public-domain, via Wikimedia Commons",
+    "Emergency telephone NYC 1.jpg by Superbass, CC-BY-SA-3.0, via Wikimedia Commons",
+    "Fulton Ferry Pier with Manhattan.JPG by Wusel007, CC-BY-SA-3.0, via Wikimedia Commons",
+    "John Street, DUMBO Brooklyn.jpg by AaronBarlow, CC-BY-SA-4.0, via Wikimedia Commons",
+    "Manhattan Bridge and Empire State Building from Washington Street, Dumbo, Brooklyn, New York.jpg by Christian David, CC-BY-SA-4.0, via Wikimedia Commons",
+    "Manhole In Dumbo (183492279).jpeg by Chris Cook, CC-BY-3.0, via Wikimedia Commons"
    ]
   },
   "brick": {
    "label": "brick and terracotta masonry",
-   "observations": 30,
-   "mean_hex": "#735241",
-   "mean_coverage": 0.245,
+   "observations": 21,
+   "mean_hex": "#725140",
+   "mean_coverage": 0.286,
    "samples": [
-    {
-     "observation_id": "obs-88aaea8e9464",
-     "hex": "#864d34",
-     "coverage": 0.179
-    },
     {
      "observation_id": "obs-a127fda12a03",
      "hex": "#84594e",
@@ -253,19 +208,14 @@
      "coverage": 0.325
     },
     {
-     "observation_id": "obs-c6fbcbd2dbc2",
-     "hex": "#5a4938",
-     "coverage": 0.167
-    },
-    {
-     "observation_id": "obs-63a7c904ed30",
-     "hex": "#822e2c",
-     "coverage": 0.114
-    },
-    {
      "observation_id": "obs-2498375a588f",
      "hex": "#7a4f48",
      "coverage": 0.137
+    },
+    {
+     "observation_id": "obs-f9a775e3a891",
+     "hex": "#62493d",
+     "coverage": 0.329
     },
     {
      "observation_id": "obs-79581618b280",
@@ -273,19 +223,9 @@
      "coverage": 0.396
     },
     {
-     "observation_id": "obs-aea50dc8f81f",
-     "hex": "#a28770",
-     "coverage": 0.199
-    },
-    {
      "observation_id": "obs-868164f9db75",
      "hex": "#432f28",
      "coverage": 0.245
-    },
-    {
-     "observation_id": "obs-54bafd6cd02e",
-     "hex": "#907a5f",
-     "coverage": 0.123
     },
     {
      "observation_id": "obs-7442559702cc",
@@ -318,21 +258,6 @@
      "coverage": 0.158
     },
     {
-     "observation_id": "obs-3adeee768da0",
-     "hex": "#433430",
-     "coverage": 0.062
-    },
-    {
-     "observation_id": "obs-0295b7dff49d",
-     "hex": "#3d332d",
-     "coverage": 0.075
-    },
-    {
-     "observation_id": "obs-bc9b6a77f765",
-     "hex": "#7e584d",
-     "coverage": 0.097
-    },
-    {
      "observation_id": "obs-357d75078d17",
      "hex": "#73594c",
      "coverage": 0.131
@@ -363,16 +288,6 @@
      "coverage": 0.199
     },
     {
-     "observation_id": "obs-755c70f795ab",
-     "hex": "#604f3f",
-     "coverage": 0.238
-    },
-    {
-     "observation_id": "obs-7d4e7acbe568",
-     "hex": "#6e4e40",
-     "coverage": 0.424
-    },
-    {
      "observation_id": "obs-ac3e4b9ae648",
      "hex": "#563c2d",
      "coverage": 0.062
@@ -389,32 +304,32 @@
     }
    ],
    "range_hex": [
-    "#3d332d",
-    "#a28770"
+    "#432f28",
+    "#9a7063"
    ],
    "credits": [
-    "1950 Census Enumeration District Maps - New York (NY) - Kings County - Brooklyn - ED 24-1 to 3802 - NARA - 24267303 (page 1).jpg by Unknown authorUnknown author or not provided, public-domain, via Wikimedia Commons",
-    "Amazon Prime E-Assisted vehicle in Brooklyn, NY.jpg by Nielsoncaetanosalmeron, CC-BY-4.0, via Wikimedia Commons",
     "Brooklyn Round-a-bout (6214820803).jpg by Tony Hisgett from Birmingham, UK, CC-BY-2.0, via Wikimedia Commons",
     "City Streets.jpg by Jkoss6, CC-BY-SA-4.0, via Wikimedia Commons",
-    "DUMBO (96047423).jpg by BriYYZ from Toronto, Canada, CC-BY-SA-2.0, via Wikimedia Commons",
     "DUMBO Brooklyn at night.jpg by LWYang from USA, CC-BY-2.0, via Wikimedia Commons",
     "DUMBO Historic District street signs.jpg by (User:Wgreaves), CC-BY-SA-4.0, via Wikimedia Commons",
     "DUMBO from Bridge.JPG by Jared Kofsky, CC-BY-SA-3.0, via Wikimedia Commons",
     "DUMBO, Front St at night as viewed from Manhattan Bridge.JPG by IlyaSukhanov, CC-BY-SA-3.0, via Wikimedia Commons",
     "Dumbo (Down Under the Manhattan Bridge Overpass) at Brooklyn - NYC - USA - panoramio.jpg by diego_cue, CC-BY-SA-3.0, via Wikimedia Commons",
     "Dumbo - Brooklyn, NYC.jpg by Adjoajo, CC-BY-SA-4.0, via Wikimedia Commons",
-    "Emergency telephone NYC 1.jpg by Superbass, CC-BY-SA-3.0, via Wikimedia Commons",
     "Jane's Carousel 2.jpg by Kiah Ankoor (@IOTAGLOBAL), CC-BY-2.0, via Wikimedia Commons",
     "Manhattan Bridge and Empire State Building from Washington Street, Dumbo, Brooklyn, New York.jpg by Christian David, CC-BY-SA-4.0, via Wikimedia Commons",
-    "Manhole In Dumbo (183492279).jpeg by Chris Cook, CC-BY-3.0, via Wikimedia Commons",
-    "New York (11600531215).jpg by Mack Male from Edmonton, AB, Canada, CC-BY-SA-2.0, via Wikimedia Commons"
+    "New York (11600531215).jpg by Mack Male from Edmonton, AB, Canada, CC-BY-SA-2.0, via Wikimedia Commons",
+    "New York (11600740003).jpg by Mack Male from Edmonton, AB, Canada, CC-BY-SA-2.0, via Wikimedia Commons",
+    "Pearl & Water Sts red brick jeh.jpg by Jim.henderson, CC-BY-SA-4.0, via Wikimedia Commons",
+    "SmackMellonFacade Etienne Frossard.jpg by Etienne Frossard, CC-BY-3.0, via Wikimedia Commons",
+    "Smorgasburg in Dumbo.jpg by dumbonyc, CC-BY-SA-2.0, via Wikimedia Commons",
+    "Superfine, 126 Front Street, Brooklyn NY.jpg by (User:Wgreaves), CC-BY-SA-4.0, via Wikimedia Commons"
    ]
   }
  },
  "provenance": {
   "module_id": "dumbo-district",
   "generated_by": "dumbo-district-3d/scripts@1.0.0 (dumbo-district-3d/scripts@1.0.0)",
-  "generated_at": "2026-08-10T03:03:22+00:00"
+  "generated_at": "2026-08-10T03:46:33+00:00"
  }
 }
