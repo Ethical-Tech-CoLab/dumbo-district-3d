@@ -120,3 +120,25 @@ revisited with rectified per-building photography, which is item 8's endgame.
 do-not-source ledger and the last sweep returned 70 new candidates from four fresh categories, most
 of the rest being duplicates or out-of-district. The next photograph gain comes from Mapillary or
 from volunteers, not from another category query.
+
+---
+
+## A note for whoever promotes the photo pipeline
+
+The bridge team is generalising `scripts/ingest_photos.py` and `scripts/build_photo_corpus.py` into
+`digital-3d-shared-contracts/tools/photo-survey/`, which is the right move — the approach has now
+been proved on 537 reviewed photographs and nothing in it is district-specific except the shot list.
+
+**Two fixes made on 2026-08-10 must travel with it**, because both are the kind of bug that is
+invisible until it has quietly cost you something:
+
+1. **The palette download cap is not a sampling strategy.** Capping decoded thumbnails at a fixed
+   number and iterating in dictionary order lets the abundant material crowd out the scarce one. It
+   silently held foliage at 2 photographs while 8 were available, and the measured colour appeared to
+   revert between builds that differed in nothing else. Decode scarce materials first.
+
+2. **An automatic screen must never overturn a human answer.** Dropping candidates whose published
+   coordinates fall outside the module's boundary is a good filter — it took 63 photographs off the
+   reviewer's desk in one sweep — but applied naively it also deleted fourteen the reviewer had
+   already accepted, because Commons frequently geotags a photograph at its *subject* rather than at
+   its camera. Anything a reviewer accepted is exempt from every automatic screen.
