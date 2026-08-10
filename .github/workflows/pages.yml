@@ -52,16 +52,23 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Check the bridge payload is not stale
-        # Advisory, not fatal: the bridge team's publishing cadence is theirs, and a district build
-        # should not be held hostage to it. It must be loud, though.
+      - name: Fetch the bridge module into the build
+        # The bridge payload is deliberately NOT committed here -- it is another team's geometry and
+        # the standing obligation in MILESTONES.md forbids vendoring it. The consequence, until this
+        # was added, was that the published site shipped no bridge at all: every reviewer looking at
+        # Pages saw a placeholder where the Manhattan Bridge should be, while it rendered fine on a
+        # developer's machine, because only they had the sibling checkout.
+        #
+        # Fetching it at build time from the repository that owns it satisfies both halves: the
+        # geometry stays theirs, and the thing people are asked to review is complete. The script
+        # prints a digest for every file it replaces, so drift is visible in the build log.
         continue-on-error: true
         run: |
           if [ -d manhattan-bridge-3d/viewer/public ]; then
             python3 dumbo-district-3d/scripts/sync_bridge_module.py \
-              --source manhattan-bridge-3d/viewer/public --check
+              --source manhattan-bridge-3d/viewer/public
           else
-            echo "bridge repository not available; skipping the staleness check"
+            echo "::warning::bridge repository unavailable; the site will ship without the bridge"
           fi
 
       - name: Install
@@ -81,6 +88,7 @@ jobs:
         run: |
           echo "tile payloads : $(ls district/tiles 2>/dev/null | wc -l)"
           echo "review sheet  : $([ -f review/index.html ] && echo present || echo MISSING)"
+          echo "bridge module : $([ -f modules/manhattan-bridge/bridge-manifest.json ] && echo present || echo MISSING)"
           du -sh .
 
       - uses: actions/upload-pages-artifact@v3
