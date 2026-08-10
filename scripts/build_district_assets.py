@@ -1093,6 +1093,26 @@ def build_source_register(control: DistrictControl) -> dict:
                 ),
             },
             {
+                "source_id": "DSRC-010",
+                "title": "NYC Planimetric Database: sidewalk, roadbed, curbs, plazas, parks, boardwalk",
+                "tier": "A",
+                "publisher": "NYC Office of Technology and Innovation, via NYC Open Data",
+                "url": "https://data.cityofnewyork.us/resource/52n9-sdep.json",
+                "accessed": "2026-08-10",
+                "license": "NYC Open Data Terms of Use",
+                "attribution_required": True,
+                "attribution_text": "Planimetric surfaces: NYC Open Data (OTI)",
+                "native_crs": "EPSG:4326",
+                "grants_confidence": "A",
+                "verified": True,
+                "notes": (
+                    "Surveyed surfaces underfoot: pavement, carriageway, plaza, park and boardwalk "
+                    "as traced polygons, plus surveyed kerb lines. Replaces the widened-centreline "
+                    "approximation and closes DOQ-006. The kerb height applied to the lines is a "
+                    "convention (DCTL-080), not a survey."
+                ),
+            },
+            {
                 "source_id": "DSRC-013",
                 "title": "USGS 3DEP 1 m bare-earth digital elevation model",
                 "tier": "A",

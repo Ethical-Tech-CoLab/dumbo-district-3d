@@ -295,6 +295,21 @@ all. Land and water is now a sourced distinction rather than a consequence of a 
 
 ---
 
+## 6.4 Ground surfaces underfoot
+
+What a walker stands on comes from the city's planimetric survey (`DSRC-010`) rather than from
+widening a centreline: pavement, carriageway, plaza, park and boardwalk each as their own traced
+polygon, and kerbs from surveyed kerb *lines*.
+
+| Control ID | Key | Value | Unit | Source IDs | Confidence | Notes |
+|---|---|---:|---|---|---|---|
+| DCTL-080 | kerb_height | 0.15 | m | DEF-008 | C | Height the surveyed kerb lines are extruded to. The survey traces the kerb in plan and says nothing about its face, so this is a single conventional value: a standard New York City kerb reveal. The *line* is grade A, the *height* is not, and anything measured against a kerb face inherits the weaker of the two. |
+
+A kerb face is worth its own control because it is the strongest cue for reading a street at eye
+level: without one, a pavement is a change of colour and the eye cannot judge distance across it.
+
+---
+
 ## 7. Open questions
 
 | ID | Question | Affects | Sources to consult | Status |
@@ -304,7 +319,7 @@ all. Land and water is now a sourced distinction rather than a consequence of a 
 | DOQ-003 | No surveyed terrain surface was registered; ground height was interpolated from building base elevations rather than measured. | Terrain, walk mode ground height, tour camera height | DSRC-013 (USGS 3DEP 1 m bare earth) | **Closed** 2026-08-09. Ground is now sampled from a 1 m bare-earth DEM in NAVD88 and graded `A`, cross-checked every build against building `ground_elevation` (section 6.1). Residual: 3DEP at 1 m rather than NYC's own 1 ft DEM (`DSRC-008`), which would be a refinement, not a correction. |
 | DOQ-004 | The MHW to NAVD88 offset DCTL-010 is transferred from The Battery, about 3 km away, rather than computed locally with VDatum. | Vertical datum reconciliation | NOAA VDatum | Open, immaterial at current confidence. |
 | DOQ-005 | The district boundary in section 2.1 was drawn to follow named streets and the shoreline by inspection, not traced from a cadastral source. | District extent | DSRC-004, NYC planimetrics shoreline | Open, immaterial. It defines project scope only, clips no geometry that another module owns, and no longer doubles as the shoreline now that `DSRC-014` supplies the land/water mask. |
-| DOQ-006 | Paved surfaces are derived by widening OSM centrelines with typical half-widths by street class, rather than traced from planimetric sidewalk polygons. Kerb lines are therefore approximate, and junctions are overlapping quads rather than a resolved surface. | Roadway and sidewalk geometry | NYC planimetric sidewalk dataset | Open. Surfaces graded `C`. |
+| DOQ-006 | Paved surfaces were derived by widening OSM centrelines with typical half-widths by street class rather than traced from planimetric polygons. | Roadway and sidewalk geometry | DSRC-010 | **Closed** 2026-08-10. Pavement, carriageway, plaza, park and boardwalk are now surveyed planimetric polygons, and kerbs come from surveyed kerb lines. Residual: the kerb *height* applied to those lines is a single conventional value (`DCTL-080`), because the survey traces kerbs in plan only. The centreline method is retained as a fallback when the layers are absent. |
 | DOQ-007 | Facade appearance is inferred from PLUTO building class and construction year. It describes the *kind* of building, not the actual facade of that building. | Building appearance in walk mode | Street-level imagery, district photogrammetry | Open. Appearance graded `C`; it never affects geometry or dimensions. |
 | DOQ-008 | The Manhattan skyline is reduced to oriented silhouette blocks. Positions and heights are authoritative, but footprint shape is discarded, and buildings below a prominence threshold are omitted entirely. | Far-field appearance across the river | DSRC-011 | Open by design. Graded `B`; never selectable and never dimensionally citable at that range. |
 | DOQ-009 | Vessel movement is plausible traffic, not a timetable. Ferries follow real routes at a nominal speed; recreational craft are invented outright. | Water animation | NYC Ferry schedules, AIS vessel tracking | Open. Ferries graded `C`, recreational craft `D`. |

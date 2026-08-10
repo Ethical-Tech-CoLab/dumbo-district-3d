@@ -501,26 +501,52 @@ def _grid_bbox(control: DistrictControl) -> tuple[float, float, float, float]:
 
 
 def fetch_sidewalks(control: DistrictControl) -> None:
-    """DSRC-010. NYC planimetric sidewalk polygons, used to pave the walk view."""
-    print("[DSRC-010] NYC sidewalk polygons")
+    """DSRC-010. NYC planimetric surfaces: what a walker is actually standing on.
+
+    The paved surfaces shipped until now were derived by widening OSM centrelines by a typical
+    half-width per street class (DOQ-006). That gives a plausible diagram of a street but not its
+    shape: no real kerb line, junctions as overlapping quads, and no distinction between a pavement,
+    a plaza and a park.
+
+    These are the city's own planimetric polygons, surveyed rather than inferred. Six layers are
+    fetched because between them they cover everything underfoot in DUMBO:
+
+      sidewalk   the pavement itself
+      roadbed    the carriageway, so the kerb line is where the two meet rather than a guess
+      curbs      surveyed kerb LINES, which is what makes a kerb face possible at all
+      plazas     the pedestrianised spaces DUMBO has a lot of
+      parks      Brooklyn Bridge Park and Commodore Barry, with names and land use
+      boardwalk  the timber waterfront decks
+
+    Each is a separate published dataset, so each gets its own file and its own audit sidecar.
+    """
+    print("[DSRC-010] NYC planimetric surfaces")
     west, south, east, north = control.bbox
-    where = f"intersects(the_geom,'POLYGON(({west} {south},{east} {south},{east} {north},{west} {north},{west} {south}))')"
-    try:
-        records = _socrata_paged("vfx9-tbb6", {"$where": where}, page=2000)
-    except Exception:
-        # Some Socrata deployments reject `intersects` on this dataset; fall back to a bbox filter
-        # on the computed centroid-ish envelope and clip locally.
-        print("    intersects() rejected, falling back to unfiltered page scan")
-        records = _socrata_paged("vfx9-tbb6", {}, page=2000)
-        records = [r for r in records if _touches_bbox(r.get("the_geom"), control.bbox)]
-    print(f"    {len(records)} sidewalk polygons")
-    _write(
-        DATA / "streetscape" / "sidewalks.raw.json",
-        records,
-        query=where,
-        source_id="DSRC-010",
-        note="NYC planimetric sidewalk polygons. Paves the walk view instead of a flat grey plane.",
-    )
+    poly = (f"POLYGON(({west} {south},{east} {south},{east} {north},"
+            f"{west} {north},{west} {south}))")
+    where = f"intersects(the_geom,'{poly}')"
+
+    for label, dataset, note in (
+        ("sidewalks", "52n9-sdep", "Pavement polygons. Replaces centreline widening for footways."),
+        ("roadbed", "i36f-5ih7", "Carriageway polygons. The kerb line is where this meets the pavement."),
+        ("curbs", "5xvt-8cbk", "Surveyed kerb lines, as MultiLineString. Extruded to a kerb face."),
+        ("plazas", "ue2e-9jm2", "Pedestrianised public plazas."),
+        ("parks", "y6ja-fw4f", "Open space with names and land use; grass rather than paving."),
+        ("boardwalk", "p9cw-7gsv", "Timber waterfront decks."),
+    ):
+        try:
+            records = _socrata_paged(dataset, {"$where": where}, page=1000)
+        except Exception as exc:  # noqa: BLE001 - one layer failing must not lose the others
+            print(f"    {label}: FAILED ({exc})", file=sys.stderr)
+            continue
+        print(f"    {label}: {len(records)} features")
+        _write(
+            DATA / "streetscape" / f"{label}.raw.json",
+            records,
+            query=where,
+            source_id="DSRC-010",
+            note=note,
+        )
 
 
 def _touches_bbox(geom: object, bbox: tuple[float, float, float, float]) -> bool:

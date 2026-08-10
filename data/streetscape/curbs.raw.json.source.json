@@ -1,0 +1,10 @@
+{
+  "source_id": "DSRC-010",
+  "query": "intersects(the_geom,'POLYGON((-73.9985 40.6975,-73.98 40.6975,-73.98 40.706,-73.9985 40.706,-73.9985 40.6975))')",
+  "fetched_at": "2026-08-10T01:11:04+00:00",
+  "fetched_by": "dumbo-district-3d/scripts@1.0.0",
+  "bytes": 2379796,
+  "sha256": "5967aa85bd32db411c5ac1e8ce5f7aa8ec96adecd005263c4e6162738b5c85d0",
+  "record_count": 714,
+  "note": "Surveyed kerb lines, as MultiLineString. Extruded to a kerb face."
+}

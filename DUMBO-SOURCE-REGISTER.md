@@ -170,17 +170,41 @@ species are grade A. The **rendered canopy is graded C**: it is a procedural for
 scaled by dbh, not a measured crown. A real tree in the right place with an approximated shape — which
 is exactly the distinction the grade is there to record.
 
-### DSRC-010 — NYC planimetric sidewalk polygons · Tier A · grants A · NOT YET INGESTED
+### DSRC-010 — NYC Planimetric Database: surfaces underfoot · Tier A · grants A
 
 | | |
 |---|---|
 | Publisher | NYC Office of Technology and Innovation, via NYC Open Data |
+| Accessed | 2026-08-10 |
 | License | NYC Open Data Terms of Use |
-| Verified | **No — not yet fetched** |
+| Attribution | **Required** — "Planimetric surfaces: NYC Open Data (OTI)" |
+| Native CRS | EPSG:4326 |
+| Verified | Yes |
 
-`scripts/ingest_sources.py::fetch_sidewalks` is written and targets dataset `vfx9-tbb6`, but the
-paving currently shipped is derived from the walk network rather than from these polygons. Registered
-so the gap is visible: paved surfaces are grade C until this is ingested.
+Six published layers, because between them they cover everything a walker stands on in DUMBO:
+
+| Layer | Dataset | In the district |
+|---|---|---:|
+| Sidewalk | `52n9-sdep` | 170 features |
+| Roadbed | `i36f-5ih7` | 390 |
+| Curbs | `5xvt-8cbk` | 714 lines |
+| Public Plazas | `ue2e-9jm2` | 12 |
+| Open Space (Parks) | `y6ja-fw4f` | 88 |
+| Boardwalk | `p9cw-7gsv` | 2 |
+
+This replaces the widened-centreline approximation and closes `DOQ-006`. The difference is not
+cosmetic: a widened centreline puts the kerb wherever a typical half-width says it should be, turns
+every junction into a heap of overlapping quads, and cannot tell a pavement from a plaza from a park.
+These are traced shapes, so the pavement runs where the pavement runs.
+
+The **curbs** layer is the one that changes the view most. It is surveyed kerb *lines*, which is what
+makes a kerb face possible at all — extruded to `DCTL-080`, they give the eye the vertical edge it
+needs to judge level and distance while walking. The line is grade A; the height applied to it is a
+single conventional value and is not.
+
+A first attempt at this used dataset `vfx9-tbb6`, which the catalogue also lists as "NYC Planimetric
+Database: Sidewalk". That one is a Socrata **map**, not a table: it answers queries with rows that
+have no columns, which is why an earlier run reported fetching 50,000 records and keeping none.
 
 ### DSRC-011 — NYC Building Footprints, Lower Manhattan frontage · Tier A · grants A
 

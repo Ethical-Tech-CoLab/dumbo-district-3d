@@ -125,6 +125,19 @@ export class DistrictScene {
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.shadowMap.enabled = false;
+    // Tone mapping, because without it the ground was lying about its own colour.
+    //
+    // The light rig is tuned for building faces, which are vertical and catch the sun at a glancing
+    // angle. A pavement is horizontal and catches it square, so with hemisphere and sun summing to
+    // nearly 4x it was multiplied straight past white and clipped: a carriageway authored at #3b3b39
+    // rendered as #a2a19e, indistinguishable from the pavement beside it. Every colour measured from
+    // the photo corpus was being flattened the same way, which is why the district read as uniform
+    // grey no matter what the palette said.
+    //
+    // ACES compresses the highlight instead of clipping it, so relative values survive; the exposure
+    // brings the overall level back to where the buildings were already right.
+    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    this.renderer.toneMappingExposure = 1.15;
 
     this.camera = new THREE.PerspectiveCamera(62, 1, 0.15, 6000);
 

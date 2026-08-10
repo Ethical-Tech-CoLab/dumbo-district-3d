@@ -180,7 +180,7 @@ class DistrictControl:
             "DCTL-050", "DCTL-051", "DCTL-052", "DCTL-053", "DCTL-054", "DCTL-055",
             "DCTL-060", "DCTL-061", "DCTL-062", "DCTL-063",
             "DCTL-070", "DCTL-071", "DCTL-072", "DCTL-073",
-            "DCTL-074", "DCTL-075", "DCTL-076",
+            "DCTL-074", "DCTL-075", "DCTL-076", "DCTL-080",
         ]
         missing = [cid for cid in required if cid not in self.controls]
         if missing:

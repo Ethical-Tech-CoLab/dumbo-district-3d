@@ -1,0 +1,10 @@
+{
+  "source_id": "DSRC-010",
+  "query": "intersects(the_geom,'POLYGON((-73.9985 40.6975,-73.98 40.6975,-73.98 40.706,-73.9985 40.706,-73.9985 40.6975))')",
+  "fetched_at": "2026-08-10T01:11:05+00:00",
+  "fetched_by": "dumbo-district-3d/scripts@1.0.0",
+  "bytes": 45745,
+  "sha256": "cfa3a772e57af1ecf95392b759096f18cda422aa47e3640a42d009b9d56cb280",
+  "record_count": 12,
+  "note": "Pedestrianised public plazas."
+}

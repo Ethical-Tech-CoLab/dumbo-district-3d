@@ -16,12 +16,29 @@ import { Frame } from '@d3d/viewer-kernel';
 export interface PavingSurface {
   kind: string;
   name: string | null;
-  /** Flat quads: [ax, ay, bx, by, cx, cy, dx, dy] in scene meters. */
+  /** Flat quads: [ax, ay, bx, by, cx, cy, dx, dy] in scene meters. Fallback format. */
   quads: number[][];
 }
 
+/** A surveyed surface polygon: an outer ring in scene metres. */
+export interface PavingPolygon {
+  kind: string;
+  name: string | null;
+  ring: Array<[number, number]>;
+}
+
+/** A surveyed kerb line, extruded to a face at render time. */
+export interface PavingKerb {
+  line: Array<[number, number]>;
+}
+
 export interface PavingDocument {
-  surfaces: PavingSurface[];
+  /** Surveyed polygons, preferred. */
+  polygons?: PavingPolygon[];
+  kerbs?: PavingKerb[];
+  kerb_height_m?: number;
+  /** Widened-centreline quads, used when the planimetric layers were not ingested. */
+  surfaces?: PavingSurface[];
   attribution?: string;
 }
 
@@ -48,13 +65,24 @@ export interface FacadeDocument {
   styles: Record<string, FacadeStyle>;
 }
 
-/** Surface colours by kind. Deliberately desaturated so buildings stay the subject. */
+/**
+ * Surface colours and how far each sits above the terrain.
+ *
+ * The lifts are larger than they look like they need to be. The ground is now a real 8 m DEM rather
+ * than a smooth interpolation, so it has centimetre-scale relief of its own; a carriageway floating
+ * 2 cm above it disappeared under the terrain wherever the terrain happened to rise, and the whole
+ * district read as one continuous pavement. The relative order — carriageway lowest, kerb top and
+ * pavement above it — is what carries the meaning, so it is the order that is fixed and the absolute
+ * heights that give it room.
+ */
 const SURFACE_STYLE: Record<string, { color: number; height: number }> = {
-  roadway: { color: 0x3c3a38, height: 0.02 },
-  sidewalk: { color: 0x8c8880, height: 0.14 },
-  plaza: { color: 0x7d7a72, height: 0.1 },
-  cycleway: { color: 0x4a4340, height: 0.05 },
-  steps: { color: 0x827d76, height: 0.16 },
+  roadway: { color: 0x3c3a38, height: 0.1 },
+  cycleway: { color: 0x4a4340, height: 0.13 },
+  park: { color: 0x53663c, height: 0.16 },
+  plaza: { color: 0x7d7a72, height: 0.22 },
+  sidewalk: { color: 0x8c8880, height: 0.25 },
+  steps: { color: 0x827d76, height: 0.27 },
+  boardwalk: { color: 0x8a6f4e, height: 0.28 },
 };
 
 /** A colour measured from photographs of the district, per surface material. */
@@ -66,21 +94,35 @@ export interface ObservedPalette {
 /**
  * Re-tint the built-in surface colours towards what photographs of DUMBO actually show.
  *
- * The built-in values are a designer's guess and look like any grey city. The measured ones come
- * from the campaign corpus, so the road reads as the district's granite sett and asphalt rather than
- * as generic tarmac. Applied as a partial blend rather than a replacement: a single measured mean
- * carries real uncertainty, and the relative contrast between roadway, kerb and plaza was chosen so
- * a walker can read edges, which is worth preserving.
+ * Takes the measured *hue and saturation* but keeps each surface's own lightness. Blending straight
+ * towards the measured colour looked right in isolation and was wrong in place: the road and the
+ * pavement converged on the same mid grey, and a street whose carriageway and footway are the same
+ * value is unreadable at eye level — the kerb line is the only thing left telling you where you can
+ * walk. The relative contrast between roadway, kerb and plaza is a legibility decision; the colour
+ * temperature is the measurement. This adopts the second without discarding the first.
  */
-export function applyObservedPalette(palette: ObservedPalette | null, strength = 0.75): string[] {
+export function applyObservedPalette(palette: ObservedPalette | null, strength = 0.8): string[] {
   const paving = palette?.surfaces?.paving;
   if (!palette?.available || !paving?.mean_hex) return [];
+
   const measured = new THREE.Color(paving.mean_hex);
-  for (const kind of ['roadway', 'sidewalk', 'plaza', 'cycleway', 'steps']) {
+  const measuredHsl = { h: 0, s: 0, l: 0 };
+  measured.getHSL(measuredHsl);
+
+  for (const kind of ['roadway', 'sidewalk', 'plaza', 'cycleway', 'steps', 'park', 'boardwalk']) {
     const style = SURFACE_STYLE[kind];
     if (!style) continue;
-    const blended = new THREE.Color(style.color).lerp(measured, strength * relativeWeight(kind));
-    style.color = blended.getHex();
+    const weight = strength * relativeWeight(kind);
+    if (weight <= 0) continue;
+    const original = new THREE.Color(style.color);
+    const originalHsl = { h: 0, s: 0, l: 0 };
+    original.getHSL(originalHsl);
+    const tinted = new THREE.Color().setHSL(
+      measuredHsl.h,
+      originalHsl.s + (measuredHsl.s - originalHsl.s) * weight,
+      originalHsl.l,
+    );
+    style.color = original.lerp(tinted, weight).getHex();
   }
   return paving.credits ?? [];
 }
@@ -99,16 +141,130 @@ function relativeWeight(kind: string): number {
       return 1.0;
     case 'plaza':
       return 0.6;
+    // Grass and timber are not what the corpus measured, and dragging them towards a road colour
+    // would undo the one distinction worth having underfoot.
+    case 'park':
+    case 'boardwalk':
+      return 0;
     default:
       return 0.35;
   }
 }
 
 export function buildPaving(doc: PavingDocument, groundAt: (x: number, y: number) => number): THREE.Group {
+  if (doc.polygons?.length) return buildSurveyedPaving(doc, groundAt);
+  return buildQuadPaving(doc, groundAt);
+}
+
+/**
+ * Draw the city's own surveyed surfaces, and give the kerbs a face.
+ *
+ * Two things make this read as a street rather than as a coloured plan. The polygons are the shapes
+ * a surveyor traced, so the pavement runs where the pavement runs and a junction is one surface
+ * instead of a heap of overlapping quads. And the kerb is extruded to a real height: without a
+ * vertical face at the edge, a pavement is only a change of colour, and the eye has nothing to judge
+ * distance or level against while walking.
+ */
+function buildSurveyedPaving(
+  doc: PavingDocument,
+  groundAt: (x: number, y: number) => number,
+): THREE.Group {
   const group = new THREE.Group();
   const byKind = new Map<string, number[]>();
 
-  for (const surface of doc.surfaces) {
+  for (const polygon of doc.polygons ?? []) {
+    const style = SURFACE_STYLE[polygon.kind] ?? SURFACE_STYLE.roadway;
+    // Normalise winding before triangulating. The published layers do not agree with each other:
+    // sidewalk rings come back one way round and roadbed the other, and since scene +Y maps to
+    // render -Z the handedness flip turns that disagreement into whole layers facing downward and
+    // vanishing. Signed area is the only thing that settles it.
+    const ring = signedArea(polygon.ring) < 0 ? [...polygon.ring].reverse() : polygon.ring;
+    const contour = ring.map(([x, y]) => new THREE.Vector2(x, y));
+    if (contour.length < 3) continue;
+
+    let faces: number[][];
+    try {
+      // three.js already ships a robust ear-clipper; a hand-rolled one would only be a worse copy.
+      faces = THREE.ShapeUtils.triangulateShape(contour, []);
+    } catch {
+      continue;
+    }
+
+    let positions = byKind.get(polygon.kind);
+    if (!positions) {
+      positions = [];
+      byKind.set(polygon.kind, positions);
+    }
+    for (const face of faces) {
+      // Scene +Y (north) maps to render -Z, flipping handedness, so the winding produced in plan
+      // has to be reversed or every surface faces down and is silently culled.
+      for (const index of [face[0], face[2], face[1]]) {
+        const point = contour[index];
+        const render = Frame.sceneToRender([point.x, point.y, groundAt(point.x, point.y) + style.height]);
+        positions.push(render[0], render[1], render[2]);
+      }
+    }
+  }
+
+  for (const [kind, positions] of byKind) {
+    if (!positions.length) continue;
+    const style = SURFACE_STYLE[kind] ?? SURFACE_STYLE.roadway;
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    geometry.computeVertexNormals();
+    const mesh = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({ color: style.color }));
+    mesh.name = `paving:${kind}`;
+    group.add(mesh);
+  }
+
+  const kerbHeight = doc.kerb_height_m ?? 0.15;
+  const roadLift = SURFACE_STYLE.roadway.height;
+  const kerbPositions: number[] = [];
+  for (const kerb of doc.kerbs ?? []) {
+    for (let i = 0; i < kerb.line.length - 1; i++) {
+      const [ax, ay] = kerb.line[i];
+      const [bx, by] = kerb.line[i + 1];
+      // Rise from the carriageway, not from bare terrain, so the face meets the road it belongs to.
+      const az = groundAt(ax, ay) + roadLift;
+      const bz = groundAt(bx, by) + roadLift;
+      const a = Frame.sceneToRender([ax, ay, az]);
+      const b = Frame.sceneToRender([bx, by, bz]);
+      const at = Frame.sceneToRender([ax, ay, az + kerbHeight]);
+      const bt = Frame.sceneToRender([bx, by, bz + kerbHeight]);
+      // Two triangles per segment, doubled-sided by material so the face reads from either kerb.
+      kerbPositions.push(...a, ...b, ...bt, ...a, ...bt, ...at);
+    }
+  }
+  if (kerbPositions.length) {
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(kerbPositions, 3));
+    geometry.computeVertexNormals();
+    const mesh = new THREE.Mesh(
+      geometry,
+      new THREE.MeshLambertMaterial({ color: 0xa8a49b, side: THREE.DoubleSide }),
+    );
+    mesh.name = 'paving:kerb';
+    group.add(mesh);
+  }
+
+  return group;
+}
+
+function signedArea(ring: Array<[number, number]>): number {
+  let total = 0;
+  for (let i = 0; i < ring.length; i++) {
+    const [ax, ay] = ring[i];
+    const [bx, by] = ring[(i + 1) % ring.length];
+    total += ax * by - bx * ay;
+  }
+  return total / 2;
+}
+
+function buildQuadPaving(doc: PavingDocument, groundAt: (x: number, y: number) => number): THREE.Group {
+  const group = new THREE.Group();
+  const byKind = new Map<string, number[]>();
+
+  for (const surface of doc.surfaces ?? []) {
     const style = SURFACE_STYLE[surface.kind] ?? SURFACE_STYLE.roadway;
     let positions = byKind.get(surface.kind);
     if (!positions) {

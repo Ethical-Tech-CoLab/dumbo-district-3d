@@ -1,0 +1,10 @@
+{
+  "source_id": "DSRC-010",
+  "query": "intersects(the_geom,'POLYGON((-73.9985 40.6975,-73.98 40.6975,-73.98 40.706,-73.9985 40.706,-73.9985 40.6975))')",
+  "fetched_at": "2026-08-10T01:11:07+00:00",
+  "fetched_by": "dumbo-district-3d/scripts@1.0.0",
+  "bytes": 16290,
+  "sha256": "f2e8b292c8a029c2a36be46973152cfcf8a7f24c9897f9ad9e07b16c47ed7138",
+  "record_count": 2,
+  "note": "Timber waterfront decks."
+}

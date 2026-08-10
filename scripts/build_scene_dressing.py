@@ -225,15 +225,166 @@ SURFACE_KIND = {
 
 def build_paving(control: DistrictControl) -> dict:
     """
-    Turn street centrelines into paved surface quads.
+    The ground surfaces a walker stands on, from the city's own planimetric survey.
 
-    A district viewer that draws streets as one-pixel lines on an untextured plane reads as a
-    diagram. Widening each centreline segment into a quad, and adding a sidewalk strip either side
-    of vehicular streets, is a cheap change that turns the diagram into a place — kerbs give the
-    eye the edges it needs to judge distance while walking.
+    Until now these were derived: each street centreline was widened by a typical half-width for its
+    class, with a strip either side for a pavement. That reads as a street from a distance and falls
+    apart up close — kerb lines in the wrong place, junctions as a pile of overlapping quads, and no
+    way to tell a plaza from a park from a carriageway.
 
-    The geometry is derived, not surveyed: widths are typical values by street class. Graded C and
-    tracked as DOQ-006.
+    These are surveyed polygons instead (`DSRC-010`), which is what DOQ-006 asked for: pavement,
+    carriageway, plaza, park and boardwalk each as their own traced shape. Kerbs come from the
+    surveyed kerb *lines* in the same database and are extruded into a face with real height, which
+    is the single strongest cue for reading a street at eye level.
+
+    If the planimetric layers have not been ingested this falls back to the old centreline widening
+    and says so, so a fresh clone still builds a street rather than a flat plane.
+    """
+    ring_enu = [control.geodetic_to_enu(lon, lat)[:2] for lon, lat in control.boundary_ring]
+    surfaces: list[dict] = []
+    counts: dict[str, int] = {}
+
+    for label, kind in (
+        ("parks", "park"),
+        ("plazas", "plaza"),
+        ("roadbed", "roadway"),
+        ("sidewalks", "sidewalk"),
+        ("boardwalk", "boardwalk"),
+    ):
+        path = DATA / "streetscape" / f"{label}.raw.json"
+        if not path.exists():
+            continue
+        for record in load(path):
+            for polygon in _rings_of(record.get("the_geom")):
+                enu = _clip_ring(control, polygon, ring_enu)
+                if len(enu) < 3:
+                    continue
+                # The survey traces kerbs to the centimetre. At walking distance a 0.25 m tolerance
+                # is invisible and cuts the payload by roughly two thirds, which matters more.
+                enu = _simplify(enu, 0.25)
+                if len(enu) < 3:
+                    continue
+                surfaces.append({
+                    "kind": kind,
+                    "name": record.get("park_name") or None,
+                    "ring": [[round(x, 2), round(y, 2)] for x, y in enu],
+                })
+                counts[kind] = counts.get(kind, 0) + 1
+
+    if not surfaces:
+        print("    no planimetric surfaces ingested; falling back to widened centrelines")
+        return _build_paving_from_centrelines(control)
+
+    kerbs = _build_kerbs(control, ring_enu)
+    print(f"    surfaces {counts}; {len(kerbs)} kerb segments")
+
+    return {
+        "contract_version": CONTRACT_VERSION,
+        "module_id": MODULE_ID,
+        "frame_id": FRAME_ID,
+        "source_refs": ["DSRC-010"],
+        "confidence": "A",
+        "attribution": "Planimetric surfaces: NYC Open Data (OTI)",
+        "notes": (
+            "Surveyed planimetric polygons for pavement, carriageway, plaza, park and boardwalk, "
+            "with kerb faces extruded from surveyed kerb lines. Replaces the widened-centreline "
+            "approximation and retires DOQ-006. Geometry is grade A; the kerb height applied to the "
+            "lines is a single conventional value, DCTL-080."
+        ),
+        "kerb_height_m": control.value_m("DCTL-080"),
+        "polygons": surfaces,
+        "kerbs": kerbs,
+        "provenance": provenance(control),
+    }
+
+
+def _simplify(points: list[tuple[float, float]], tolerance: float) -> list[tuple[float, float]]:
+    """Ramer-Douglas-Peucker, iterative so a long surveyed ring cannot blow the stack."""
+    if len(points) < 3:
+        return points
+    keep = [False] * len(points)
+    keep[0] = keep[-1] = True
+    stack = [(0, len(points) - 1)]
+    while stack:
+        first, last = stack.pop()
+        if last <= first + 1:
+            continue
+        ax, ay = points[first]
+        bx, by = points[last]
+        dx, dy = bx - ax, by - ay
+        span = math.hypot(dx, dy)
+        worst, index = 0.0, -1
+        for i in range(first + 1, last):
+            px, py = points[i]
+            if span < 1e-9:
+                distance = math.hypot(px - ax, py - ay)
+            else:
+                distance = abs(dy * px - dx * py + bx * ay - by * ax) / span
+            if distance > worst:
+                worst, index = distance, i
+        if worst > tolerance and index > 0:
+            keep[index] = True
+            stack.append((first, index))
+            stack.append((index, last))
+    return [p for p, k in zip(points, keep) if k]
+
+
+def _rings_of(geom: object) -> list[list]:
+    """Outer rings of a GeoJSON Polygon or MultiPolygon, holes ignored."""
+    if not isinstance(geom, dict):
+        return []
+    kind = geom.get("type")
+    if kind == "MultiPolygon":
+        return [poly[0] for poly in geom.get("coordinates", []) if poly]
+    if kind == "Polygon":
+        coords = geom.get("coordinates", [])
+        return [coords[0]] if coords else []
+    return []
+
+
+def _clip_ring(control: DistrictControl, ring: list, boundary: list) -> list[tuple[float, float]]:
+    """Convert a lon/lat ring to scene ENU, dropping any that lies wholly outside the district.
+
+    Kept deliberately simple: a polygon is either in or out, rather than being cut at the boundary.
+    These are surveyed shapes and cutting them would invent edges that no survey recorded, which is
+    worse than a pavement running a few metres past the line where the project stops caring.
+    """
+    enu = [control.geodetic_to_enu(float(p[0]), float(p[1]))[:2] for p in ring]
+    if not enu:
+        return []
+    if any(point_in_ring(p, boundary) for p in enu):
+        return enu
+    return []
+
+
+def _build_kerbs(control: DistrictControl, boundary: list) -> list[dict]:
+    """Surveyed kerb lines, as polylines ready to be extruded into a face."""
+    path = DATA / "streetscape" / "curbs.raw.json"
+    if not path.exists():
+        return []
+    out: list[dict] = []
+    for record in load(path):
+        geom = record.get("the_geom") or {}
+        lines = (geom.get("coordinates", []) if geom.get("type") == "MultiLineString"
+                 else [geom.get("coordinates", [])] if geom.get("type") == "LineString" else [])
+        for line in lines:
+            enu = [control.geodetic_to_enu(float(p[0]), float(p[1]))[:2] for p in line]
+            enu = [p for p in enu if point_in_ring(p, boundary)]
+            if len(enu) < 2:
+                continue
+            enu = _simplify(enu, 0.25)
+            if len(enu) < 2:
+                continue
+            out.append({"line": [[round(x, 2), round(y, 2)] for x, y in enu]})
+    return out
+
+
+def _build_paving_from_centrelines(control: DistrictControl) -> dict:
+    """
+    Fallback: turn street centrelines into paved surface quads.
+
+    Widths are typical values by street class, so the geometry is derived rather than surveyed.
+    Graded C and tracked as DOQ-006. Used only when the planimetric layers are absent.
     """
     ways = load(DATA / "streets" / "osm-ways.raw.json")
     ring = control.boundary_ring

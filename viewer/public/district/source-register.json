@@ -171,6 +171,21 @@
    "notes": "East River ferry route lines and landings, including the real Pier 11 to DUMBO/Fulton Ferry service. Vessels follow these lines; their speed and spacing are nominal, not a timetable. See DOQ-009."
   },
   {
+   "source_id": "DSRC-010",
+   "title": "NYC Planimetric Database: sidewalk, roadbed, curbs, plazas, parks, boardwalk",
+   "tier": "A",
+   "publisher": "NYC Office of Technology and Innovation, via NYC Open Data",
+   "url": "https://data.cityofnewyork.us/resource/52n9-sdep.json",
+   "accessed": "2026-08-10",
+   "license": "NYC Open Data Terms of Use",
+   "attribution_required": true,
+   "attribution_text": "Planimetric surfaces: NYC Open Data (OTI)",
+   "native_crs": "EPSG:4326",
+   "grants_confidence": "A",
+   "verified": true,
+   "notes": "Surveyed surfaces underfoot: pavement, carriageway, plaza, park and boardwalk as traced polygons, plus surveyed kerb lines. Replaces the widened-centreline approximation and closes DOQ-006. The kerb height applied to the lines is a convention (DCTL-080), not a survey."
+  },
+  {
    "source_id": "DSRC-013",
    "title": "USGS 3DEP 1 m bare-earth digital elevation model",
    "tier": "A",
@@ -221,11 +236,11 @@
  "provenance": {
   "module_id": "dumbo-district",
   "generated_by": "dumbo-district-3d/scripts@1.0.0",
-  "generated_at": "2026-08-09T21:26:50+00:00",
+  "generated_at": "2026-08-10T01:48:19+00:00",
   "source_documents": [
    {
     "path": "DUMBO-GEOSPATIAL-CONTROL.md",
-    "sha256": "9e43784757ddf627a923dfb977f9d41d83e181603b99b9c25b2430a9c970383c"
+    "sha256": "13a8ea3926db0f9c18456f395872ca8474fcc426d7e28cb89885e88d65e834bc"
    }
   ]
  }

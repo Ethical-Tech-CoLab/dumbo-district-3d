@@ -10,11 +10,12 @@ import { fileURLToPath, URL } from 'node:url';
  */
 const contractsRoot = fileURLToPath(new URL('../../digital-3d-shared-contracts', import.meta.url));
 
-export default defineConfig({
-  // Relative asset URLs, so the same build works at a domain root and under a project subpath
-  // like /dumbo-district-3d/ on GitHub Pages. Every data fetch in the app is already relative for
-  // the same reason.
-  base: './',
+export default defineConfig(({ command }) => ({
+  // Relative asset URLs so one build works at a domain root and under a project subpath like
+  // /dumbo-district-3d/ on GitHub Pages; every data fetch in the app is already relative for the
+  // same reason. Only at build time: the dev server needs an absolute base to resolve /src/main.tsx,
+  // and a relative one makes it answer 400.
+  base: command === 'build' ? './' : '/',
   plugins: [react()],
   resolve: {
     alias: {
@@ -27,4 +28,4 @@ export default defineConfig({
     fs: { allow: ['..', contractsRoot] },
   },
   build: { outDir: 'dist', sourcemap: true },
-});
+}));
