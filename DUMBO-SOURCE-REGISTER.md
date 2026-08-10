@@ -335,6 +335,34 @@ same rule this project already applies to another module's geometry.
 Photographs never grant A; that is the contract's rule, not a local one. Grade B requires an image
 that is locatable, datable and large enough to read a material from. See `DOQ-007`.
 
+### DSRC-016 — OpenStreetMap street furniture · Tier B · grants A for position
+
+| | |
+|---|---|
+| Publisher | OpenStreetMap contributors, via Overpass API |
+| Accessed | 2026-08-10 |
+| License | **ODbL 1.0** |
+| Attribution | **Required** — "© OpenStreetMap contributors" wherever this is rendered |
+| Native CRS | EPSG:4326 |
+| Verified | Yes |
+
+1,359 features inside the district: 465 benches, 401 street lamps, 173 barrier lines totalling
+**7.4 km**, plus bollards, bike racks, litter baskets, hydrants, signals and flagpoles.
+
+Railings are the reason this source was added. The Brooklyn Bridge Park waterfront is fenced along
+almost its whole length, and a promenade rendered without one does not read as a promenade — it
+reads as a lawn that stops at the water, with nothing telling a walker where the edge is.
+
+**A finding worth recording: OSM does not tag these the way the wiki suggests.** Not one feature in
+the district carries `barrier=railing`. The waterfront guard rail is `barrier=fence` with
+`fence_type=railing`, and querying the documented tag alone returns nothing at all. The ingest
+therefore reads `fence_type` in preference to `barrier`, which is also what keeps the promenade's
+railing from rendering like the Farragut substation's chain-link.
+
+Position is grade A — these are surveyed or traced from imagery by mappers on the ground. Everything
+else is grade C: OSM says a bench is *there*, not what it looks like, so heights, colours and forms
+are conventional values chosen per type. That split is the whole point of the grade.
+
 ---
 
 ## 3. Definition sources

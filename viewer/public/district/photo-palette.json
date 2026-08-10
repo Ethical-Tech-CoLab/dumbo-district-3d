@@ -8,9 +8,9 @@
  "surfaces": {
   "paving": {
    "label": "cobblestone, granite sett and asphalt",
-   "observations": 31,
-   "mean_hex": "#686765",
-   "mean_coverage": 0.514,
+   "observations": 38,
+   "mean_hex": "#686665",
+   "mean_coverage": 0.498,
    "samples": [
     {
      "observation_id": "obs-88aaea8e9464",
@@ -23,6 +23,11 @@
      "coverage": 0.249
     },
     {
+     "observation_id": "obs-23efe304b395",
+     "hex": "#525155",
+     "coverage": 0.199
+    },
+    {
      "observation_id": "obs-a127fda12a03",
      "hex": "#605b5a",
      "coverage": 0.334
@@ -33,9 +38,24 @@
      "coverage": 0.364
     },
     {
+     "observation_id": "obs-c6fbcbd2dbc2",
+     "hex": "#444343",
+     "coverage": 0.367
+    },
+    {
      "observation_id": "obs-63a7c904ed30",
      "hex": "#7c7b7c",
      "coverage": 0.517
+    },
+    {
+     "observation_id": "obs-785e2f6603ee",
+     "hex": "#757372",
+     "coverage": 0.669
+    },
+    {
+     "observation_id": "obs-a56bea229e24",
+     "hex": "#4f545e",
+     "coverage": 0.565
     },
     {
      "observation_id": "obs-2498375a588f",
@@ -53,9 +73,19 @@
      "coverage": 0.678
     },
     {
+     "observation_id": "obs-0a29342c8fd8",
+     "hex": "#6a696d",
+     "coverage": 0.341
+    },
+    {
      "observation_id": "obs-86d66d0079c2",
      "hex": "#686b68",
      "coverage": 0.561
+    },
+    {
+     "observation_id": "obs-15957c9a8ffc",
+     "hex": "#858581",
+     "coverage": 0.337
     },
     {
      "observation_id": "obs-79581618b280",
@@ -83,6 +113,11 @@
      "coverage": 0.608
     },
     {
+     "observation_id": "obs-3ef3c94ddb2e",
+     "hex": "#68695f",
+     "coverage": 0.899
+    },
+    {
      "observation_id": "obs-868164f9db75",
      "hex": "#636364",
      "coverage": 0.77
@@ -98,11 +133,6 @@
      "coverage": 0.423
     },
     {
-     "observation_id": "obs-3f5e768dd587",
-     "hex": "#6e6e6e",
-     "coverage": 0.903
-    },
-    {
      "observation_id": "obs-cb2a590d9453",
      "hex": "#97938b",
      "coverage": 0.95
@@ -116,6 +146,11 @@
      "observation_id": "obs-3adeee768da0",
      "hex": "#564d48",
      "coverage": 0.271
+    },
+    {
+     "observation_id": "obs-db01d801e3e2",
+     "hex": "#777665",
+     "coverage": 0.515
     },
     {
      "observation_id": "obs-0295b7dff49d",
@@ -169,7 +204,7 @@
     }
    ],
    "range_hex": [
-    "#504f4c",
+    "#444343",
     "#97938b"
    ],
    "credits": [
@@ -177,25 +212,25 @@
     "55 Washington Street, Brooklyn NY.jpg by (User:Wgreaves), CC-BY-SA-4.0, via Wikimedia Commons",
     "60 Water Street (2022).jpg by ThibautRe, CC-BY-SA-4.0, via Wikimedia Commons",
     "Amazon Prime E-Assisted vehicle in Brooklyn, NY.jpg by Nielsoncaetanosalmeron, CC-BY-4.0, via Wikimedia Commons",
+    "BQE BB split jeh.jpg by Jim.henderson, CC0-1.0, via Wikimedia Commons",
     "Brooklyn (7031591563).jpg by Andr\u00e9s Nieto Porras from Palma de Mallorca, Espa\u00f1a, CC-BY-SA-2.0, via Wikimedia Commons",
+    "By the Brooklyn Bridge 2.jpg by Aaron Barlow, CC-BY-SA-4.0, via Wikimedia Commons",
     "City Streets.jpg by Jkoss6, CC-BY-SA-4.0, via Wikimedia Commons",
+    "DUMBO (41325554841).jpg by Nan Palmero from San Antonio, TX, USA, CC-BY-2.0, via Wikimedia Commons",
     "DUMBO from Bridge.JPG by Jared Kofsky, CC-BY-SA-3.0, via Wikimedia Commons",
     "Dumbo - Brooklyn, NYC.jpg by Adjoajo, CC-BY-SA-4.0, via Wikimedia Commons",
     "Dumbo Brooklyn October 2021 006.jpg by Kidfly182, CC-BY-SA-4.0, via Wikimedia Commons",
     "Dumbo Brooklyn October 2021 007.jpg by Kidfly182, CC-BY-SA-4.0, via Wikimedia Commons",
-    "EW Bliss Company Torpedo Works ca 1910-1915.jpg by Bain News Service, public-domain, via Wikimedia Commons",
     "Emergency telephone NYC 1.jpg by Superbass, CC-BY-SA-3.0, via Wikimedia Commons",
     "Fulton Ferry Pier with Manhattan.JPG by Wusel007, CC-BY-SA-3.0, via Wikimedia Commons",
-    "John Street, DUMBO Brooklyn.jpg by AaronBarlow, CC-BY-SA-4.0, via Wikimedia Commons",
-    "Manhattan Bridge and Empire State Building from Washington Street, Dumbo, Brooklyn, New York.jpg by Christian David, CC-BY-SA-4.0, via Wikimedia Commons",
-    "Manhole In Dumbo (183492279).jpeg by Chris Cook, CC-BY-3.0, via Wikimedia Commons"
+    "John Street, DUMBO Brooklyn.jpg by AaronBarlow, CC-BY-SA-4.0, via Wikimedia Commons"
    ]
   },
   "brick": {
    "label": "brick and terracotta masonry",
-   "observations": 21,
-   "mean_hex": "#725140",
-   "mean_coverage": 0.286,
+   "observations": 24,
+   "mean_hex": "#745241",
+   "mean_coverage": 0.27,
    "samples": [
     {
      "observation_id": "obs-a127fda12a03",
@@ -218,9 +253,19 @@
      "coverage": 0.329
     },
     {
+     "observation_id": "obs-15957c9a8ffc",
+     "hex": "#a87158",
+     "coverage": 0.182
+    },
+    {
      "observation_id": "obs-79581618b280",
      "hex": "#9a7063",
      "coverage": 0.396
+    },
+    {
+     "observation_id": "obs-3ef3c94ddb2e",
+     "hex": "#5b4939",
+     "coverage": 0.096
     },
     {
      "observation_id": "obs-868164f9db75",
@@ -288,6 +333,11 @@
      "coverage": 0.199
     },
     {
+     "observation_id": "obs-736847837273",
+     "hex": "#7c5942",
+     "coverage": 0.192
+    },
+    {
      "observation_id": "obs-ac3e4b9ae648",
      "hex": "#563c2d",
      "coverage": 0.062
@@ -305,10 +355,12 @@
    ],
    "range_hex": [
     "#432f28",
-    "#9a7063"
+    "#a87158"
    ],
    "credits": [
+    "Brooklyn Bridge from Brooklyn Bridge Park.jpg by Fredverillo, CC-BY-SA-3.0, via Wikimedia Commons",
     "Brooklyn Round-a-bout (6214820803).jpg by Tony Hisgett from Birmingham, UK, CC-BY-2.0, via Wikimedia Commons",
+    "By the Brooklyn Bridge 2.jpg by Aaron Barlow, CC-BY-SA-4.0, via Wikimedia Commons",
     "City Streets.jpg by Jkoss6, CC-BY-SA-4.0, via Wikimedia Commons",
     "DUMBO Brooklyn at night.jpg by LWYang from USA, CC-BY-2.0, via Wikimedia Commons",
     "DUMBO Historic District street signs.jpg by (User:Wgreaves), CC-BY-SA-4.0, via Wikimedia Commons",
@@ -317,19 +369,43 @@
     "Dumbo (Down Under the Manhattan Bridge Overpass) at Brooklyn - NYC - USA - panoramio.jpg by diego_cue, CC-BY-SA-3.0, via Wikimedia Commons",
     "Dumbo - Brooklyn, NYC.jpg by Adjoajo, CC-BY-SA-4.0, via Wikimedia Commons",
     "Jane's Carousel 2.jpg by Kiah Ankoor (@IOTAGLOBAL), CC-BY-2.0, via Wikimedia Commons",
+    "Manhattan Bridge -1.jpg by Shah Ronak S, CC-BY-SA-4.0, via Wikimedia Commons",
     "Manhattan Bridge and Empire State Building from Washington Street, Dumbo, Brooklyn, New York.jpg by Christian David, CC-BY-SA-4.0, via Wikimedia Commons",
     "New York (11600531215).jpg by Mack Male from Edmonton, AB, Canada, CC-BY-SA-2.0, via Wikimedia Commons",
     "New York (11600740003).jpg by Mack Male from Edmonton, AB, Canada, CC-BY-SA-2.0, via Wikimedia Commons",
-    "Pearl & Water Sts red brick jeh.jpg by Jim.henderson, CC-BY-SA-4.0, via Wikimedia Commons",
-    "SmackMellonFacade Etienne Frossard.jpg by Etienne Frossard, CC-BY-3.0, via Wikimedia Commons",
-    "Smorgasburg in Dumbo.jpg by dumbonyc, CC-BY-SA-2.0, via Wikimedia Commons",
-    "Superfine, 126 Front Street, Brooklyn NY.jpg by (User:Wgreaves), CC-BY-SA-4.0, via Wikimedia Commons"
+    "Pearl & Water Sts red brick jeh.jpg by Jim.henderson, CC-BY-SA-4.0, via Wikimedia Commons"
+   ]
+  },
+  "foliage": {
+   "label": "street tree canopy",
+   "observations": 2,
+   "mean_hex": "#364122",
+   "mean_coverage": 0.138,
+   "samples": [
+    {
+     "observation_id": "obs-63a7c904ed30",
+     "hex": "#3b452a",
+     "coverage": 0.06
+    },
+    {
+     "observation_id": "obs-bca6f962a107",
+     "hex": "#354020",
+     "coverage": 0.215
+    }
+   ],
+   "range_hex": [
+    "#354020",
+    "#3b452a"
+   ],
+   "credits": [
+    "Emergency telephone NYC 1.jpg by Superbass, CC-BY-SA-3.0, via Wikimedia Commons",
+    "Thomson Meter Co Water Meters building in DUMBO, Brooklyn.jpg by (User:Wgreaves), CC-BY-SA-4.0, via Wikimedia Commons"
    ]
   }
  },
  "provenance": {
   "module_id": "dumbo-district",
   "generated_by": "dumbo-district-3d/scripts@1.0.0 (dumbo-district-3d/scripts@1.0.0)",
-  "generated_at": "2026-08-10T03:46:33+00:00"
+  "generated_at": "2026-08-10T03:58:53+00:00"
  }
 }

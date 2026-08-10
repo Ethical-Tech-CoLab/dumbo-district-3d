@@ -127,6 +127,38 @@ export function applyObservedPalette(palette: ObservedPalette | null, strength =
   return paving.credits ?? [];
 }
 
+/** Fewer than this many photographs and a measured foliage colour is one tree's summer, not DUMBO's. */
+const MIN_FOLIAGE_OBSERVATIONS = 2;
+
+/** Hue and saturation measured from photographs of DUMBO's planting, if the corpus has enough. */
+let observedFoliage: { h: number; s: number; strength: number } | null = null;
+
+/**
+ * Adopt the green that photographs of DUMBO actually show.
+ *
+ * Records the measurement rather than rewriting the prototypes, so it does not matter whether the
+ * palette or the prop set loads first, and calling it twice cannot drag the canopies further each
+ * time. `tintFor` applies it when geometry is built.
+ *
+ * The blend keeps each genus's own lightness, exactly as the surfaces do, so a plane still reads
+ * lighter than an oak and a mixed street does not flatten into one wall of green.
+ *
+ * Gated on a minimum count because foliage is the thinnest evidence in the corpus: a canopy fills a
+ * small part of most frames, and one photograph taken in October would repaint the district's
+ * summer. Returns credits only when the measurement will actually be used, so nothing is credited
+ * for an influence it did not have.
+ */
+export function applyObservedFoliage(palette: ObservedPalette | null, strength = 0.7): string[] {
+  const foliage = palette?.surfaces?.foliage;
+  if (!palette?.available || !foliage?.mean_hex) return [];
+  if ((foliage.observations ?? 0) < MIN_FOLIAGE_OBSERVATIONS) return [];
+
+  const hsl = { h: 0, s: 0, l: 0 };
+  new THREE.Color(foliage.mean_hex).getHSL(hsl);
+  observedFoliage = { h: hsl.h, s: hsl.s, strength };
+  return foliage.credits ?? [];
+}
+
 /**
  * How far each surface moves towards the measured colour.
  *
@@ -320,7 +352,7 @@ function buildQuadPaving(doc: PavingDocument, groundAt: (x: number, y: number) =
  * later is a change to the prototype's `url` and nothing else.
  */
 function proceduralPrototype(prototype: ScenePrototype): THREE.BufferGeometry[] {
-  const [sx, , sz] = prototype.size_m ?? [6, 6, 8];
+  const [sx, sy, sz] = prototype.size_m ?? [6, 6, 8];
 
   switch (prototype.kind) {
     case 'tree': {
@@ -354,6 +386,56 @@ function proceduralPrototype(prototype: ScenePrototype): THREE.BufferGeometry[] 
       post.translate(0, sz / 2, 0);
       return [post];
     }
+    case 'fence': {
+      // A panel authored along local X, so an instance's yaw aligns it with the run it sits on.
+      // Two rails and three balusters read as a railing at walking distance and cost 5 boxes;
+      // a real model later is a change to the prototype's url.
+      const depth = sy || 0.12;
+      const parts: THREE.BufferGeometry[] = [];
+
+      const topRail = new THREE.BoxGeometry(sx, 0.06, depth * 0.5);
+      topRail.translate(0, sz - 0.03, 0);
+      parts.push(topRail);
+
+      const midRail = new THREE.BoxGeometry(sx, 0.04, depth * 0.35);
+      midRail.translate(0, sz * 0.55, 0);
+      parts.push(midRail);
+
+      for (const offset of [-0.5, 0, 0.5]) {
+        const baluster = new THREE.BoxGeometry(0.05, sz, 0.05);
+        baluster.translate(sx * offset, sz / 2, 0);
+        parts.push(baluster);
+      }
+      return parts;
+    }
+    case 'wall': {
+      // Solid, unlike a fence. Rendering a wall with balusters would let a walker see through a
+      // retaining wall, which is precisely the thing a wall is there to stop.
+      const slab = new THREE.BoxGeometry(sx, sz, sy || 0.3);
+      slab.translate(0, sz / 2, 0);
+      const coping = new THREE.BoxGeometry(sx, 0.07, (sy || 0.3) * 1.15);
+      coping.translate(0, sz, 0);
+      return [slab, coping];
+    }
+    case 'bin': {
+      const body = new THREE.CylinderGeometry(sx * 0.4, sx * 0.34, sz, 8);
+      body.translate(0, sz / 2, 0);
+      return [body];
+    }
+    case 'hydrant': {
+      const body = new THREE.CylinderGeometry(sx * 0.3, sx * 0.36, sz * 0.8, 6);
+      body.translate(0, sz * 0.4, 0);
+      const cap = new THREE.SphereGeometry(sx * 0.32, 6, 4);
+      cap.translate(0, sz * 0.82, 0);
+      return [body, cap];
+    }
+    case 'traffic_light': {
+      const post = new THREE.CylinderGeometry(0.05, 0.07, sz, 6);
+      post.translate(0, sz / 2, 0);
+      const head = new THREE.BoxGeometry(0.24, 0.6, 0.2);
+      head.translate(0, sz - 0.35, 0);
+      return [post, head];
+    }
     default: {
       const box = new THREE.BoxGeometry(sx, sz, sx);
       box.translate(0, sz / 2, 0);
@@ -362,10 +444,29 @@ function proceduralPrototype(prototype: ScenePrototype): THREE.BufferGeometry[] 
   }
 }
 
-/** Parse the foliage tint a prototype records in its notes, falling back to a neutral green. */
-function tintFor(prototype: ScenePrototype): number {
+/** The tint a prototype was authored with, ignoring any measurement. */
+function authoredTint(prototype: ScenePrototype): number {
   const match = /#([0-9a-f]{6})/i.exec(prototype.notes ?? '');
   return match ? parseInt(match[1], 16) : 0x4e6c3c;
+}
+
+/**
+ * The tint to render a prototype with: the authored colour, pulled towards the measured foliage
+ * hue when the corpus has one and the prototype is a plant.
+ */
+function tintFor(prototype: ScenePrototype): number {
+  const original = new THREE.Color(authoredTint(prototype));
+  if (!observedFoliage || (prototype.kind !== 'tree' && prototype.kind !== 'shrub')) {
+    return original.getHex();
+  }
+  const originalHsl = { h: 0, s: 0, l: 0 };
+  original.getHSL(originalHsl);
+  const tinted = new THREE.Color().setHSL(
+    observedFoliage.h,
+    originalHsl.s + (observedFoliage.s - originalHsl.s) * observedFoliage.strength,
+    originalHsl.l,
+  );
+  return original.lerp(tinted, observedFoliage.strength).getHex();
 }
 
 const TRUNK_COLOR = 0x5a4634;

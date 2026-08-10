@@ -231,12 +231,26 @@
    "grants_confidence": "B",
    "verified": true,
    "notes": "First found-imagery campaign: 336 fetched, 62 kept after human review. Every one carries an explicit reuse licence recorded with its credit line; anything without one is rejected rather than assumed. Share-alike images are marked derive_appearance: colours are measured from them, the images themselves are never vendored into this repository. Photographs never grant A. See DOQ-007 and PHOTO-SURVEY.md."
+  },
+  {
+   "source_id": "DSRC-016",
+   "title": "OpenStreetMap street furniture",
+   "tier": "B",
+   "publisher": "OpenStreetMap contributors",
+   "url": "https://www.openstreetmap.org/",
+   "accessed": "2026-08-10",
+   "license": "ODbL-1.0",
+   "attribution_required": true,
+   "attribution_text": "Street furniture: \u00a9 OpenStreetMap contributors, ODbL",
+   "grants_confidence": "A",
+   "verified": true,
+   "notes": "Railings, lamps, benches, bollards, bike racks, bins, hydrants and signals. 7.4 km of barrier line, which is what gives the Brooklyn Bridge Park promenade an edge instead of ending at the water with nothing there. Note that not one feature in the district uses the documented barrier=railing tag: the waterfront guard rail is barrier=fence with fence_type=railing, so the ingest reads fence_type first. Position grade A; heights, colours and forms are conventional per type and graded C."
   }
  ],
  "provenance": {
   "module_id": "dumbo-district",
   "generated_by": "dumbo-district-3d/scripts@1.0.0",
-  "generated_at": "2026-08-10T03:05:35+00:00",
+  "generated_at": "2026-08-10T03:55:52+00:00",
   "source_documents": [
    {
     "path": "DUMBO-GEOSPATIAL-CONTROL.md",

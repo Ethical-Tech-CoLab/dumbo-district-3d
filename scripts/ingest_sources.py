@@ -261,6 +261,89 @@ def fetch_streets(control: DistrictControl) -> None:
     )
 
 
+def fetch_street_furniture(control: DistrictControl) -> None:
+    """DSRC-016. The things a walker actually brushes past.
+
+    Railings above all. The Brooklyn Bridge Park waterfront is fenced along nearly its whole
+    length, and a promenade rendered without its railing does not read as a promenade — it reads
+    as a lawn that stops at the water. Lamps, benches, bollards and bike racks matter for the
+    same reason: they are what makes a street look occupied rather than modelled.
+
+    Two geometries, deliberately kept apart. Railings and fences are *lines* and have to be
+    extruded along their run; everything else is a *point* and can be instanced. Asking Overpass
+    for both in one query and sorting the result by type is cheaper than two round trips.
+    """
+    print("[DSRC-016] OpenStreetMap street furniture")
+    west, south, east, north = control.bbox
+    bbox = f"{south},{west},{north},{east}"
+    line_selectors = [
+        'way["barrier"~"^(railing|handrail|fence|guard_rail|wall)$"]',
+    ]
+    point_selectors = [
+        'node["highway"="street_lamp"]',
+        'node["amenity"="bench"]',
+        'node["barrier"="bollard"]',
+        'node["amenity"="bicycle_parking"]',
+        'node["amenity"="waste_basket"]',
+        'node["amenity"="drinking_fountain"]',
+        'node["emergency"="fire_hydrant"]',
+        'node["highway"="traffic_signals"]',
+        'node["man_made"="flagpole"]',
+        'node["amenity"="fountain"]',
+    ]
+    query = (
+        "[out:json][timeout:180];("
+        + "".join(f"{selector}({bbox});" for selector in line_selectors)
+        + "".join(f"{selector}({bbox});" for selector in point_selectors)
+        + ");out geom tags;"
+    )
+    result = _overpass(query)
+
+    lines: list[dict] = []
+    points: list[dict] = []
+    for element in result.get("elements", []):
+        tags = element.get("tags") or {}
+        if element.get("type") == "way" and element.get("geometry"):
+            lines.append(
+                {
+                    "osm_id": element["id"],
+                    "barrier": tags.get("barrier"),
+                    "geometry": [[p["lon"], p["lat"]] for p in element["geometry"]],
+                    "tags": tags,
+                }
+            )
+        elif element.get("type") == "node" and element.get("lat") is not None:
+            points.append(
+                {
+                    "osm_id": element["id"],
+                    "lon": float(element["lon"]),
+                    "lat": float(element["lat"]),
+                    "tags": tags,
+                }
+            )
+
+    kinds: dict[str, int] = {}
+    for line in lines:
+        kinds[f"barrier={line['barrier']}"] = kinds.get(f"barrier={line['barrier']}", 0) + 1
+    for point in points:
+        tags = point["tags"]
+        key = next(
+            (f"{k}={tags[k]}" for k in ("highway", "amenity", "barrier", "emergency", "man_made") if k in tags),
+            "other",
+        )
+        kinds[key] = kinds.get(key, 0) + 1
+    for key in sorted(kinds, key=lambda k: -kinds[k]):
+        print(f"    {kinds[key]:5d}  {key}")
+
+    _write(
+        DATA / "streets" / "osm-street-furniture.raw.json",
+        {"lines": lines, "points": points},
+        query=query,
+        source_id="DSRC-016",
+        note="OpenStreetMap contributors, ODbL. Attribution is mandatory wherever this is rendered.",
+    )
+
+
 def fetch_landmarks(control: DistrictControl) -> None:
     """DSRC-007. Named places used as tour stops and map labels."""
     print("[DSRC-007] OpenStreetMap named landmarks")
@@ -659,6 +742,7 @@ def main() -> int:
     parser.add_argument("--pluto", action="store_true")
     parser.add_argument("--streets", action="store_true")
     parser.add_argument("--landmarks", action="store_true")
+    parser.add_argument("--furniture", action="store_true")
     parser.add_argument("--nta", action="store_true")
     parser.add_argument("--trees", action="store_true")
     parser.add_argument("--sidewalks", action="store_true")
@@ -681,6 +765,8 @@ def main() -> int:
         jobs.append(fetch_streets)
     if args.all or args.landmarks:
         jobs.append(fetch_landmarks)
+    if args.all or args.furniture:
+        jobs.append(fetch_street_furniture)
     if args.all or args.nta:
         jobs.append(fetch_nta)
     if args.all or args.trees:

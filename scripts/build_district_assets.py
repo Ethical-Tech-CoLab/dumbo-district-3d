@@ -1178,6 +1178,28 @@ def build_source_register(control: DistrictControl) -> dict:
                     "repository. Photographs never grant A. See DOQ-007 and PHOTO-SURVEY.md."
                 ),
             },
+            {
+                "source_id": "DSRC-016",
+                "title": "OpenStreetMap street furniture",
+                "tier": "B",
+                "publisher": "OpenStreetMap contributors",
+                "url": "https://www.openstreetmap.org/",
+                "accessed": "2026-08-10",
+                "license": "ODbL-1.0",
+                "attribution_required": True,
+                "attribution_text": "Street furniture: © OpenStreetMap contributors, ODbL",
+                "grants_confidence": "A",
+                "verified": True,
+                "notes": (
+                    "Railings, lamps, benches, bollards, bike racks, bins, hydrants and signals. "
+                    "7.4 km of barrier line, which is what gives the Brooklyn Bridge Park promenade "
+                    "an edge instead of ending at the water with nothing there. Note that not one "
+                    "feature in the district uses the documented barrier=railing tag: the waterfront "
+                    "guard rail is barrier=fence with fence_type=railing, so the ingest reads "
+                    "fence_type first. Position grade A; heights, colours and forms are conventional "
+                    "per type and graded C."
+                ),
+            },
         ],
         "provenance": provenance(control),
     }

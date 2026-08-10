@@ -52,6 +52,84 @@ GENUS_FORM = {
 }
 DEFAULT_FORM = {"label": "Street tree", "spread": 0.95, "height": 0.95, "tint": "#4e6c3c"}
 
+# Street furniture prototypes. Height and colour are conventional values, not measurements, which is
+# why every one of these is graded C: OSM gives an authoritative *position*, and says nothing about
+# what the thing looks like.
+#
+# The tag key is deliberately more specific than `barrier` alone. OSM in DUMBO tags the waterfront
+# guard rail as `barrier=fence` + `fence_type=railing`, not `barrier=railing`, and a promenade railing
+# and a substation's chain-link have no business rendering alike.
+FURNITURE_FORM = {
+    "railing":      {"kind": "fence",         "label": "Waterfront railing",   "height": 1.10, "tint": "#3c4348", "panel": 2.0},
+    "fence_bars":   {"kind": "fence",         "label": "Bar fence",            "height": 1.80, "tint": "#3a3f42", "panel": 2.0},
+    "fence_chain":  {"kind": "fence",         "label": "Chain-link fence",     "height": 2.10, "tint": "#6b7075", "panel": 2.5},
+    "fence_wood":   {"kind": "fence",         "label": "Timber fence",         "height": 1.80, "tint": "#6d5a44", "panel": 2.0},
+    "fence":        {"kind": "fence",         "label": "Fence",                "height": 1.80, "tint": "#4a4f52", "panel": 2.0},
+    "wall_stone":   {"kind": "wall",          "label": "Stone wall",           "height": 1.20, "tint": "#7d7367", "panel": 2.0, "thickness": 0.35},
+    "wall_brick":   {"kind": "wall",          "label": "Brick wall",           "height": 1.60, "tint": "#725140", "panel": 2.0, "thickness": 0.30},
+    "wall":         {"kind": "wall",          "label": "Wall",                 "height": 1.40, "tint": "#8a8781", "panel": 2.0, "thickness": 0.30},
+    "bench":        {"kind": "bench",         "label": "Bench",                "height": 0.90, "tint": "#6b5740", "size": 1.80},
+    "lamp":         {"kind": "lamp",          "label": "Street lamp",          "height": 6.50, "tint": "#3f4448", "size": 0.30},
+    "bollard":      {"kind": "bollard",       "label": "Bollard",              "height": 0.95, "tint": "#43474a", "size": 0.25},
+    "bike_rack":    {"kind": "custom",        "label": "Bicycle parking",      "height": 0.85, "tint": "#4c5155", "size": 0.80},
+    "bin":          {"kind": "bin",           "label": "Litter basket",        "height": 0.95, "tint": "#3d4b3f", "size": 0.60},
+    "hydrant":      {"kind": "hydrant",       "label": "Fire hydrant",         "height": 0.80, "tint": "#9c3b32", "size": 0.30},
+    "traffic_light": {"kind": "traffic_light", "label": "Traffic signal",      "height": 4.20, "tint": "#3a3e41", "size": 0.28},
+    "flagpole":     {"kind": "custom",        "label": "Flagpole",             "height": 8.00, "tint": "#8d9095", "size": 0.20},
+    "fountain":     {"kind": "custom",        "label": "Fountain",             "height": 0.70, "tint": "#6d7378", "size": 2.00},
+}
+
+
+def _furniture_line_form(tags: dict) -> str:
+    """Which prototype a barrier way should use.
+
+    `fence_type` is consulted before `barrier`, because it is the tag that actually distinguishes
+    the promenade's railing from the substation's chain-link, and OSM here records both as
+    `barrier=fence`.
+    """
+    barrier = (tags.get("barrier") or "").strip()
+    fence_type = (tags.get("fence_type") or "").strip()
+    material = (tags.get("material") or "").strip()
+
+    if barrier in {"railing", "handrail", "guard_rail"}:
+        return "railing"
+    if barrier == "wall":
+        if material in {"stone", "brick"}:
+            return f"wall_{material}"
+        return "wall"
+    if fence_type in {"railing", "bars", "metal_bars"}:
+        return "railing" if fence_type == "railing" else "fence_bars"
+    if fence_type == "chain_link":
+        return "fence_chain"
+    if fence_type == "wood":
+        return "fence_wood"
+    return "fence"
+
+
+def _furniture_point_form(tags: dict) -> str | None:
+    """Which prototype an OSM node should use, or None to ignore it."""
+    if tags.get("highway") == "street_lamp":
+        return "lamp"
+    if tags.get("highway") == "traffic_signals":
+        return "traffic_light"
+    if tags.get("amenity") == "bench":
+        return "bench"
+    if tags.get("amenity") == "bicycle_parking":
+        return "bike_rack"
+    if tags.get("amenity") == "waste_basket":
+        return "bin"
+    if tags.get("amenity") == "fountain":
+        return "fountain"
+    if tags.get("amenity") == "drinking_fountain":
+        return "fountain"
+    if tags.get("barrier") == "bollard":
+        return "bollard"
+    if tags.get("emergency") == "fire_hydrant":
+        return "hydrant"
+    if tags.get("man_made") == "flagpole":
+        return "flagpole"
+    return None
+
 
 def now() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
@@ -175,6 +253,10 @@ def build_props(control: DistrictControl, index: dict) -> dict:
     print(f"    {len(instances)} trees placed, {len(prototypes)} prototypes, {skipped} skipped")
     print(f"    genera: {dict(sorted(used_genera.items(), key=lambda kv: -kv[1])[:5])}")
 
+    furniture_prototypes, furniture_instances = build_street_furniture(control, index)
+    prototypes.extend(furniture_prototypes)
+    instances.extend(furniture_instances)
+
     return {
         "contract_version": CONTRACT_VERSION,
         "module_id": MODULE_ID,
@@ -183,6 +265,145 @@ def build_props(control: DistrictControl, index: dict) -> dict:
         "instances": instances,
         "provenance": provenance(control),
     }
+
+
+def build_street_furniture(control: DistrictControl, index: dict) -> tuple[list[dict], list[dict]]:
+    """Railings, lamps, benches and the rest, as instanced props.
+
+    Railings matter more than the rest put together. The Brooklyn Bridge Park waterfront is fenced
+    along almost its whole length, and a promenade rendered without one does not read as a
+    promenade — it reads as a lawn that stops at the water, and a walker gets no sense of an edge
+    they cannot cross.
+
+    Barriers are lines, and the prop contract places points, so each way is walked at a fixed
+    spacing and a panel dropped at every step, yawed to the segment it sits on. That keeps the
+    existing schema and the existing instanced renderer, and it means a real railing model later is
+    a change to one prototype's `url`.
+
+    Positions are grade A from OSM. Heights and colours are conventional, so every prototype is
+    graded C — the survey says a railing is *there*, not what it looks like.
+    """
+    path = DATA / "streets" / "osm-street-furniture.raw.json"
+    if not path.exists():
+        print("    no street furniture source; run ingest_sources.py --furniture")
+        return [], []
+
+    raw = load(path)
+    ring = control.boundary_ring
+    size = index["scheme"]["tile_size_m"]
+    ox, oy = index["scheme"]["origin_xy_m"]
+
+    used: dict[str, int] = {}
+    instances: list[dict] = []
+
+    def emit(form: str, x: float, y: float, yaw: float, scale: float = 1.0) -> None:
+        col = int(math.floor((x - ox) / size))
+        row = int(math.floor((y - oy) / size))
+        used[form] = used.get(form, 0) + 1
+        instance = {
+            "p": f"prop_{form}",
+            "xy": [round(x, 2), round(y, 2)],
+            "r": round(yaw % 360, 1),
+            "tile": f"t_{col}_{row}",
+        }
+        if abs(scale - 1.0) > 1e-3:
+            instance["s"] = round(scale, 3)
+        instances.append(instance)
+
+    barrier_m = 0.0
+    for line in raw.get("lines", []):
+        form = _furniture_line_form(line.get("tags") or {})
+        spacing = FURNITURE_FORM[form]["panel"]
+        coords = line.get("geometry") or []
+        # Project once, then walk in metres. Doing it the other way round means resampling in
+        # degrees, where a step is a different length north-south than east-west.
+        runs: list[list[tuple[float, float]]] = [[]]
+        for lon, lat in coords:
+            if not point_in_ring((lon, lat), ring):
+                if runs[-1]:
+                    runs.append([])
+                continue
+            x, y, _ = control.geodetic_to_enu(float(lon), float(lat))
+            runs[-1].append((x, y))
+
+        for run in runs:
+            if len(run) < 2:
+                continue
+            # Walk the whole run by arc length rather than segment by segment. Stepping per segment
+            # looks equivalent and is not: an OSM way often has vertices centimetres apart, and each
+            # one would get its own panel squashed to fit, so a railing would come out as a row of
+            # 5 cm stumps wherever the survey happened to be dense.
+            spans = []
+            for a, b in zip(run, run[1:]):
+                length = math.hypot(b[0] - a[0], b[1] - a[1])
+                if length > 1e-6:
+                    spans.append((a, b, length))
+            total = sum(s[2] for s in spans)
+            if total < spacing * 0.4:
+                continue
+            barrier_m += total
+
+            steps = max(1, math.ceil(total / spacing))
+            step_len = total / steps
+            for step in range(steps):
+                target = (step + 0.5) * step_len
+                travelled = 0.0
+                for a, b, length in spans:
+                    if travelled + length >= target:
+                        t = (target - travelled) / length
+                        yaw = math.degrees(math.atan2(b[1] - a[1], b[0] - a[0]))
+                        # Deliberately not scaled to close the gap. Instance scale is uniform, so
+                        # stretching a panel to fit would stretch its height too and the railing
+                        # would ripple. Stepping shorter than the panel instead makes neighbours
+                        # overlap slightly, which on a fence is invisible, whereas a gap is not.
+                        emit(form, a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, yaw)
+                        break
+                    travelled += length
+
+    for point in raw.get("points", []):
+        form = _furniture_point_form(point.get("tags") or {})
+        if form is None:
+            continue
+        lon, lat = float(point["lon"]), float(point["lat"])
+        if not point_in_ring((lon, lat), ring):
+            continue
+        x, y, _ = control.geodetic_to_enu(lon, lat)
+        # Benches and racks have a direction; nothing in the data says which, so a deterministic
+        # pseudo-random yaw from the OSM id at least stops a row of them facing identically.
+        yaw = (int(point["osm_id"]) * 47) % 360
+        emit(form, x, y, yaw)
+
+    prototypes = []
+    for form in sorted(used):
+        spec = FURNITURE_FORM[form]
+        footprint = spec.get("panel") or spec.get("size") or 0.5
+        # size_m is [length, thickness, height]. The middle value only matters for the things that
+        # are a run rather than an object — a wall 2 m thick would swallow the pavement behind it.
+        thickness = spec.get("thickness", 0.12 if spec.get("panel") else footprint)
+        prototypes.append(
+            {
+                "prototype_id": f"prop_{form}",
+                "kind": spec["kind"],
+                "label": spec["label"],
+                "format": "procedural",
+                "size_m": [round(footprint, 2), round(thickness, 2), round(spec["height"], 2)],
+                "billboard": False,
+                "casts_shadow": False,
+                "source_basis": ["official_dataset", "procedural"],
+                "source_refs": ["DSRC-016"],
+                "confidence": "C",
+                "notes": (
+                    f"{spec['label']}. Position is grade A from OpenStreetMap; the height and form "
+                    f"are conventional values rather than measurements, so the prop is graded C. "
+                    f"Tint {spec['tint']}."
+                ),
+            }
+        )
+
+    print(f"    {len(instances)} furniture instances, {len(prototypes)} prototypes")
+    print(f"    {barrier_m:,.0f} m of barrier line")
+    print(f"    {dict(sorted(used.items(), key=lambda kv: -kv[1])[:6])}")
+    return prototypes, instances
 
 
 def _as_float(value: object) -> float | None:

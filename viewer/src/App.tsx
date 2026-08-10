@@ -18,7 +18,7 @@ import {
 import { DistrictScene, type TileBuilding } from './DistrictScene';
 import { FrameLoop } from './FrameLoop';
 import { GroundGrid, type GroundGridDocument } from './GroundGrid';
-import { applyObservedPalette } from './SceneDressing';
+import { applyObservedFoliage, applyObservedPalette } from './SceneDressing';
 import { WalkControls } from './WalkControls';
 import { WalkRouter, type WalkNetwork } from './WalkRouter';
 import MetadataPanel, { type FacadeEvidence } from './components/MetadataPanel';
@@ -262,10 +262,15 @@ export default function App() {
         try {
           const response = await fetch('district/photo-palette.json');
           if (response.ok) {
-            const credits = applyObservedPalette(await response.json());
+            const palette = await response.json();
+            const credits = applyObservedPalette(palette);
             // The corpus is hundreds of photographs; the footer can carry a few. The full credit
             // list ships in photo-survey.json and is shown per building when one is selected.
             paletteCredits = credits.slice(0, 2).map((line) => `Surface colours measured from: ${line}`);
+            const foliageCredits = applyObservedFoliage(palette);
+            paletteCredits = paletteCredits.concat(
+              foliageCredits.slice(0, 1).map((line) => `Foliage colour measured from: ${line}`),
+            );
           }
         } catch {
           /* no corpus yet; the built-in surface colours stand */
