@@ -4,6 +4,8 @@
 **[🔍 Photograph audit](https://ethical-tech-colab.github.io/dumbo-district-3d/review/)** — **537
 photographs reviewed by a person**, the corpus that proved the pipeline
 
+*This district runs its own viewer, which is correct — the shared `@d3d/bridge-viewer-ui` is a bridge inspect shell, not a district shell; both sit on the shared `@d3d/viewer-kernel`. The review sheet is still generated locally by `scripts/build_review_sheet.py`, a fork of the tool that was promoted out of this repository; see [issue #1](https://github.com/Ethical-Tech-CoLab/dumbo-district-3d/issues/1).*
+
 A walkable, browser-renderable digital twin of the DUMBO neighbourhood in Brooklyn, built from
 authoritative NYC open data, with every asset traceable to a registered source.
 
