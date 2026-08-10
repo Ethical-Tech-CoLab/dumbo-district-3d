@@ -36,9 +36,33 @@ jobs:
           repository: Ethical-Tech-CoLab/digital-3d-shared-contracts
           path: digital-3d-shared-contracts
 
+      # The bridge is another team's geometry and this repository only ever consumes it. Checking it
+      # out here turns "our copy is stale" from something you notice by squinting at the render into
+      # a build failure. It happened: the bridge team remodelled the tower arches and shipped it
+      # under the same module_version, so nothing in the contract could tell us we were four hours
+      # behind, and the only symptom was that the bridge looked subtly wrong.
+      - name: Check out the bridge module
+        uses: actions/checkout@v4
+        continue-on-error: true
+        with:
+          repository: Ethical-Tech-CoLab/manhattan-bridge-3d
+          path: manhattan-bridge-3d
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+
+      - name: Check the bridge payload is not stale
+        # Advisory, not fatal: the bridge team's publishing cadence is theirs, and a district build
+        # should not be held hostage to it. It must be loud, though.
+        continue-on-error: true
+        run: |
+          if [ -d manhattan-bridge-3d/viewer/public ]; then
+            python3 dumbo-district-3d/scripts/sync_bridge_module.py \
+              --source manhattan-bridge-3d/viewer/public --check
+          else
+            echo "bridge repository not available; skipping the staleness check"
+          fi
 
       - name: Install
         working-directory: dumbo-district-3d/viewer
