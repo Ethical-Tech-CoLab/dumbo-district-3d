@@ -55,6 +55,9 @@ html, body, #root {
 .seasons { display: flex; gap: 4px; margin-left: 14px; padding-left: 14px; border-left: 1px solid var(--line); }
 .seasons button { padding: 5px 9px; font-size: 12px; text-transform: capitalize; }
 
+.lighting { display: flex; gap: 4px; margin-left: 10px; padding-left: 10px; border-left: 1px solid var(--line); }
+.lighting button { padding: 5px 8px; font-size: 12px; text-transform: capitalize; }
+
 button {
   background: var(--panel-2);
   color: var(--text);

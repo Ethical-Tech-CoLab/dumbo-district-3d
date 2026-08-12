@@ -20,6 +20,7 @@ import { FrameLoop } from './FrameLoop';
 import { GroundGrid, type GroundGridDocument } from './GroundGrid';
 import { applyObservedFoliage, applyObservedPalette } from './SceneDressing';
 import type { Season } from './FarField';
+import { LIGHTING_PRESETS, type LightingPreset } from './Sky';
 import { WalkControls } from './WalkControls';
 import { WalkRouter, type WalkNetwork } from './WalkRouter';
 import MetadataPanel, { type FacadeEvidence } from './components/MetadataPanel';
@@ -73,6 +74,7 @@ export default function App() {
   const [selected, setSelected] = useState<AssetMetadata | null>(null);
   const [overlay, setOverlay] = useState(false);
   const [season, setSeason] = useState<Season>('summer');
+  const [lighting, setLighting] = useState<LightingPreset | 'live'>('live');
   const [attributions, setAttributions] = useState<string[]>([]);
   /**
    * Notices, grouped by code.
@@ -326,7 +328,9 @@ export default function App() {
           { maxSpeed: MAX_PACE_MPS, sprintSpeed: SPRINT_PACE_MPS, walkSpeed: WALK_PACE_MPS },
         );
 
-        scene.setTimeOfDay('16:30');
+        // Open on the sky that is actually outside. A twin of a real place should default to the
+        // real light over that place, and it costs one solar calculation.
+        scene.setSunFor(new Date());
         setAttributions([...registry.attributions(), ...paletteCredits]);
 
         engine.current = {
@@ -696,6 +700,14 @@ export default function App() {
     setSeason(next);
   }, []);
 
+  const changeLighting = useCallback((next: LightingPreset | 'live') => {
+    const state = engine.current;
+    if (!state) return;
+    if (next === 'live') state.scene.setSunFor(new Date());
+    else state.scene.setLightingPreset(next);
+    setLighting(next);
+  }, []);
+
   const startTour = useCallback(
     async (summary: TourSummary) => {
       const state = engine.current;
@@ -858,6 +870,26 @@ python scripts/propose_bridge_placement.py --write`}
               title={`Dress the district for ${candidate}`}
             >
               {candidate}
+            </button>
+          ))}
+        </nav>
+
+        <nav className="lighting" aria-label="Lighting">
+          <button
+            className={lighting === 'live' ? 'active' : ''}
+            onClick={() => changeLighting('live')}
+            title="Light the district for the sun that is over DUMBO right now"
+          >
+            live sun
+          </button>
+          {(Object.keys(LIGHTING_PRESETS) as LightingPreset[]).map((preset) => (
+            <button
+              key={preset}
+              className={lighting === preset ? 'active' : ''}
+              onClick={() => changeLighting(preset)}
+              title={`Light the district for ${preset.replace('-', ' ')}`}
+            >
+              {preset.replace('golden-', '')}
             </button>
           ))}
         </nav>

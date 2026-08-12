@@ -35,6 +35,13 @@ import {
 } from './SceneDressing';
 import type { ScenePropSet } from '@d3d/contracts';
 import {
+  LIGHTING_PRESETS,
+  skyLighting,
+  sunPosition,
+  type LightingPreset,
+  type SkyLighting,
+} from './Sky';
+import {
   WaterScene,
   buildHorizon,
   seasonForDate,
@@ -106,7 +113,10 @@ export class DistrictScene {
   private readonly inFlight = new Set<string>();
   private readonly metadataById = new Map<string, TileBuilding>();
   private readonly sun: THREE.DirectionalLight;
+  private readonly fill: THREE.DirectionalLight;
   private readonly hemi: THREE.HemisphereLight;
+  private readonly skyUniforms: { top: { value: THREE.Color }; horizon: { value: THREE.Color } };
+  private lighting: SkyLighting | null = null;
   private readonly raycaster = new THREE.Raycaster();
   private highlight: THREE.Mesh | null = null;
   private confidenceOverlay = false;
@@ -145,15 +155,62 @@ export class DistrictScene {
 
     this.camera = new THREE.PerspectiveCamera(62, 1, 0.15, 6000);
 
-    this.scene.background = new THREE.Color(0x9fb6cc);
-    this.scene.fog = new THREE.Fog(0x9fb6cc, 500, 2400);
+    // A gradient sky dome rather than a flat background colour. Half the view from DUMBO is across
+    // open water to the horizon, and a flat fill makes that read as a painted backdrop; the pale
+    // band where the sky meets the river is what sells the distance.
+    //
+    // Rendered on the inside of a large sphere with depth writing off, so it is always behind
+    // everything and costs one draw call.
+    this.skyUniforms = {
+      top: { value: new THREE.Color(0x74a8e8) },
+      horizon: { value: new THREE.Color(0xd6e8f8) },
+    };
+    const skyDome = new THREE.Mesh(
+      new THREE.SphereGeometry(4200, 24, 12),
+      new THREE.ShaderMaterial({
+        uniforms: this.skyUniforms,
+        side: THREE.BackSide,
+        depthWrite: false,
+        fog: false,
+        vertexShader: `
+          varying vec3 vWorld;
+          void main() {
+            vWorld = (modelMatrix * vec4(position, 1.0)).xyz;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `,
+        fragmentShader: `
+          uniform vec3 top;
+          uniform vec3 horizon;
+          varying vec3 vWorld;
+          void main() {
+            // Height above the horizon, eased so the pale band hugs the horizon rather than
+            // washing out the whole lower half of the sky.
+            float h = clamp(normalize(vWorld).y, 0.0, 1.0);
+            gl_FragColor = vec4(mix(horizon, top, pow(h, 0.42)), 1.0);
+          }
+        `,
+      }),
+    );
+    skyDome.renderOrder = -1000;
+    skyDome.frustumCulled = false;
+    this.scene.add(skyDome);
 
-    this.hemi = new THREE.HemisphereLight(0xcfe0f2, 0x50493f, 1.5);
+    this.scene.fog = new THREE.Fog(0xd6e8f8, 500, 3200);
+
+    this.hemi = new THREE.HemisphereLight(0xcfe0f2, 0x6b6154, 1.5);
     this.scene.add(this.hemi);
 
     this.sun = new THREE.DirectionalLight(0xfff2df, 2.1);
     this.sun.position.set(-180, 260, 140);
     this.scene.add(this.sun);
+
+    // The fill: a weak second sun, opposite the first and low, so it lands on the wall faces the sun
+    // has left dark without adding much to the ground. See Sky.ts for why a hemisphere light alone
+    // cannot do this job.
+    this.fill = new THREE.DirectionalLight(0xd6e2f4, 0.9);
+    this.fill.position.set(180, 80, -140);
+    this.scene.add(this.fill);
 
     this.scene.add(this.tileRoot);
   }
@@ -894,17 +951,62 @@ export class DistrictScene {
 
   setTimeOfDay(hhmm: string): void {
     const [hours, minutes] = hhmm.split(':').map(Number);
-    const t = (hours + minutes / 60 - 6) / 12; // 06:00 -> 0, 18:00 -> 1
-    const angle = Math.max(0.03, Math.min(1, t)) * Math.PI;
-    const elevation = Math.sin(angle);
-    this.sun.position.set(Math.cos(angle) * -320, Math.max(20, elevation * 320), 160);
-    this.sun.intensity = 0.5 + elevation * 1.8;
-    const warmth = 1 - elevation;
-    this.sun.color.setRGB(1, 0.95 - warmth * 0.2, 0.87 - warmth * 0.3);
-    const sky = new THREE.Color().setHSL(0.58, 0.35, 0.35 + elevation * 0.35);
-    this.scene.background = sky;
-    if (this.scene.fog) (this.scene.fog as THREE.Fog).color = sky;
-    this.hemi.intensity = 0.6 + elevation * 1.1;
+    const when = new Date();
+    when.setHours(hours, minutes, 0, 0);
+    this.setSunFor(when);
+  }
+
+  /**
+   * Light the district for a real instant, at its real latitude.
+   *
+   * The old rig swept a light along a fixed arc and painted a flat blue-grey behind it, which is why
+   * the buildings looked dark and the sky dull: at its own default of 16:30 it put the sun 20° up
+   * and rendered a sunlit brick wall at lightness 0.11, where brick actually photographs around
+   * 0.40. Real geometry fixes the sun; a brighter sky reference and an exposure that falls with the
+   * sun fix the rest.
+   */
+  setSunFor(when: Date, lat = 40.703, lon = -73.989): void {
+    this.applyLighting(skyLighting(sunPosition(lat, lon, when)));
+  }
+
+  /** Light the district for a named look rather than a moment. */
+  setLightingPreset(preset: LightingPreset): void {
+    this.applyLighting(skyLighting(LIGHTING_PRESETS[preset]));
+  }
+
+  private applyLighting(rig: SkyLighting): void {
+    const [dx, dy, dz] = rig.sunDirection;
+    // Distance is arbitrary for a directional light; far enough that the shadow frustum, when one
+    // arrives, has room.
+    this.sun.position.set(dx * 900, dy * 900, dz * 900);
+    this.sun.color.setHex(rig.sunColour);
+    this.sun.intensity = rig.sunIntensity;
+
+    const [fx, fy, fz] = rig.fillDirection;
+    this.fill.position.set(fx * 900, fy * 900, fz * 900);
+    this.fill.color.setHex(rig.fillColour);
+    this.fill.intensity = rig.fillIntensity;
+
+    this.hemi.color.setHex(rig.hemiSky);
+    this.hemi.groundColor.setHex(rig.hemiGround);
+    this.hemi.intensity = rig.hemiIntensity;
+
+    this.renderer.toneMappingExposure = rig.exposure;
+
+    // The sky is a gradient rather than a flat fill. A real sky is much paler at the horizon than
+    // overhead, and that gradient is most of what makes it read as sky rather than as a background
+    // colour -- particularly here, where half the view is across open water to the horizon.
+    this.skyUniforms.top.value.setHex(rig.skyTop);
+    this.skyUniforms.horizon.value.setHex(rig.skyHorizon);
+
+    // Fog takes the horizon colour, so distance fades into the sky instead of into a grey band.
+    if (this.scene.fog) (this.scene.fog as THREE.Fog).color.setHex(rig.skyHorizon);
+
+    this.lighting = rig;
+  }
+
+  get lightingState(): SkyLighting | null {
+    return this.lighting;
   }
 
   resize(width: number, height: number): void {
