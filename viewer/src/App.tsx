@@ -33,7 +33,7 @@ const DISTRICT_MANIFEST = 'district/district-manifest.json';
 const TOUR_INDEX = 'tours/index.json';
 
 /** Eye height and pace defaults, mirroring DCTL-050 and DCTL-052. */
-const EYE_HEIGHT_M = 1.65;
+const EYE_HEIGHT_M = 1.70;
 const WALK_PACE_MPS = 1.3;
 const MAX_PACE_MPS = 2.2;
 /** DCTL-055. Shift-to-hurry ceiling, deliberately above the free-walk clamp. */
@@ -71,6 +71,15 @@ export default function App() {
   const [ready, setReady] = useState(false);
 
   const [mode, setMode] = useState<ViewerMode>('walk');
+  /**
+   * The current mode, readable from callbacks that were built once.
+   *
+   * The scene and its controls are constructed in an effect that runs a single time, so anything
+   * they close over is frozen at that moment. A ref is the escape hatch: collision has to know
+   * whether we are walking or looking at a plan, and that changes long after the closure is made.
+   */
+  const modeRef = useRef<ViewerMode>('walk');
+  modeRef.current = mode;
   const [selected, setSelected] = useState<AssetMetadata | null>(null);
   const [overlay, setOverlay] = useState(false);
   const [season, setSeason] = useState<Season>('summer');
@@ -331,7 +340,14 @@ export default function App() {
         const controls = new WalkControls(
           canvas,
           { position: [start[0], start[1], 0], headingDeg: 20, pitchDeg: 4, moving: false },
-          { maxSpeed: MAX_PACE_MPS, sprintSpeed: SPRINT_PACE_MPS, walkSpeed: WALK_PACE_MPS },
+          {
+            maxSpeed: MAX_PACE_MPS,
+            sprintSpeed: SPRINT_PACE_MPS,
+            walkSpeed: WALK_PACE_MPS,
+            // Only in walk mode. Map mode is a plan view where dragging across a block is the
+            // point, and refusing to cross a roof there would be nonsense.
+            isBlocked: (x, y) => modeRef.current === 'walk' && scene.isInsideBuilding(x, y),
+          },
         );
 
         // Open on the sky that is actually outside. A twin of a real place should default to the

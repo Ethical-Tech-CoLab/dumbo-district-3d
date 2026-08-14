@@ -194,7 +194,7 @@ Used by walk mode and by the tour player when a tour does not specify its own pa
 
 | Control ID | Key | Value | Unit | Source IDs | Confidence | Notes |
 |---|---|---:|---|---|---|---|
-| DCTL-050 | eye_height_adult | 1.65 | m | DEF-005 | B | Nominal adult standing eye height. |
+| DCTL-050 | eye_height_adult | 1.70 | m | DEF-005 | B | Nominal adult standing eye height. Raised from 1.65 on 2026-08-14. Both values are defensible -- US anthropometric means run about 1.63 m for women and 1.73 m for men -- but 1.65 sat at the low end of that range, and the viewer is one notional adult rather than a population. The visible symptom was waist-high guard rails reading as barriers; that had a separate and larger cause (surveyed barrier heights were being ignored, DSRC-016), fixed at the same time. |
 | DCTL-051 | eye_height_child | 1.15 | m | DEF-005 | B | Nominal eye height for a child of about eight. |
 | DCTL-052 | walk_pace_default | 1.30 | m/s | DEF-005 | B | Unhurried adult pace. |
 | DCTL-053 | walk_pace_family | 1.05 | m/s | DEF-005 | B | Group containing children, sightseeing rather than commuting. |

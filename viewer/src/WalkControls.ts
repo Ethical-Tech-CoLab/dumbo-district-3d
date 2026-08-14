@@ -31,6 +31,14 @@ export interface WalkControlsOptions {
   sprintSpeed?: number;
   walkSpeed: number;
   onPointerLockChange?: (locked: boolean) => void;
+  /**
+   * True when a walker standing at this scene position would be inside a building.
+   *
+   * Supplied rather than computed here because the controls know about input and nothing else;
+   * what counts as solid is the scene's business. Omit it and walking is unobstructed, which is
+   * the old behaviour and still the right one for a shell with no geometry loaded.
+   */
+  isBlocked?: (x: number, y: number) => boolean;
 }
 
 interface PointerSample {
@@ -256,8 +264,7 @@ export class WalkControls {
     const ry = -Math.sin(heading);
     const right = -dx * PAN_METRES_PER_PIXEL;
     const forward = -dy * PAN_METRES_PER_PIXEL;
-    this.state.position[0] += rx * right + fx * forward;
-    this.state.position[1] += ry * right + fy * forward;
+    this.translate(rx * right + fx * forward, ry * right + fy * forward);
   }
 
   private orbit(dx: number, dy: number): void {
@@ -269,8 +276,7 @@ export class WalkControls {
   private dolly(metres: number): void {
     if (!metres) return;
     const heading = (this.state.headingDeg * Math.PI) / 180;
-    this.state.position[0] += Math.sin(heading) * metres;
-    this.state.position[1] += Math.cos(heading) * metres;
+    this.translate(Math.sin(heading) * metres, Math.cos(heading) * metres);
   }
 
   /**
@@ -293,6 +299,54 @@ export class WalkControls {
 
   get isLocked(): boolean {
     return this.locked;
+  }
+
+  /**
+   * Move the walker by a ground-plane delta, refusing to enter anything solid.
+   *
+   * Every movement goes through here -- keyboard, drag-pan and dolly alike -- because a collision
+   * test that only one of the three consults is a collision test you can walk around by using the
+   * mouse instead of the keyboard.
+   *
+   * A blocked move is retried along each axis separately, which is what makes a wall slideable
+   * rather than sticky. Without it, walking into a facade at a slight angle stops you dead, and
+   * because most approaches are at a slight angle it feels like the world is made of glue.
+   */
+  private translate(dx: number, dy: number): void {
+    if (!dx && !dy) return;
+    const blocked = this.options.isBlocked;
+    const [x, y] = this.state.position;
+
+    if (!blocked) {
+      this.state.position[0] = x + dx;
+      this.state.position[1] = y + dy;
+      return;
+    }
+
+    // Never trap. If we are somehow already inside something solid -- a tour that set us down
+    // there, a tile that streamed in around us, or simply an outline generalised over the pavement
+    // we were standing on -- then every move is allowed until we are out. Collision that can lock a
+    // viewer in place is worse than collision that occasionally lets someone clip a corner, because
+    // nothing on screen explains it and there is no way to recover.
+    if (blocked(x, y)) {
+      this.state.position[0] = x + dx;
+      this.state.position[1] = y + dy;
+      return;
+    }
+
+    if (!blocked(x + dx, y + dy)) {
+      this.state.position[0] = x + dx;
+      this.state.position[1] = y + dy;
+      return;
+    }
+    // Slide: keep whichever component is legal on its own.
+    if (dx && !blocked(x + dx, y)) {
+      this.state.position[0] = x + dx;
+      return;
+    }
+    if (dy && !blocked(x, y + dy)) {
+      this.state.position[1] = y + dy;
+    }
   }
 
   /** Advance by `dt` seconds. Returns true when the party actually moved. */
@@ -333,8 +387,7 @@ export class WalkControls {
     const ry = -Math.sin(heading);
 
     const step = (speed * dt) / magnitude;
-    this.state.position[0] += (fx * forward + rx * strafe) * step;
-    this.state.position[1] += (fy * forward + ry * strafe) * step;
+    this.translate((fx * forward + rx * strafe) * step, (fy * forward + ry * strafe) * step);
     this.state.moving = true;
     return true;
   }

@@ -100,15 +100,70 @@ const SHADOW_HALF_EXTENT_M = 110;
  */
 const SHADOW_STEP_M = 16;
 
+/**
+ * How close a walker may bring their eye to a wall, in metres.
+ *
+ * A person is not a point, so stopping the eye exactly on the facade plane puts it where a face
+ * would already be inside the brick. Kept small because this margin also *widens* every wall, and
+ * the outlines are simplified enough to overhang the pavement in places already.
+ */
+const BODY_RADIUS_M = 0.25;
+
+/**
+ * Cell size for the footprint collision index, in metres.
+ *
+ * A DUMBO block face runs 60-80 m, so at 32 m most buildings touch two or three cells and the
+ * per-step test looks at a handful of rings rather than several hundred.
+ */
+const COLLISION_CELL_M = 32;
+
 function hashColor(id: string): number {
   let hash = 0;
   for (let i = 0; i < id.length; i++) hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
   return PALETTE[hash % PALETTE.length];
 }
+
+/** Even-odd point-in-polygon. The rings are simple and closed, so this is exact. */
+function pointInRing(x: number, y: number, ring: [number, number][]): boolean {
+  let inside = false;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const [xi, yi] = ring[i];
+    const [xj, yj] = ring[j];
+    if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) inside = !inside;
+  }
+  return inside;
+}
+
+/** Distance from a point to the nearest edge of a ring, so a body can be held off the wall. */
+function distanceToRing(x: number, y: number, ring: [number, number][]): number {
+  let best = Infinity;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const [xi, yi] = ring[i];
+    const [xj, yj] = ring[j];
+    const dx = xj - xi;
+    const dy = yj - yi;
+    const lengthSq = dx * dx + dy * dy;
+    let t = lengthSq > 0 ? ((x - xi) * dx + (y - yi) * dy) / lengthSq : 0;
+    t = t < 0 ? 0 : t > 1 ? 1 : t;
+    const d = Math.hypot(x - (xi + t * dx), y - (yi + t * dy));
+    if (d < best) best = d;
+  }
+  return best;
+}
+
 interface ResidentTile {
   group: THREE.Group;
   level: number;
   buildings: Map<string, TileBuilding>;
+  /**
+   * Scene offset of this tile's local coordinates.
+   *
+   * Building rings are stored tile-local, exactly as they arrive. Anything that reads a ring in
+   * scene space has to add this first -- collision was written without it and put an invisible
+   * wall across the viewer's own start position, several hundred metres from the building it
+   * thought it had found.
+   */
+  origin: [number, number];
 }
 
 export interface SceneOptions {
@@ -135,6 +190,9 @@ export class DistrictScene {
   /** Scratch for aiming the shadow box; a fresh vector every frame would churn the heap. */
   private readonly viewDirection = new THREE.Vector3();
   private shadowDirty = true;
+  /** Resident footprints bucketed by grid cell, for walking into things. */
+  private readonly collisionGrid = new Map<string, [number, number][][]>();
+  private collisionDirty = true;
   private readonly fill: THREE.DirectionalLight;
   private readonly hemi: THREE.HemisphereLight;
   private readonly bounce: THREE.AmbientLight;
@@ -301,6 +359,97 @@ export class DistrictScene {
   /** Ground height in scene meters, or 0 when no grid has been supplied. */
   groundHeightAt(x: number, y: number): number {
     return this.ground?.heightAt(x, y) ?? 0;
+  }
+
+  /**
+   * Whether a walker standing here would be inside a building.
+   *
+   * Walking through walls is the single loudest way a twin stops being a twin: it says the
+   * buildings are pictures rather than things. The footprints are already authoritative geometry
+   * (grade A, NYC Open Data), so the test is exact rather than an approximation with boxes.
+   *
+   * A body radius is included so you stop with your face at the wall rather than with the camera
+   * halfway through it -- a zero-radius test lets the eye, which is a point, pass the plane while
+   * the person it belongs to would not have.
+   */
+  isInsideBuilding(x: number, y: number, radius = BODY_RADIUS_M): boolean {
+    if (this.collisionDirty) this.rebuildCollisionIndex();
+    const cell = COLLISION_CELL_M;
+    // A body can straddle a cell boundary, so the neighbours have to be consulted too.
+    const gx = Math.floor(x / cell);
+    const gy = Math.floor(y / cell);
+    for (let ix = gx - 1; ix <= gx + 1; ix++) {
+      for (let iy = gy - 1; iy <= gy + 1; iy++) {
+        const bucket = this.collisionGrid.get(`${ix}:${iy}`);
+        if (!bucket) continue;
+        for (const ring of bucket) {
+          if (pointInRing(x, y, ring)) return true;
+          if (radius > 0 && distanceToRing(x, y, ring) < radius) return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Index the resident footprints by grid cell.
+   *
+   * Rebuilt wholesale when tiles change rather than maintained incrementally: the district holds a
+   * few hundred footprints, so a rebuild is microseconds, and an incremental index that drifts out
+   * of step with streaming would produce invisible walls in empty air -- the worst possible bug in
+   * a walk mode, because nothing on screen explains it.
+   */
+  private rebuildCollisionIndex(): void {
+    this.collisionGrid.clear();
+    const cell = COLLISION_CELL_M;
+    const seen = new Set<string>();
+    // Finest first, so a building that is resident at both levels is indexed from its best ring.
+    // Simplification pushes an outline outward, and the outward error lands on the pavement people
+    // walk along: measured against the walk network, LOD 2 outlines swallow 20.8% of the nodes
+    // beside them where the true footprints swallow 4%.
+    const tiles = [...this.resident.values()].sort((a, b) => a.level - b.level);
+    for (const tile of tiles) {
+      // Detailed footprints only. A coarse tile simplifies a whole block to its bounding box --
+      // one resident LOD 2 "building" here is 153 x 90 m -- and those boxes swallow the streets
+      // between the real buildings. Where only coarse tiles are resident there is simply no
+      // collision, which is right: that is far away, and a missing wall out there is invisible
+      // while a false one is not.
+      if (tile.level > 1) continue;
+      const [ox, oy] = tile.origin;
+      for (const [id, building] of tile.buildings) {
+        // The same building is present at several LODs; index it once.
+        if (seen.has(id)) continue;
+        seen.add(id);
+        const local = building.ring;
+        if (!local || local.length < 3) continue;
+        // Tile-local to scene, once here rather than on every test.
+        const ring = local.map(([x, y]) => [ox + x, oy + y] as [number, number]);
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+        for (const [px, py] of ring) {
+          if (px < minX) minX = px;
+          if (px > maxX) maxX = px;
+          if (py < minY) minY = py;
+          if (py > maxY) maxY = py;
+        }
+        for (let ix = Math.floor(minX / cell); ix <= Math.floor(maxX / cell); ix++) {
+          for (let iy = Math.floor(minY / cell); iy <= Math.floor(maxY / cell); iy++) {
+            const key = `${ix}:${iy}`;
+            let bucket = this.collisionGrid.get(key);
+            if (!bucket) {
+              bucket = [];
+              this.collisionGrid.set(key, bucket);
+            }
+            bucket.push(ring);
+          }
+        }
+      }
+    }
+    this.collisionDirty = false;
+  }
+
+  /** Footprints moved, so the collision index is stale. */
+  private invalidateCollision(): void {
+    this.collisionDirty = true;
   }
 
   /**
@@ -568,6 +717,7 @@ export class DistrictScene {
     for (const id of existing.buildings.keys()) this.metadataById.delete(id);
     this.resident.delete(tileId);
     this.invalidateShadows();
+    this.invalidateCollision();
   }
 
   /**
@@ -760,7 +910,8 @@ export class DistrictScene {
 
     this.tileRoot.add(group);
     this.invalidateShadows();
-    return { group, level, buildings };
+    this.invalidateCollision();
+    return { group, level, buildings, origin: [ox, oy] };
   }
 
   /**
@@ -832,7 +983,7 @@ export class DistrictScene {
   }
 
   /** Eye height the shell is using, so ground picking can fall back to the right plane. */
-  eyeHeightM = 1.65;
+  eyeHeightM = 1.7;
 
   /** Where a registered asset ended up, so tour `look_at` can target it. */
   resolveBuildingAnchor(localId: string): [number, number, number] | null {

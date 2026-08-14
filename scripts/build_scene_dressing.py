@@ -174,6 +174,43 @@ FURNITURE_FORM = {
 }
 
 
+def _osm_height_m(value: object) -> float | None:
+    """A barrier's surveyed height, when OSM records one.
+
+    208 of the district's 278 barriers carry a `height` tag and this project was ignoring all of
+    them, drawing every one at a conventional height instead. That is why the waterfront promenade
+    was fenced in at 1.8 m: OSM says those runs are 1 m, which is a waist-high guard rail, and a
+    walker at 1.65 m was being penned behind something taller than their own eyes.
+
+    OSM heights are metres unless suffixed. Feet appear occasionally as `12'` or `12 ft`, so both
+    are handled rather than silently read as a 12 m fence. Anything outside a plausible range is
+    refused and the conventional height stands: a mistyped tag should not put a 40 m wall across a
+    park.
+    """
+    if value is None:
+        return None
+    text = str(value).strip().lower()
+    if not text:
+        return None
+    feet = False
+    for suffix in ("'", "ft", "feet", "foot"):
+        if text.endswith(suffix):
+            text = text[: -len(suffix)].strip()
+            feet = True
+            break
+    if text.endswith("m"):
+        text = text[:-1].strip()
+    try:
+        height = float(text)
+    except ValueError:
+        return None
+    if feet:
+        height *= 0.3048
+    if not math.isfinite(height) or not 0.3 <= height <= 12.0:
+        return None
+    return height
+
+
 def _furniture_line_form(tags: dict) -> str:
     """Which prototype a barrier way should use.
 
@@ -412,8 +449,16 @@ def build_street_furniture(control: DistrictControl, index: dict) -> tuple[list[
 
     used: dict[str, int] = {}
     instances: list[dict] = []
+    measured_heights = 0
 
-    def emit(form: str, x: float, y: float, yaw: float, scale: float = 1.0) -> None:
+    def emit(
+        form: str,
+        x: float,
+        y: float,
+        yaw: float,
+        scale: float = 1.0,
+        height_m: float | None = None,
+    ) -> None:
         col = int(math.floor((x - ox) / size))
         row = int(math.floor((y - oy) / size))
         used[form] = used.get(form, 0) + 1
@@ -425,11 +470,23 @@ def build_street_furniture(control: DistrictControl, index: dict) -> tuple[list[
         }
         if abs(scale - 1.0) > 1e-3:
             instance["s"] = round(scale, 3)
+        # A surveyed height overrides the conventional one, and only in Z. This is what `s3` is for:
+        # a uniform scale would stretch the panel's length as well, so a 1 m railing would come out
+        # as a row of stumps with gaps between them.
+        if height_m is not None:
+            nominal = FURNITURE_FORM[form]["height"]
+            ratio = height_m / nominal
+            if abs(ratio - 1.0) > 0.02:
+                instance["s3"] = [1.0, 1.0, round(ratio, 3)]
         instances.append(instance)
 
     barrier_m = 0.0
     for line in raw.get("lines", []):
-        form = _furniture_line_form(line.get("tags") or {})
+        tags = line.get("tags") or {}
+        form = _furniture_line_form(tags)
+        surveyed = _osm_height_m(tags.get("height"))
+        if surveyed is not None:
+            measured_heights += 1
         spacing = FURNITURE_FORM[form]["panel"]
         coords = line.get("geometry") or []
         # Project once, then walk in metres. Doing it the other way round means resampling in
@@ -473,7 +530,7 @@ def build_street_furniture(control: DistrictControl, index: dict) -> tuple[list[
                         # stretching a panel to fit would stretch its height too and the railing
                         # would ripple. Stepping shorter than the panel instead makes neighbours
                         # overlap slightly, which on a fence is invisible, whereas a gap is not.
-                        emit(form, a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, yaw)
+                        emit(form, a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, yaw, height_m=surveyed)
                         break
                     travelled += length
 
@@ -510,14 +567,16 @@ def build_street_furniture(control: DistrictControl, index: dict) -> tuple[list[
                 "source_refs": ["DSRC-016"],
                 "confidence": "C",
                 "notes": (
-                    f"{spec['label']}. Position is grade A from OpenStreetMap; the height and form "
-                    f"are conventional values rather than measurements, so the prop is graded C. "
-                    f"Tint {spec['tint']}."
+                    f"{spec['label']}. Position is grade A from OpenStreetMap. The form and colour "
+                    f"are conventional, so the prototype is graded C; where OSM records a `height` "
+                    f"the instance carries it as a per-axis scale and that instance's height is a "
+                    f"surveyed value rather than this nominal {spec['height']} m. Tint {spec['tint']}."
                 ),
             }
         )
 
     print(f"    {len(instances)} furniture instances, {len(prototypes)} prototypes")
+    print(f"    {measured_heights} of {len(raw.get('lines', []))} barrier runs carry a surveyed height")
     print(f"    {barrier_m:,.0f} m of barrier line")
     print(f"    {dict(sorted(used.items(), key=lambda kv: -kv[1])[:6])}")
     return prototypes, instances
