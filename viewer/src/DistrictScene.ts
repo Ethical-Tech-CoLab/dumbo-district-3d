@@ -82,6 +82,24 @@ const CONFIDENCE_COLOR: Record<string, number> = {
 /** Facade tints, chosen to read as brick-and-warehouse DUMBO rather than as data. */
 const PALETTE = [0x8d6e5a, 0x9a7b64, 0x7d6455, 0xa3856d, 0x6f5a4d, 0x8a7263];
 
+/**
+ * Half-width of the shadow box, in metres.
+ *
+ * 220 m across a 2048 map is about 0.1 m per texel, which resolves a window reveal and a kerb. It is
+ * also comfortably further than a walker can see down a DUMBO street, so nothing that matters falls
+ * outside it. Widening this trades shadow sharpness for range and there is nothing to spend it on.
+ */
+const SHADOW_HALF_EXTENT_M = 110;
+
+/**
+ * How far the viewer moves before the shadow box is re-centred.
+ *
+ * Snapping rather than following continuously. A shadow map that slides by a fraction of a texel
+ * every frame makes every straight edge crawl, and this district is nothing but straight edges. A
+ * whole-stride step means the texel grid stays put between jumps.
+ */
+const SHADOW_STEP_M = 16;
+
 function hashColor(id: string): number {
   let hash = 0;
   for (let i = 0; i < id.length; i++) hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
@@ -113,8 +131,13 @@ export class DistrictScene {
   private readonly inFlight = new Set<string>();
   private readonly metadataById = new Map<string, TileBuilding>();
   private readonly sun: THREE.DirectionalLight;
+  private readonly sunOffset = new THREE.Vector3(-180, 260, 140);
+  /** Scratch for aiming the shadow box; a fresh vector every frame would churn the heap. */
+  private readonly viewDirection = new THREE.Vector3();
+  private shadowDirty = true;
   private readonly fill: THREE.DirectionalLight;
   private readonly hemi: THREE.HemisphereLight;
+  private readonly bounce: THREE.AmbientLight;
   private readonly skyUniforms: { top: { value: THREE.Color }; horizon: { value: THREE.Color } };
   private lighting: SkyLighting | null = null;
   private readonly raycaster = new THREE.Raycaster();
@@ -138,7 +161,15 @@ export class DistrictScene {
 
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    this.renderer.shadowMap.enabled = false;
+    this.renderer.shadowMap.enabled = true;
+    // Soft edges. A hard shadow on a low-poly massing model reads as a rendering artefact; PCF makes
+    // the same geometry read as a building in sunlight.
+    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    // The sun does not move between preset changes, so the shadow map does not need redrawing every
+    // frame. It is invalidated explicitly when the light moves, when a tile arrives, or when the prop
+    // set is rebuilt. That turns shadows from a per-frame cost into a per-change one, which is what
+    // makes them affordable at 7,044 prop instances.
+    this.renderer.shadowMap.autoUpdate = false;
     // Tone mapping, because without it the ground was lying about its own colour.
     //
     // The light rig is tuned for building faces, which are vertical and catch the sun at a glancing
@@ -201,9 +232,30 @@ export class DistrictScene {
     this.hemi = new THREE.HemisphereLight(0xcfe0f2, 0x6b6154, 1.5);
     this.scene.add(this.hemi);
 
+    // Bounce between facing buildings. See Sky.ts for why a fourth light is needed at all: the other
+    // three are directional in effect, so a wall turned away from both sun and fill had nothing left
+    // once cast shadows stopped a stray sun term from rescuing it.
+    this.bounce = new THREE.AmbientLight(0xe4e2de, 0);
+    this.scene.add(this.bounce);
+
     this.sun = new THREE.DirectionalLight(0xfff2df, 2.1);
     this.sun.position.set(-180, 260, 140);
+    this.sun.castShadow = true;
+    // The shadow camera follows the viewer rather than covering the district. The district is about
+    // 1.8 km across after the boundary extension, and a 2048 map stretched over that gives 0.9 m per
+    // texel, which is coarser than the kerbs it would be shadowing. Fitted to a 220 m box around the
+    // camera instead it gives about 0.1 m per texel, which resolves a window reveal.
+    this.sun.shadow.mapSize.set(2048, 2048);
+    this.sun.shadow.camera.near = 1;
+    this.sun.shadow.camera.far = 1400;
+    // normalBias rather than bias, because this district is full of thin geometry -- awning canopies
+    // are 80 mm thick and fence rails 40 mm -- and a constant depth bias either leaves acne on those
+    // or makes everything else peter-pan. Offsetting along the normal scales with the surface angle,
+    // which is what thin extrusions need.
+    this.sun.shadow.normalBias = 0.06;
+    this.sun.shadow.bias = -0.0004;
     this.scene.add(this.sun);
+    this.scene.add(this.sun.target);
 
     // The fill: a weak second sun, opposite the first and low, so it lands on the wall faces the sun
     // has left dark without adding much to the ground. See Sky.ts for why a hemisphere light alone
@@ -316,6 +368,9 @@ export class DistrictScene {
     geometry.computeVertexNormals();
 
     const mesh = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({ vertexColors: true }));
+    // Receives but does not cast. The terrain is the thing shadows land on; letting it cast onto
+    // itself buys nothing at this relief and invites acne across the whole grid.
+    mesh.receiveShadow = true;
     this.scene.add(mesh);
     this.groundMesh = mesh;
   }
@@ -326,7 +381,15 @@ export class DistrictScene {
   setPaving(doc: PavingDocument): void {
     if (this.pavingGroup) this.scene.remove(this.pavingGroup);
     this.pavingGroup = buildPaving(doc, (x, y) => this.groundHeightAt(x, y));
+    // Pavement receives; kerbs cast, because a kerb face with no shadow at its foot looks painted on.
+    this.pavingGroup.traverse((node) => {
+      if (node instanceof THREE.Mesh) {
+        node.receiveShadow = true;
+        node.castShadow = node.name === 'paving:kerb';
+      }
+    });
     this.scene.add(this.pavingGroup);
+    this.invalidateShadows();
   }
 
   /** Instanced street furniture and vegetation. */
@@ -358,6 +421,7 @@ export class DistrictScene {
     this.propsGroup = result.group;
     this.propStats = { instances: result.instanceCount, drawCalls: result.drawCalls };
     this.scene.add(this.propsGroup);
+    this.invalidateShadows();
   }
 
   /**
@@ -503,6 +567,7 @@ export class DistrictScene {
     });
     for (const id of existing.buildings.keys()) this.metadataById.delete(id);
     this.resident.delete(tileId);
+    this.invalidateShadows();
   }
 
   /**
@@ -685,11 +750,16 @@ export class DistrictScene {
         geometry,
         new THREE.MeshLambertMaterial({ vertexColors: true }),
       );
+      // Buildings both cast and receive: a DUMBO street canyon is defined by the shadow the north
+      // side throws across it, and by the one a warehouse throws onto its neighbour.
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
       mesh.userData = { tileId: payload.tile_id, level, ranges, selectable: level <= 1 };
       group.add(mesh);
     }
 
     this.tileRoot.add(group);
+    this.invalidateShadows();
     return { group, level, buildings };
   }
 
@@ -976,9 +1046,10 @@ export class DistrictScene {
 
   private applyLighting(rig: SkyLighting): void {
     const [dx, dy, dz] = rig.sunDirection;
-    // Distance is arbitrary for a directional light; far enough that the shadow frustum, when one
-    // arrives, has room.
-    this.sun.position.set(dx * 900, dy * 900, dz * 900);
+    // Positioned relative to the shadow target, not the world origin. The target follows the viewer,
+    // so an absolute position would swing the light direction as you walked across the district.
+    this.sunOffset.set(dx * 700, dy * 700, dz * 700);
+    this.sun.position.copy(this.sun.target.position).add(this.sunOffset);
     this.sun.color.setHex(rig.sunColour);
     this.sun.intensity = rig.sunIntensity;
 
@@ -990,6 +1061,9 @@ export class DistrictScene {
     this.hemi.color.setHex(rig.hemiSky);
     this.hemi.groundColor.setHex(rig.hemiGround);
     this.hemi.intensity = rig.hemiIntensity;
+
+    this.bounce.color.setHex(rig.bounceColour);
+    this.bounce.intensity = rig.bounceIntensity;
 
     this.renderer.toneMappingExposure = rig.exposure;
 
@@ -1003,6 +1077,7 @@ export class DistrictScene {
     if (this.scene.fog) (this.scene.fog as THREE.Fog).color.setHex(rig.skyHorizon);
 
     this.lighting = rig;
+    this.invalidateShadows();
   }
 
   get lightingState(): SkyLighting | null {
@@ -1016,7 +1091,116 @@ export class DistrictScene {
   }
 
   render(): void {
+    this.updateShadowFrustum();
     this.renderer.render(this.scene, this.camera);
+  }
+
+  /**
+   * Keep the shadow camera over what the viewer is looking at, and redraw the map only when
+   * something moved.
+   *
+   * A directional shadow map is a fixed-size box, so it has to be aimed. Aiming it at the district
+   * would waste almost all of its resolution on places nobody is standing; aiming it at the camera
+   * keeps the texels where the eye is.
+   *
+   * It is aimed *ahead* of the camera rather than at it. Centring on the camera spends half the box
+   * on ground behind the viewer's head, and from any raised viewpoint — the aerial look, a bridge
+   * walkway — the ground actually in frame falls outside the box entirely and loses its shadows.
+   * The lead scales with how far the eye is above the ground, because that is what decides how much
+   * ground the view covers.
+   *
+   * The box is re-centred in whole strides rather than continuously, because a shadow map that
+   * shifts by a fraction of a texel every frame shimmers along every straight edge -- and DUMBO is
+   * nothing but straight edges.
+   */
+  private updateShadowFrustum(): void {
+    const target = this.sun.target.position;
+    const cam = this.camera.position;
+    const half = SHADOW_HALF_EXTENT_M;
+
+    this.camera.getWorldDirection(this.viewDirection);
+    this.viewDirection.y = 0;
+    // Straight down leaves nothing to project; keep the box under the camera in that case.
+    const lead =
+      this.viewDirection.lengthSq() < 1e-6
+        ? 0
+        : Math.min(half * 0.55 + Math.max(0, cam.y) * 0.8, half * 2);
+    if (lead > 0) this.viewDirection.normalize().multiplyScalar(lead);
+    else this.viewDirection.set(0, 0, 0);
+
+    const step = SHADOW_STEP_M;
+    const x = Math.round((cam.x + this.viewDirection.x) / step) * step;
+    const z = Math.round((cam.z + this.viewDirection.z) / step) * step;
+
+    if (x === target.x && z === target.z && !this.shadowDirty) return;
+
+    target.set(x, 0, z);
+    this.sun.target.updateMatrixWorld();
+    this.sun.position.copy(target).add(this.sunOffset);
+
+    const shadowCamera = this.sun.shadow.camera;
+    shadowCamera.left = -half;
+    shadowCamera.right = half;
+    shadowCamera.top = half;
+    shadowCamera.bottom = -half;
+    shadowCamera.updateProjectionMatrix();
+
+    this.renderer.shadowMap.needsUpdate = true;
+    this.shadowDirty = false;
+  }
+
+  /** Mark the shadow map stale: the sun moved, a tile arrived, or the props were rebuilt. */
+  private invalidateShadows(): void {
+    this.shadowDirty = true;
+  }
+
+  /**
+   * The numbers that decide whether a shadow appears. Exposed because when one is missing the
+   * cause is always one of these and never visible in a screenshot: either the renderer is not
+   * drawing shadows, or the light is not casting, or no mesh is casting, or the shadow camera's
+   * box does not contain the geometry that ought to be casting into view.
+   */
+  shadowDiagnostics(): Record<string, unknown> {
+    let casters = 0;
+    let receivers = 0;
+    let castersInBox = 0;
+    const half = SHADOW_HALF_EXTENT_M;
+    const target = this.sun.target.position;
+    const box = new THREE.Box3();
+
+    this.scene.traverse((object) => {
+      const mesh = object as THREE.Mesh;
+      if (!mesh.isMesh && !(mesh as unknown as THREE.InstancedMesh).isInstancedMesh) return;
+      if (mesh.receiveShadow) receivers++;
+      if (!mesh.castShadow) return;
+      casters++;
+      box.setFromObject(mesh);
+      if (
+        box.max.x >= target.x - half &&
+        box.min.x <= target.x + half &&
+        box.max.z >= target.z - half &&
+        box.min.z <= target.z + half
+      ) {
+        castersInBox++;
+      }
+    });
+
+    return {
+      shadowMapEnabled: this.renderer.shadowMap.enabled,
+      shadowMapAutoUpdate: this.renderer.shadowMap.autoUpdate,
+      sunCastShadow: this.sun.castShadow,
+      sunIntensity: this.sun.intensity,
+      sunPosition: this.sun.position.toArray().map((v) => Math.round(v)),
+      shadowTarget: target.toArray().map((v) => Math.round(v)),
+      shadowCamera: {
+        near: this.sun.shadow.camera.near,
+        far: this.sun.shadow.camera.far,
+        halfExtent: half,
+      },
+      casters,
+      castersInBox,
+      receivers,
+    };
   }
 
   captureFrame(width: number, height: number): string {

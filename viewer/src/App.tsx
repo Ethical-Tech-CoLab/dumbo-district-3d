@@ -246,6 +246,12 @@ export default function App() {
           bus,
         });
 
+        // A handle for inspecting the live scene from the console or from an automated check.
+        // Rendering defects are the one class of bug that no unit test catches and no screenshot
+        // explains: when a shadow is missing, the question is always whether the light casts, the
+        // mesh casts, or the frustum misses, and that is three numbers rather than an opinion.
+        (window as unknown as { __district?: DistrictScene }).__district = scene;
+
         // Terrain first: everything else, including where the camera's feet go, depends on it.
         try {
           const response = await fetch('district/ground-grid.json');

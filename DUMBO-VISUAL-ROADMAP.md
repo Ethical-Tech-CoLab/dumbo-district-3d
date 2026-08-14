@@ -46,19 +46,19 @@ highest ratio of visible improvement to work in the whole list.
 
 ---
 
-## 3. The sun is in one place and nothing casts a shadow — **partly done 2026-08-12**
+## 3. The sun is in one place and nothing casts a shadow — **done 2026-08-12**
 
 **What was wrong.** `setTimeOfDay` moved a directional light along a fixed arc, and
-`shadowMap.enabled = false`. The lighting half is now fixed; shadows are still off. See the lighting
-section at the end of this document for what was done and why.
+`shadowMap.enabled = false`. Both halves are now fixed. See the lighting section at the end of this
+document for the sun placement, and the shadow section below it for the rest.
 
-**What remains.** Enable shadow mapping for the directional light with a tight cascade around the
-camera. At walking scale only the near tiles need to cast, so a single 2048 map over a 150 m box is
-enough and costs one extra pass. This is now much more worthwhile than it was, because with a
-physically-placed sun the shadows fall in the right direction at the right hour.
+**What it cost.** 1.17 ms per frame, measured: 5.72 ms with shadows off, 6.89 ms on. Rebuilding the
+shadow map every frame instead costs 8.85 ms, so caching it saves about 63% of the shadow overhead.
 
-**Watch out for.** Turning shadows on will darken the scene, and the exposure balance will need
-re-reading against `npm run test:lighting`.
+**What was learned.** Almost nothing about this was hard except finding out what was true. The
+detailed account is at the end of this document, but the short version: three separate "shadows are
+broken" conclusions during the work were all measurement errors, and the one real defect the work
+uncovered — walls going near-black — was a genuine gap in the lighting rig rather than in shadows.
 
 ---
 
@@ -232,7 +232,93 @@ over DUMBO, but nothing in the geometry depends on it.
 
 ### What follows, in order
 
-1. **Shadows.** Still off, so a street canyon has no canyon. Much more worthwhile now that the sun is
-   physically placed, because the shadows would fall correctly for the hour.
-2. **Specular windows.** More visible now: a brighter sky gives glass something to reflect.
-3. **Cloud cover from a weather API**, as above.
+1. **Specular windows.** More visible now: a brighter sky gives glass something to reflect, and
+   shadows give the reflections somewhere dark to sit against.
+2. **Cloud cover from a weather API**, as above.
+
+---
+
+## Shadows, 2026-08-12
+
+Switched on for the sun only. `PCFSoftShadowMap`, one 2048 map over a 220 m box that follows the
+viewer, buildings and the larger props casting, all ground and facades receiving.
+
+### What it costs
+
+Measured in the browser, median of seven alternating rounds, GPU forced to sync with `readPixels`:
+
+| | ms/frame |
+|---|---|
+| shadows off | 5.72 |
+| shadows on, map cached | 6.89 |
+| shadows on, map rebuilt every frame | 8.85 |
+
+So shadows cost 1.17 ms, and **caching the map saves 63% of that cost**. This is why
+`shadowMap.autoUpdate = false`: the sun is static between preset changes, so the map only needs
+redrawing when the viewer moves far enough, a tile arrives, the props rebuild, or the light changes.
+Everything that can invalidate it calls `invalidateShadows()`. Confirmed at the draw-call level --
+a cached frame issues 192 calls, a frame that rebuilds the map issues 342.
+
+### Decisions worth keeping
+
+- **Aim the box ahead of the camera, not at it.** Centring on the camera spends half the box behind
+  the viewer's head, and from any raised viewpoint the ground actually in frame falls outside the box
+  and silently loses its shadows. The lead scales with eye height, because that is what decides how
+  much ground the view covers.
+- **Snap the box in whole 16 m strides.** A shadow map that shifts a fraction of a texel per frame
+  shimmers along every straight edge, and DUMBO is nothing but straight edges.
+- **`normalBias` over `bias`.** The district is full of thin geometry -- awning canopies at 0.08 m,
+  fence rails at 0.04 m.
+- **Let the data decide what casts.** `casts_shadow` is already in the contract, so the viewer reads
+  it off the prototype instead of keeping its own list of prop kinds. `build_scene_dressing.py` is
+  the authority. A shared kernel has no business knowing that a district has bollards or that a
+  bridge has gantries. Bollards, bins, hydrants and benches receive but do not cast: a few pixels
+  each, and there are hundreds of them.
+- **The far field must not cast.** Horizon blocks 1-3 km out would wreck the frustum. They default
+  to not casting, which was verified rather than assumed.
+
+### The one real defect this uncovered
+
+Turning shadows on took the darkest walls to **lightness 0.078**, under the 0.09 floor. The cause was
+in the lighting rig, not in shadows: all three lights are directional in effect -- the sun has a
+direction, the fill has a direction, and a hemisphere light gives a vertical surface only about half
+the sky. A wall turned away from both sun and fill therefore had almost nothing left. It had never
+mattered, because without cast shadows such a wall always caught some sun.
+
+Note *why* the fill could not rescue it: the fill sits opposite the sun, so the wall it cannot reach
+is precisely the one that faces the sun's side of the street and stands in a taller building's
+shadow. That is a common wall in DUMBO, not a corner case.
+
+The fix is a fourth light: a small omnidirectional `bounce` term, which is the physical stand-in for
+sunlight traded back and forth between facing buildings in a canyon. At 0.35 it lifts the worst walls
+from 0.078 to 0.147 and costs 7 points of shadow contrast on the ground (44% down to 37%), which
+still reads unmistakably as shadow. **Keep it small**: bounce is the one term a shadow cannot
+occlude, so every unit of it is a unit of contrast removed from every shadow in the district.
+
+The test gained an `occluded` column for exactly this surface, and a `shadowed` column for pavement
+in shade. It also gained a correction that predates this work: it was giving a vertical surface half
+the sky and *none* of the hemisphere's ground bounce, where three.js mixes both by the normal's tilt.
+
+### How much of this was real
+
+Three separate times during this work the conclusion "shadows are broken" turned out to be a
+measurement error, and each cost more than the implementation did:
+
+1. **Screenshots of a WebGL canvas in a backgrounded tab are stale.** Zeroing both the fill and the
+   hemisphere changed nothing on screen, which is what finally gave it away. Every screenshot before
+   that had been an old frame. The fix is to render synchronously via `captureFrame()`, push the
+   result into an `<img>`, and `await img.decode()` before screenshotting -- the compositor will
+   repaint a plain DOM image even when it will not repaint the canvas.
+2. **`lookAt` straight down is a gimbal singularity.** It produced a degenerate camera matrix, so
+   nothing rendered, and `preserveDrawingBuffer` faithfully returned the previous frame. Two
+   "identical" captures that should have differed.
+3. **"Props cast no shadows at all", twice.** The first test left props casting in both arms of the
+   comparison. The second was valid but ran in a street already entirely inside a building's shadow,
+   where prop shadows are genuinely redundant. Measured properly, against sunlit ground, props
+   account for 1.4% of the frame.
+
+The lesson that generalises: **when a renderer appears to be wrong, measure a number before forming
+an opinion.** `shadowDiagnostics()` exists for this -- it reports whether the renderer draws shadows,
+whether the light casts, how many meshes cast, and how many of them fall inside the shadow box, which
+is the complete list of ways a missing shadow can happen. The very first call to it showed
+`sunIntensity: 0` and the sun 199 m below the horizon: the default is `live sun`, and it was night.

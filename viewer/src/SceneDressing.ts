@@ -707,6 +707,15 @@ export function buildProps(
       });
       const mesh = new THREE.InstancedMesh(geometry, material, capped.length);
       mesh.frustumCulled = true;
+      // What casts, and what only receives, is a budget decision taken per kind rather than per
+      // prototype. A tree's shadow across a pavement is most of what says "there is a tree here";
+      // a litter bin's is four pixels nobody will miss, and there are 7,044 instances in total.
+      // Whether a prop casts is the module's decision, not the viewer's: the contract carries
+      // `casts_shadow` per prototype, and a shared kernel has no business knowing that a district
+      // has bollards or that a bridge has gantries. Absent the field the answer is no, which is
+      // both the schema's default and the safe one — a missing shadow is cheaper than a wrong one.
+      mesh.castShadow = prototype.casts_shadow === true;
+      mesh.receiveShadow = true;
 
       capped.forEach((instance, i) => {
         const [x, y] = instance.xy;

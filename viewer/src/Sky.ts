@@ -86,6 +86,13 @@ export interface SkyLighting {
   fillDirection: [number, number, number];
   fillColour: number;
   fillIntensity: number;
+  /**
+   * Omnidirectional bounce, standing in for light traded between facing buildings in a canyon.
+   * Small by design: it is the one term a shadow cannot occlude, so it costs shadow contrast
+   * everywhere it is spent. Only meaningful once cast shadows are on.
+   */
+  bounceColour: number;
+  bounceIntensity: number;
   /** Renderer exposure, which has to fall as the sun does or dusk reads as noon. */
   exposure: number;
   /** 0 at night, 1 in full sun. Useful for deciding whether to draw window glow. */
@@ -196,6 +203,20 @@ export function skyLighting(sun: SunPosition): SkyLighting {
   // shaded side of every building gets darker as the day gets brighter, which is backwards.
   const fillIntensity = daylight * (1.0 + 1.6 * overhead);
 
+  // Bounce: a small omnidirectional term standing in for the light a street canyon throws back and
+  // forth between facing buildings. It exists because the other three lights are all directional in
+  // effect -- the sun has a direction, the fill has a direction, and a hemisphere light gives a
+  // vertical surface only about half the sky. A wall that faces away from the sun AND away from the
+  // fill therefore receives almost nothing, which did not matter until cast shadows were switched
+  // on and such walls stopped being rescued by a stray sun term. Measured against the render, that
+  // case sat at lightness 0.078 with no bounce, below the 0.09 floor; 0.35 lifts it to about 0.13
+  // while leaving shadowed pavement clearly darker than the pavement beside it in sun.
+  //
+  // Keep it small. Bounce is the one term that cannot be occluded, so every unit of it is a unit of
+  // contrast removed from every shadow in the district.
+  const bounceColour = mix([228, 226, 222], [240, 220, 202], golden);
+  const bounceIntensity = daylight * 0.35;
+
   // Exposure falls with the sun, which is what makes evening look like evening rather than like noon
   // with orange lights. It also eases off when the sun is high, because a horizontal surface takes
   // the full beam at noon while a facade takes a glancing fraction of it: without this the pavement
@@ -215,6 +236,8 @@ export function skyLighting(sun: SunPosition): SkyLighting {
     fillDirection,
     fillColour,
     fillIntensity,
+    bounceColour,
+    bounceIntensity,
     exposure,
     daylight,
     altitudeDeg,

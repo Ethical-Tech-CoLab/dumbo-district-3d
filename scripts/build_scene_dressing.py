@@ -118,6 +118,27 @@ DEFAULT_FORM = {"label": "Street tree", "spread": 0.95, "height": 0.95,
 
 SEASONS = ("spring", "summer", "autumn", "winter")
 
+# Which prop kinds are worth a shadow.
+#
+# Chosen by what the shadow tells you rather than by what the object is. A tree's canopy shadow
+# across a pavement is most of what says a tree is there; a wall's is what makes it read as solid;
+# an awning's is the whole reason an awning exists. A bollard, a bin and a hydrant each cast a few
+# pixels and there are hundreds of them, so they receive shadow without casting one.
+#
+# This file is the authority. The viewer reads `casts_shadow` off the prototype rather than keeping
+# its own list, so a module decides for itself and the shared kernel needs to know nothing about any
+# district's prop taxonomy.
+SHADOW_CASTING_KINDS = {
+    "tree",
+    "shrub",
+    "wall",
+    "fence",
+    "awning",
+    "lamp",
+    "traffic_light",
+    "kiosk",
+}
+
 # Trunk diameter to canopy height. A forestry rule of thumb for street trees is roughly 0.55 m of
 # height per inch of DBH, which holds for the middle of the range and overstates the extremes.
 DBH_TO_HEIGHT_M = 0.55
@@ -320,7 +341,7 @@ def build_props(control: DistrictControl, index: dict) -> dict:
                     round(10.0 * form["height"], 2),
                 ],
                 "billboard": False,
-                "casts_shadow": False,
+                "casts_shadow": "tree" in SHADOW_CASTING_KINDS,
                 "source_basis": ["official_dataset", "procedural"],
                 "source_refs": ["DSRC-009"],
                 "confidence": "C",
@@ -477,7 +498,7 @@ def build_street_furniture(control: DistrictControl, index: dict) -> tuple[list[
                 "format": "procedural",
                 "size_m": [round(footprint, 2), round(thickness, 2), round(spec["height"], 2)],
                 "billboard": False,
-                "casts_shadow": False,
+                "casts_shadow": spec["kind"] in SHADOW_CASTING_KINDS,
                 "source_basis": ["official_dataset", "procedural"],
                 "source_refs": ["DSRC-016"],
                 "confidence": "C",
@@ -623,7 +644,7 @@ def build_storefronts(control: DistrictControl, index: dict) -> tuple[list[dict]
                 "format": "procedural",
                 "size_m": [AWNING_WIDTH_M, AWNING_DEPTH_M, AWNING_HEIGHT_M],
                 "billboard": False,
-                "casts_shadow": False,
+                "casts_shadow": "awning" in SHADOW_CASTING_KINDS,
                 "source_basis": ["official_dataset", "inferred"],
                 "source_refs": ["DSRC-017", "DSRC-001"],
                 "confidence": "D",
