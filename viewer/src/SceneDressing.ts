@@ -776,57 +776,150 @@ export function buildProps(
  * without a texture, a UV set, or an image request. Cheap, and it reads correctly at walking
  * distance, which is the only place it is seen.
  */
-export function facadeBandFactor(
-  heightFraction: number,
-  style: FacadeStyle | undefined,
-  buildingHeight: number,
-): number {
-  if (!style || style.glazing <= 0.02) return 1;
+/**
+ * Horizontal composition of a facade, as bands of absolute height above the building's base.
+ *
+ * Replaces sampling a wall at uniform "courses" and asking each one whether it happens to be
+ * glazed. Sampling could only ever approximate where a window starts, and it could not express the
+ * one thing a street-level viewer actually looks at: a ground floor is not a storey like the
+ * others. It is a plinth, a tall shopfront, and a lintel or sign band over it, and rendering it
+ * with the same rhythm as the fifth floor is most of what makes these buildings read as boxes.
+ *
+ * Bands are explicit so the edges land exactly where they belong, and so the wall can be emitted
+ * as a handful of quads rather than a stack of samples.
+ */
+export interface WallBand {
+  /** Metres above the building base. */
+  z0: number;
+  z1: number;
+  /** Whether this band is pierced by openings, and so needs dividing across its width. */
+  glazed: boolean;
+  /** Multiplier on the facade tint for the solid parts of this band. */
+  tone: number;
+}
 
-  // Ground floor reads differently everywhere: taller, usually retail or a loading bay.
-  const groundFraction = Math.min(0.34, 4.2 / Math.max(buildingHeight, 4));
-  if (heightFraction < groundFraction) {
-    return style.family === 'retail' ? 0.62 : 0.86;
+/** Where the ground floor stops, in metres above base. DUMBO's are tall: lofts and loading bays. */
+function groundFloorHeight(buildingHeight: number): number {
+  return Math.min(4.6, Math.max(3.0, buildingHeight * 0.34));
+}
+
+export function facadeBands(height: number, style: FacadeStyle | undefined): WallBand[] {
+  if (!style || style.glazing <= 0.02) return [{ z0: 0, z1: height, glazed: false, tone: 1 }];
+
+  const bands: WallBand[] = [];
+  const ground = Math.min(groundFloorHeight(height), height * 0.9);
+
+  // A base course. Almost every masonry building here meets the pavement with something darker
+  // and harder than its wall -- granite, bluestone, painted brick -- and the line it draws is what
+  // stops a facade looking like it was pushed into the ground.
+  const plinth = Math.min(0.65, ground * 0.2);
+  bands.push({ z0: 0, z1: plinth, glazed: false, tone: 0.7 });
+
+  // The shopfront itself: one tall opening rather than a storey's worth of punched windows.
+  const lintel = Math.min(0.55, ground * 0.16);
+  bands.push({ z0: plinth, z1: ground - lintel, glazed: true, tone: 0.95 });
+
+  // Lintel or sign band over the shopfront, lighter than the wall. In DUMBO this is where the
+  // painted signage sits, and it is the strongest horizontal line on the whole elevation.
+  bands.push({ z0: ground - lintel, z1: ground, glazed: false, tone: 1.16 });
+
+  // Upper storeys. Each one is a spandrel and a window; the spandrel carries no openings so it
+  // costs a single quad however wide the wall is.
+  const floors = style.floors && style.floors > 1 ? style.floors : Math.max(1, Math.round(height / 3.6));
+  const upperFloors = Math.max(1, floors - 1);
+  const cornice = height > 9 ? Math.min(0.7, height * 0.02) : 0;
+  const top = height - cornice;
+  const storey = (top - ground) / upperFloors;
+
+  if (storey > 1.2) {
+    for (let i = 0; i < upperFloors; i++) {
+      const z = ground + storey * i;
+      // Sill below, opening above it. The opening keeps clear of the floor line, which is what
+      // makes a window read as punched into a wall rather than as a slot cut through it.
+      const sill = z + storey * 0.24;
+      const head = z + storey * 0.82;
+      bands.push({ z0: z, z1: sill, glazed: false, tone: 1.0 });
+      bands.push({ z0: sill, z1: head, glazed: true, tone: 1.0 });
+      bands.push({ z0: head, z1: z + storey, glazed: false, tone: 1.03 });
+    }
+  } else {
+    bands.push({ z0: ground, z1: top, glazed: false, tone: 1.0 });
   }
 
-  const floors =
-    style.floors && style.floors > 1 ? style.floors : Math.max(2, Math.round(buildingHeight / 3.5));
-  const band = ((heightFraction - groundFraction) / (1 - groundFraction)) * floors;
-  const withinFloor = band - Math.floor(band);
-
-  // Window occupies the middle of each storey. Depth is driven by the glazing ratio but floored,
-  // because a warehouse with 10% glazing still has visibly punched openings and a facade with no
-  // readable articulation looks like an untextured box rather than a building.
-  const windowHalf = Math.min(0.42, 0.18 + style.glazing * 0.5);
-  const inWindow = Math.abs(withinFloor - 0.45) < windowHalf;
-  return inWindow ? 1 - Math.min(0.62, 0.28 + style.glazing * 0.8) : 1.06;
+  if (cornice > 0) bands.push({ z0: top, z1: height, glazed: false, tone: 1.18 });
+  return bands;
 }
 
 /**
- * How much of a window band survives at this point *across* a bay: 1 in the middle of the opening,
- * 0 on the pier between openings.
+ * Vertical composition across one wall, as spans along its length.
  *
- * This is the other half of the window. `facadeBandFactor` says which horizontal courses are glazed;
- * without this the result is a continuous ribbon at every storey, which reads as a striped box
- * rather than a building. Masonry piers between punched openings are what give a wall its vertical
- * rhythm, and the rhythm is most of what tells you a row house from a warehouse at a glance.
+ * This is the half that was missing. The previous code divided a wall into bays and then asked
+ * `facadeBayFactor` for a single value per bay -- sampled at the bay's own centre, which is the
+ * middle of the opening every time. So every bay came back identical and the vertical rhythm
+ * cancelled out exactly, leaving the horizontal banding the district has looked like ever since.
  *
- * Returned as a multiplier rather than a hard mask so the transition covers a whole bay smoothly;
- * the geometry is only a few quads wide per bay and a step edge would alias badly at distance.
+ * Emitting the piers and openings as spans instead makes the rhythm exact and costs less than
+ * subdividing finely enough to sample it: a wall of n bays is 2n+1 spans, because the pier at the
+ * end of one bay and the start of the next are the same pier.
  */
-export function facadeBayFactor(
-  acrossFraction: number,
-  bays: number,
+export interface WallColumn {
+  t0: number;
+  t1: number;
+  open: boolean;
+}
+
+export function facadeColumns(
+  edgeLength: number,
   style: FacadeStyle | undefined,
-): number {
-  if (!style || bays < 2) return 1;
-  const within = acrossFraction * bays - Math.floor(acrossFraction * bays);
-  // Wider openings for glassier buildings; a Federal row house keeps a lot of wall.
-  const openHalf = Math.min(0.42, 0.16 + style.glazing * 0.55);
-  const distance = Math.abs(within - 0.5);
-  if (distance >= openHalf) return 0;
-  // Ease the last 25% so the pier edge does not shimmer when the bay is only a few pixels wide.
-  return Math.min(1, (openHalf - distance) / (openHalf * 0.25));
+  ground: boolean,
+): WallColumn[] {
+  if (!style) return [{ t0: 0, t1: 1, open: false }];
+
+  // Shopfronts are wide and close-set; upper storeys are punched openings with real pier between
+  // them. Using one pitch for both is why ground floors have looked like the floors above them.
+  const pitch = ground ? Math.max(3.4, (style.bay_m ?? 4.0) * 1.15) : style.bay_m ?? 4.0;
+  const bays = Math.max(1, Math.min(28, Math.round(edgeLength / pitch)));
+  if (bays < 1) return [{ t0: 0, t1: 1, open: false }];
+
+  // Fraction of a bay that is glass. A shopfront is mostly glass; a Federal row house is mostly
+  // wall. Clamped so there is always a pier to see and always an opening to see through.
+  const openFraction = ground
+    ? Math.min(0.82, 0.62 + style.glazing * 0.5)
+    : Math.min(0.62, 0.26 + style.glazing * 0.9);
+
+  const columns: WallColumn[] = [];
+  const bay = 1 / bays;
+  const half = (bay * openFraction) / 2;
+  let cursor = 0;
+  for (let i = 0; i < bays; i++) {
+    const centre = bay * (i + 0.5);
+    const start = centre - half;
+    const end = centre + half;
+    if (start > cursor) columns.push({ t0: cursor, t1: start, open: false });
+    columns.push({ t0: start, t1: end, open: true });
+    cursor = end;
+  }
+  if (cursor < 1) columns.push({ t0: cursor, t1: 1, open: false });
+  return columns;
+}
+
+/**
+ * How an opening reads against its wall.
+ *
+ * Glass seen from outside in daylight is darker than masonry and *cooler*: it is mostly reflecting
+ * sky. Tinting toward that, rather than only darkening the wall colour, is the difference between a
+ * window and a brick-coloured hole -- and it costs nothing, because these are vertex colours on the
+ * one merged mesh that keeps the whole district inside a handful of draw calls.
+ *
+ * Returns a multiplier per channel, applied to the facade's own tint.
+ */
+export function openingTint(style: FacadeStyle | undefined, ground: boolean): [number, number, number] {
+  if (!style) return [1, 1, 1];
+  // Shopfronts are big single sheets and read darker; upper windows are smaller and catch more sky.
+  const darken = ground ? 0.42 : Math.max(0.34, 0.66 - style.glazing * 0.4);
+  // Cool the reflection. Blue is lifted rather than red pulled down, so a dark window still sits in
+  // the same family as the wall instead of turning into a grey rectangle pasted on.
+  return [darken * 0.92, darken * 1.0, darken * 1.28];
 }
 
 export function parseColor(hex: string, fallback: number): number {  const match = /#?([0-9a-f]{6})/i.exec(hex);

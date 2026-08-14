@@ -25,8 +25,9 @@ import type { GroundGrid } from './GroundGrid';
 import {
   buildPaving,
   buildProps,
-  facadeBandFactor,
-  facadeBayFactor,
+  facadeBands,
+  facadeColumns,
+  openingTint,
   parseColor,
   setSeason,
   type FacadeDocument,
@@ -787,51 +788,69 @@ export class DistrictScene {
         // Shade walls slightly by orientation so massing reads without textures.
         const shade = 0.78 + 0.22 * Math.abs(nx);
 
-        // Split each wall into horizontal courses so procedural window bands have somewhere to
-        // live. Two courses per storey, capped: enough to resolve a window band and the spandrel
-        // above it, cheap enough for a whole district. Without this a wall is two triangles and
-        // cannot show banding at all.
-        const courses = style ? Math.max(4, Math.min(28, Math.round(height / 1.75))) : 1;
+        // The facade is composed rather than sampled: explicit horizontal bands, and within the
+        // glazed ones, explicit spans of pier and opening. See facadeBands/facadeColumns for why
+        // sampling could not work -- it evaluated every bay at the bay's own centre and so returned
+        // the same value for all of them, which is why this district has only ever shown
+        // horizontal banding.
+        //
+        // Detail follows the tile's own LOD. Full articulation is worth its triangles where a
+        // walker can see a window reveal and nowhere else; at LOD 2 a building is a distant
+        // silhouette and the bands would be smaller than a pixel.
+        const detailed = level <= 1 && style !== undefined;
+        const bands = detailed
+          ? facadeBands(height, style)
+          : [{ z0: 0, z1: height, glazed: false, tone: 1 }];
+        const groundTop = detailed ? Math.min(4.6, Math.max(3.0, height * 0.34)) : 0;
+        const upperCols = detailed ? facadeColumns(len, style, false) : null;
+        const groundCols = detailed ? facadeColumns(len, style, true) : null;
+        const glassUpper = openingTint(style, false);
+        const glassGround = openingTint(style, true);
 
-        // ...and into vertical bays, which is what stops a facade reading as a striped box. Courses
-        // alone give continuous ribbons at every storey; real windows are punched openings with
-        // masonry piers between them, and the pier is the thing the eye uses to judge a building's
-        // width and scale. The pitch comes from the city's designation register where it has an
-        // opinion -- a row house's two-bay front and a daylight factory's wide industrial opening are
-        // genuinely different -- and falls back to a warehouse-ish 4 m where it does not.
-        const bayPitch = style?.bay_m ?? 4.0;
-        const bays = style ? Math.max(1, Math.min(24, Math.round(len / bayPitch))) : 1;
+        const pushQuad = (
+          t0: number,
+          t1: number,
+          z0: number,
+          z1: number,
+          tone: number,
+          glass?: [number, number, number],
+        ) => {
+          color.setHex(tint);
+          if (glass) {
+            color.setRGB(color.r * glass[0], color.g * glass[1], color.b * glass[2]);
+            color.multiplyScalar(shade);
+          } else {
+            color.multiplyScalar(shade * tone);
+          }
+          const px0 = ax + dx * t0;
+          const py0 = ay + dy * t0;
+          const px1 = ax + dx * t1;
+          const py1 = ay + dy * t1;
+          const quad = [
+            [px0, z0, py0], [px1, z0, py1], [px1, z1, py1],
+            [px0, z0, py0], [px1, z1, py1], [px0, z1, py0],
+          ];
+          for (const [vx, vy, vy2] of quad) {
+            positions.push(vx, vy, -vy2);
+            normals.push(nx, 0, nz);
+            colors.push(color.r, color.g, color.b);
+          }
+        };
 
-        for (let c = 0; c < courses; c++) {
-          const f0 = c / courses;
-          const f1 = (c + 1) / courses;
-          const z0 = baseZ + height * f0;
-          const z1 = baseZ + height * f1;
-
-          const band = facadeBandFactor((f0 + f1) / 2, style, height);
-
-          for (let s = 0; s < bays; s++) {
-            const g0 = s / bays;
-            const g1 = (s + 1) / bays;
-            const px0 = ax + dx * g0;
-            const py0 = ay + dy * g0;
-            const px1 = ax + dx * g1;
-            const py1 = ay + dy * g1;
-
-            // Only the middle of a bay is glazed; the edges are the pier between openings. When the
-            // course is not a window course this is 1 and the whole bay renders as plain wall.
-            const pier = bays > 1 ? facadeBayFactor((g0 + g1) / 2, bays, style) : 1;
-            color.setHex(tint).multiplyScalar(shade * (band < 1 ? 1 - (1 - band) * pier : band));
-
-            const quad = [
-              [px0, z0, py0], [px1, z0, py1], [px1, z1, py1],
-              [px0, z0, py0], [px1, z1, py1], [px0, z1, py0],
-            ];
-            for (const [vx, vy, vy2] of quad) {
-              positions.push(vx, vy, -vy2);
-              normals.push(nx, 0, nz);
-              colors.push(color.r, color.g, color.b);
-            }
+        for (const bandSpec of bands) {
+          const z0 = baseZ + bandSpec.z0;
+          const z1 = baseZ + bandSpec.z1;
+          if (z1 - z0 < 0.02) continue;
+          if (!bandSpec.glazed) {
+            pushQuad(0, 1, z0, z1, bandSpec.tone);
+            continue;
+          }
+          const isGround = bandSpec.z1 <= groundTop + 0.01;
+          const cols = (isGround ? groundCols : upperCols) ?? [{ t0: 0, t1: 1, open: false }];
+          const glass = isGround ? glassGround : glassUpper;
+          for (const col of cols) {
+            if (col.t1 - col.t0 < 1e-4) continue;
+            pushQuad(col.t0, col.t1, z0, z1, bandSpec.tone, col.open ? glass : undefined);
           }
         }
       }
