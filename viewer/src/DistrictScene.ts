@@ -25,11 +25,14 @@ import type { GroundGrid } from './GroundGrid';
 import {
   buildPaving,
   buildProps,
+  buildContextBridges,
+  updateBridgeDetail,
   facadeBands,
   facadeColumns,
   openingTint,
   parseColor,
   setSeason,
+  type BridgeDocument,
   type FacadeDocument,
   type FacadeStyle,
   type PavingDocument,
@@ -212,6 +215,7 @@ export class DistrictScene {
   private facades: FacadeDocument | null = null;
   private propStats = { instances: 0, drawCalls: 0 };
   private horizonGroup: THREE.Group | null = null;
+  private contextBridges: THREE.Group | null = null;
   private water: WaterScene | null = null;
   private waterDoc: WaterDocument | null = null;
 
@@ -344,6 +348,21 @@ export class DistrictScene {
     }
     this.water = new WaterScene(doc, season);
     this.scene.add(this.water.group);
+    // Resolved per frame rather than captured: props are rebuilt on every season change, so a held
+    // reference would leave the reflection excluding a group that no longer exists and reflecting
+    // the one that replaced it.
+    this.water.surface.setExcluded(() =>
+      [this.propsGroup, this.pavingGroup].filter((g): g is THREE.Group => g !== null),
+    );
+    // A fresh surface has default lighting uniforms; hand it the rig that is actually in force, or
+    // the river keeps a noon glitter through an evening preset until the next lighting change.
+    if (this.lighting) {
+      this.water.surface.setLighting(
+        this.lighting.sunDirection,
+        this.lighting.sunColour,
+        this.lighting.daylight,
+      );
+    }
   }
 
   get vesselCount(): number {
@@ -1004,8 +1023,7 @@ export class DistrictScene {
   /** Eye height the shell is using, so ground picking can fall back to the right plane. */
   eyeHeightM = 1.7;
 
-  /** Where a registered asset ended up, so tour `look_at` can target it. */
-  resolveBuildingAnchor(localId: string): [number, number, number] | null {
+  /** Where a registered asset ended up, so tour `look_at` can target it. */  resolveBuildingAnchor(localId: string): [number, number, number] | null {
     const building = this.metadataById.get(localId);
     if (!building) return null;
     let cx = 0;
@@ -1235,6 +1253,9 @@ export class DistrictScene {
     this.bounce.color.setHex(rig.bounceColour);
     this.bounce.intensity = rig.bounceIntensity;
 
+    // The river's glitter follows the same sun, so evening water goes gold and dusk stops sparkling.
+    this.water?.surface.setLighting(rig.sunDirection, rig.sunColour, rig.daylight);
+
     this.renderer.toneMappingExposure = rig.exposure;
 
     // The sky is a gradient rather than a flat fill. A real sky is much paler at the horizon than
@@ -1262,6 +1283,14 @@ export class DistrictScene {
 
   render(): void {
     this.updateShadowFrustum();
+    if (this.contextBridges) {
+      const cam = this.camera.position;
+      updateBridgeDetail(this.contextBridges, cam.x, -cam.z);
+    }
+    // The reflection is a second view of the scene, so it has to be drawn before the frame that
+    // samples it -- and never from inside that frame, or the water would sample last frame's
+    // reflection of itself.
+    this.water?.surface.update(this.renderer, this.scene, this.camera, performance.now() / 1000);
     this.renderer.render(this.scene, this.camera);
   }
 
@@ -1322,6 +1351,26 @@ export class DistrictScene {
   /** Mark the shadow map stale: the sun moved, a tile arrived, or the props were rebuilt. */
   private invalidateShadows(): void {
     this.shadowDirty = true;
+  }
+
+  /**
+   * Brooklyn and Williamsburg as district context.
+   *
+   * Not the Manhattan Bridge, which has an owning module and arrives as that module's proxy. These
+   * two have no owner and are unavoidable from DUMBO, so the district carries them at grade C and
+   * says so. If either ever gets a module, this is deleted and the proxy takes over.
+   */
+  setBridges(doc: BridgeDocument): void {
+    if (this.contextBridges) {
+      this.scene.remove(this.contextBridges);
+      this.contextBridges.traverse((o) => {
+        const mesh = o as THREE.Mesh;
+        mesh.geometry?.dispose?.();
+      });
+    }
+    this.contextBridges = buildContextBridges(doc);
+    this.scene.add(this.contextBridges);
+    this.invalidateShadows();
   }
 
   /**

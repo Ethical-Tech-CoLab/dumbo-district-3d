@@ -8,6 +8,7 @@
 
 import * as THREE from 'three';
 import { Frame } from '@d3d/viewer-kernel';
+import { WaterSurface } from './WaterSurface';
 
 export interface HorizonBlock {
   /** Scene-space centre [x, y]. */
@@ -194,28 +195,15 @@ export class WaterScene {
   private vessels: Vessel[] = [];
   private surfaceZ: number;
   private waterMesh: THREE.Mesh | null = null;
+  /** The reflective surface, which owns its own render target and shader. */
+  readonly surface: WaterSurface;
 
   constructor(doc: WaterDocument, season: Season) {
     this.surfaceZ = doc.surface.elevation_m;
-    this.buildSurface();
+    this.surface = new WaterSurface(this.surfaceZ);
+    this.waterMesh = this.surface.mesh;
+    this.group.add(this.surface.mesh);
     this.buildVessels(doc, season);
-  }
-
-  private buildSurface(): void {
-    const geometry = new THREE.PlaneGeometry(6000, 6000, 1, 1);
-    const mesh = new THREE.Mesh(
-      geometry,
-      new THREE.MeshLambertMaterial({
-        color: 0x38566d,
-        transparent: true,
-        opacity: 0.94,
-      }),
-    );
-    mesh.rotation.x = -Math.PI / 2;
-    mesh.position.y = this.surfaceZ;
-    mesh.renderOrder = -1;
-    this.waterMesh = mesh;
-    this.group.add(mesh);
   }
 
   private buildVessels(doc: WaterDocument, season: Season): void {
@@ -329,6 +317,7 @@ export class WaterScene {
         (Array.isArray(node.material) ? node.material : [node.material]).forEach((m) => m.dispose());
       }
     });
+    this.surface.dispose();
     this.waterMesh = null;
     this.vessels = [];
   }

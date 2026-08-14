@@ -925,3 +925,228 @@ export function openingTint(style: FacadeStyle | undefined, ground: boolean): [n
 export function parseColor(hex: string, fallback: number): number {  const match = /#?([0-9a-f]{6})/i.exec(hex);
   return match ? parseInt(match[1], 16) : fallback;
 }
+
+// ---------------------------------------------------------------- context bridges
+
+export interface ContextBridge {
+  id: string;
+  name: string;
+  deck: [number, number, number][];
+  deck_width_m: number;
+  towers: { xy: [number, number]; height_m: number }[];
+  tower_form: string;
+  colours: { tower: string; cable: string; deck: string };
+  length_m: number;
+  main_span_m: number;
+  confidence: string;
+  notes: string;
+}
+
+export interface BridgeDocument {
+  bridges: ContextBridge[];
+  attribution?: string;
+}
+
+/**
+ * Detail tiers for a context bridge, by how far away the viewer is standing.
+ *
+ * The Williamsburg Bridge is 1.6 km from the district origin and the Brooklyn Bridge is 465 m, so
+ * one treatment cannot serve both: suspenders that read correctly from Fulton Ferry are a shimmering
+ * grey haze at a kilometre and cost far more than the silhouette they blur. The tiers are switched
+ * by visibility rather than rebuilt, so approaching one costs nothing.
+ */
+const BRIDGE_SUSPENDER_RANGE_M = 900;
+const BRIDGE_CABLE_RANGE_M = 3200;
+
+/**
+ * A suspension bridge as district context.
+ *
+ * Deliberately not a model of a bridge: a deck ribbon, two towers, the main cables and their
+ * suspenders, at measured positions and published dimensions. It exists because leaving these out
+ * does not make the view neutral, it makes it wrong -- the Brooklyn Bridge closes the view from
+ * Fulton Ferry and is half of why anyone stands there.
+ *
+ * The Manhattan Bridge is not built this way and must not be: it has an owning module, and this
+ * district shows whatever proxy that module publishes.
+ */
+export function buildContextBridges(doc: BridgeDocument): THREE.Group {
+  const root = new THREE.Group();
+  root.name = 'context_bridges';
+
+  for (const bridge of doc.bridges ?? []) {
+    if (!bridge.deck?.length) continue;
+    const group = new THREE.Group();
+    group.name = `context_bridge_${bridge.id}`;
+
+    const deckColour = parseColor(bridge.colours?.deck ?? '#6f7275', 0x6f7275);
+    const towerColour = parseColor(bridge.colours?.tower ?? '#8a8d90', 0x8a8d90);
+    const cableColour = parseColor(bridge.colours?.cable ?? '#9aa0a4', 0x9aa0a4);
+
+    // Deck: a ribbon of quads along the centreline, widened to the published deck width. Built as
+    // one merged geometry so a whole bridge is a single draw call.
+    const half = bridge.deck_width_m / 2;
+    const positions: number[] = [];
+    const normals: number[] = [];
+    for (let i = 0; i < bridge.deck.length - 1; i++) {
+      const [ax, ay, az] = bridge.deck[i];
+      const [bx, by, bz] = bridge.deck[i + 1];
+      const dx = bx - ax;
+      const dy = by - ay;
+      const len = Math.hypot(dx, dy) || 1;
+      const nx = (-dy / len) * half;
+      const ny = (dx / len) * half;
+      const quad: [number, number, number][] = [
+        [ax - nx, az, ay - ny], [ax + nx, az, ay + ny], [bx + nx, bz, by + ny],
+        [ax - nx, az, ay - ny], [bx + nx, bz, by + ny], [bx - nx, bz, by - ny],
+      ];
+      for (const [vx, vz, vy] of quad) {
+        positions.push(vx, vz, -vy);
+        normals.push(0, 1, 0);
+      }
+    }
+    const deckGeom = new THREE.BufferGeometry();
+    deckGeom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    deckGeom.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
+    deckGeom.computeBoundingSphere();
+    const deck = new THREE.Mesh(deckGeom, new THREE.MeshLambertMaterial({ color: deckColour, side: THREE.DoubleSide }));
+    deck.receiveShadow = true;
+    group.add(deck);
+
+    // Towers. Masonry towers are solid and battered; steel lattice towers are a pair of legs with
+    // bracing. The difference is the whole reason these two read as different bridges at distance.
+    const deckZAt = (x: number, y: number): number => {
+      let best = bridge.deck[0][2];
+      let bestD = Infinity;
+      for (const [dx2, dy2, dz] of bridge.deck) {
+        const d = (dx2 - x) ** 2 + (dy2 - y) ** 2;
+        if (d < bestD) { bestD = d; best = dz; }
+      }
+      return best;
+    };
+    for (const tower of bridge.towers ?? []) {
+      const [tx, ty] = tower.xy;
+      const baseZ = 0;
+      const topZ = tower.height_m;
+      const deckZ = deckZAt(tx, ty);
+      const width = bridge.deck_width_m * 0.92;
+
+      if (bridge.tower_form === 'masonry_arch') {
+        // Two piers with a gap between them: from a distance the twin arches read as that gap.
+        for (const sign of [-1, 1]) {
+          const pier = new THREE.Mesh(
+            new THREE.BoxGeometry(9, topZ - baseZ, width * 0.3),
+            new THREE.MeshLambertMaterial({ color: towerColour }),
+          );
+          pier.position.set(tx, (topZ + baseZ) / 2, -(ty + sign * width * 0.3));
+          pier.castShadow = true;
+          group.add(pier);
+        }
+        // Spandrel above the arches, which is where the masonry becomes solid.
+        const cap = new THREE.Mesh(
+          new THREE.BoxGeometry(9, topZ - deckZ - 24, width),
+          new THREE.MeshLambertMaterial({ color: towerColour }),
+        );
+        cap.position.set(tx, topZ - (topZ - deckZ - 24) / 2, -ty);
+        cap.castShadow = true;
+        group.add(cap);
+      } else {
+        for (const sign of [-1, 1]) {
+          const leg = new THREE.Mesh(
+            new THREE.BoxGeometry(6, topZ - baseZ, width * 0.16),
+            new THREE.MeshLambertMaterial({ color: towerColour }),
+          );
+          leg.position.set(tx, (topZ + baseZ) / 2, -(ty + sign * width * 0.42));
+          leg.castShadow = true;
+          group.add(leg);
+        }
+        // Two cross-braces, enough to say "lattice" at the distance this is seen from.
+        for (const f of [0.55, 0.85]) {
+          const brace = new THREE.Mesh(
+            new THREE.BoxGeometry(5, 3, width),
+            new THREE.MeshLambertMaterial({ color: towerColour }),
+          );
+          brace.position.set(tx, baseZ + (topZ - baseZ) * f, -ty);
+          group.add(brace);
+        }
+      }
+    }
+
+    // Main cables and suspenders, each in their own group so distance can switch them off.
+    const cables = new THREE.Group();
+    cables.name = 'cables';
+    const suspenders = new THREE.Group();
+    suspenders.name = 'suspenders';
+
+    if (bridge.towers?.length === 2) {
+      const [t0, t1] = bridge.towers;
+      const topZ = t0.height_m;
+      const spanX = t1.xy[0] - t0.xy[0];
+      const spanY = t1.xy[1] - t0.xy[1];
+      const midDeckZ = deckZAt((t0.xy[0] + t1.xy[0]) / 2, (t0.xy[1] + t1.xy[1]) / 2);
+      // Catenary approximated by a parabola between tower tops, sagging to just above mid-span.
+      const sagTo = midDeckZ + 6;
+      const steps = 28;
+      for (const side of [-1, 1]) {
+        const pts: THREE.Vector3[] = [];
+        const offX = (-spanY / (Math.hypot(spanX, spanY) || 1)) * half * side;
+        const offY = (spanX / (Math.hypot(spanX, spanY) || 1)) * half * side;
+        for (let i = 0; i <= steps; i++) {
+          const t = i / steps;
+          const x = t0.xy[0] + spanX * t + offX;
+          const y = t0.xy[1] + spanY * t + offY;
+          const z = topZ - (topZ - sagTo) * (1 - (2 * t - 1) ** 2);
+          pts.push(new THREE.Vector3(x, z, -y));
+        }
+        cables.add(
+          new THREE.Line(
+            new THREE.BufferGeometry().setFromPoints(pts),
+            new THREE.LineBasicMaterial({ color: cableColour }),
+          ),
+        );
+        // Suspenders drop from the cable to the deck.
+        const drops: THREE.Vector3[] = [];
+        for (let i = 2; i < steps - 1; i += 2) {
+          const t = i / steps;
+          const x = t0.xy[0] + spanX * t + offX;
+          const y = t0.xy[1] + spanY * t + offY;
+          const z = topZ - (topZ - sagTo) * (1 - (2 * t - 1) ** 2);
+          drops.push(new THREE.Vector3(x, z, -y));
+          drops.push(new THREE.Vector3(x, deckZAt(x - offX, y - offY), -y));
+        }
+        suspenders.add(
+          new THREE.LineSegments(
+            new THREE.BufferGeometry().setFromPoints(drops),
+            new THREE.LineBasicMaterial({ color: cableColour, transparent: true, opacity: 0.85 }),
+          ),
+        );
+      }
+    }
+    group.add(cables);
+    group.add(suspenders);
+
+    // Where the bridge is, for the distance test.
+    const mid = bridge.deck[Math.floor(bridge.deck.length / 2)];
+    group.userData = {
+      contextBridge: bridge.id,
+      centre: [mid[0], mid[1]],
+      name: bridge.name,
+      confidence: bridge.confidence,
+    };
+    root.add(group);
+  }
+
+  return root;
+}
+
+/** Switch bridge detail by how far the viewer is standing from each one. */
+export function updateBridgeDetail(root: THREE.Group, viewerX: number, viewerY: number): void {
+  for (const child of root.children) {
+    const centre = (child.userData?.centre as [number, number] | undefined) ?? null;
+    if (!centre) continue;
+    const distance = Math.hypot(centre[0] - viewerX, centre[1] - viewerY);
+    for (const part of (child as THREE.Group).children) {
+      if (part.name === 'suspenders') part.visible = distance < BRIDGE_SUSPENDER_RANGE_M;
+      else if (part.name === 'cables') part.visible = distance < BRIDGE_CABLE_RANGE_M;
+    }
+  }
+}

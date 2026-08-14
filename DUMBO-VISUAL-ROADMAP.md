@@ -334,3 +334,78 @@ an opinion.** `shadowDiagnostics()` exists for this -- it reports whether the re
 whether the light casts, how many meshes cast, and how many of them fall inside the shadow box, which
 is the complete list of ways a missing shadow can happen. The very first call to it showed
 `sunIntensity: 0` and the sun 199 m below the horizon: the default is `live sun`, and it was night.
+
+---
+
+## Water, bridges and the ground floor, 2026-08-14
+
+### Why Poseidon was read carefully and then not used
+
+`owenyuwono/poseidon` was suggested as a reference for the water. It is MIT licensed and genuinely
+good: a Tessendorf/Horvath FFT ocean, JONSWAP spectrum with TMA depth correction, three wave
+cascades at 250 m / 17 m / 5 m, Jacobian foam, and a half-vector subsurface approximation.
+
+Two findings ruled it out, and neither is a criticism of it:
+
+1. **It is WebGPU only, and says so.** The FFT runs as `renderer.compute()` dispatches -- 19 per
+   frame at N=256 -- and WebGL2 has no compute shaders. The project deliberately aborts if it
+   detects a WebGL2 fallback. This viewer is a WebGL2 `WebGLRenderer`.
+2. **It does not reflect anything.** Its water samples an *analytic sky colour* along the reflected
+   ray. No planar reflection, no SSR, no cubemap. That is the right call for open ocean with nothing
+   to reflect, and exactly wrong for a 500 m river with the Brooklyn Bridge over it -- which means
+   the one thing that was asked for is the one thing it does not do.
+
+It is also an open-ocean model: 810,000 vertices over a 400 m patch, with 250 m swell. The East
+River is a tidal strait seen from a promenade.
+
+So the water is written here: procedural ripple from four summed directional waves (no texture, so
+nothing to vendor and nothing to licence), a real planar reflection, Fresnel, and sun glitter that
+follows the same solar rig as everything else.
+
+### The reflection had to be paid for, and the bill was itemised
+
+A planar reflection is a second render of the scene. Measured:
+
+| | ms/frame |
+|---|---|
+| no reflection | 7.0 |
+| reflecting everything | 30.9 |
+| reflecting everything but props and paving | 13.0 |
+
+**Reflecting the whole scene cost 24 ms -- three and a half times the entire rest of the frame.**
+Almost all of it was street props: 26,000 instanced trees, railings, bollards and bins, none of
+which are visible in a river from any viewpoint in this district. Excluding props and paving takes
+the pass to **5.95 ms** and removes nothing a person would look for. Buildings, both context
+bridges, the Manhattan skyline and the sky all still reflect, because those are what the water is
+for.
+
+A wrong turn worth recording: the first suspicion was that toggling `renderer.shadowMap.enabled`
+around the reflection pass was recompiling every material, which is a real three.js trap. It was
+measured and it was not the cause here -- but the toggle was removed anyway, because the shadow map
+is not rebuilt for that pass in any case.
+
+### Brooklyn and Williamsburg are context, and say so
+
+The Manhattan Bridge has an owning module and arrives as that module's proxy; DUMBO-SCOPE.md is
+explicit that its towers and cables are not ours. Nobody owns the other two, and leaving them out
+does not make the view neutral -- the Brooklyn Bridge closes the view from Fulton Ferry and is half
+of why anyone stands there.
+
+So they are built like the Manhattan skyline: **grade C context from the mapped centreline**, with
+a conventional suspension form fitted to published dimensions. If either ever gets a module, this is
+deleted and the proxy takes over.
+
+Two measurement notes:
+
+- The longest OSM way for each bridge is the `man_made=bridge` **area**, which closes on itself.
+  Resampling around it produced a deck following the outline and towers 40 m apart instead of 486.
+  A centreline is now required to carry a road and not return to where it started.
+- Tower positions are measured where the data allows. OSM maps the Williamsburg main span as its own
+  way -- 488 m against a published 1,600 ft -- so its endpoints *are* the towers. Brooklyn has no
+  such way, but its longest roadway is 1,054 m against a published main span plus two side spans of
+  1,053 m, so that way is the suspended structure and the towers sit at the side-span offsets.
+  Both come out within a metre of the published main span.
+
+Detail follows distance: suspenders inside 900 m, cables inside 3.2 km, silhouette beyond. The
+Williamsburg Bridge is 1.9 km from the district origin and never draws its suspenders from anywhere
+in DUMBO.

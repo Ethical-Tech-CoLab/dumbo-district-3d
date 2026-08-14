@@ -301,6 +301,7 @@ export default function App() {
           ['district/props.json', (d: unknown) => scene.setProps(d as never)],
           ['district/horizon.json', (d: unknown) => scene.setHorizon(d as never)],
           ['district/water.json', (d: unknown) => scene.setWater(d as never)],
+          ['district/bridges.json', (d: unknown) => scene.setBridges(d as never)],
         ] as const) {
           try {
             const response = await fetch(file);

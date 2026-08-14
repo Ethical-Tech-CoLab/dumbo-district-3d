@@ -1,0 +1,8 @@
+{
+  "source_id": "DSRC-007",
+  "fetched_at": "2026-08-14T16:29:51+00:00",
+  "fetched_by": "dumbo-district-3d/scripts@1.0.0",
+  "bytes": 46261,
+  "sha256": "dd90fa7835df93e6bc5b3f90ce6d1cf9ba11fe9626c03dcb95d3b57d375d7f5f",
+  "note": "OpenStreetMap contributors, ODbL. Centrelines of the Brooklyn and Williamsburg Bridges, used to place district context geometry. Neither bridge has an owning module; if one appears, this is replaced by that module's proxy."
+}
