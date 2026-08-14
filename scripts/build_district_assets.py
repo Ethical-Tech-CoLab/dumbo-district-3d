@@ -1243,6 +1243,32 @@ def build_source_register(control: DistrictControl) -> dict:
                     "District exists to protect."
                 ),
             },
+            {
+                "source_id": "DSRC-020",
+                "title": "NYC DCP 3-D Building Model (Brooklyn CD2)",
+                "tier": "A",
+                "publisher": "NYC Department of City Planning, from DOITT's 2014 aerial survey",
+                "url": "https://www.nyc.gov/content/planning/pages/resources/datasets/nyc-3d-model",
+                "accessed": "2026-08-13",
+                "license": "NYC Open Data Terms of Use",
+                "attribution_required": True,
+                "attribution_text": (
+                    "Rooftop structures: NYC Department of City Planning 3-D Building Model"
+                ),
+                "native_crs": "EPSG:2263",
+                "vertical_datum": "NAVD88",
+                "units": "feet",
+                "grants_confidence": "B",
+                "verified": True,
+                "notes": (
+                    "Closes DOQ-012. The only open source carrying what stands on a DUMBO roof: "
+                    "DOITT's survey resolved roof structure, not just roof outline, so the model "
+                    "gives 15,322 roof polygons for 8,530 buildings. A polygon standing inside a "
+                    "lower one is a structure on that roof; 113 of them over the district. Graded "
+                    "B, not A: the survey is from 2014, each structure is reduced to its "
+                    "minimum-area rectangle, and what each one is was never surveyed."
+                ),
+            },
         ],
         "provenance": provenance(control),
     }

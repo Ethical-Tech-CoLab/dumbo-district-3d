@@ -26,9 +26,11 @@ data/photos/*.raw.json
 # Cached thumbnails, fetched only to measure colours from. Third-party images are never committed:
 # the corpus references them by URL and records their licence, it does not vendor them.
 data/photos/cache/
-# 92 MB Rhino .3dm, kept out of the tree: no standard-library parser can read it, so it is a dead
-# end retained only in the M4.1 notes.
-data/roofs/
+# The 672 MB Rhino .3dm and its zip. Untracked because they are large and re-fetchable (DSRC-020),
+# but rooftop-structures.json IS tracked: it is the 21 KB result of reading them, and it is what
+# lets the district build without anyone downloading the model again.
+data/roofs/*.3dm
+data/roofs/*.zip
 data/ingest.log
 
 # Another module's published artifacts, copied here only to co-serve them during development.

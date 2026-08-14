@@ -78,12 +78,24 @@ lightness spans 0.22–0.56, saturation tops out at 0.56, and no facade left the
 Observed facades are exempt: a colour measured from a photograph *of that building* is the strongest
 evidence there is, and spreading it towards a district average would be a downgrade.
 
-## 5. Roofs are empty
+## 5. Roofs are empty — **done 2026-08-13**
 
-`DOQ-012`. Roof *shape* is settled — 73 of 81 flat, measured — but DUMBO rooflines carry bulkheads,
-stair houses, lift overruns and timber water tanks, and from the Manhattan Bridge that clutter is the
-skyline. The NYC DCP LOD2 model has them and `rhino3dm` (MIT) is proven to read the format; the
-download page has moved and needs locating.
+`DOQ-012`, closed. Roof *shape* was already settled — 73 of 81 flat, measured — but DUMBO rooflines
+carry bulkheads, stair houses, lift overruns and timber water tanks, and from the Manhattan Bridge
+that clutter is the skyline. **103 of them** now stand on the roofs, each with a surveyed position,
+plan extent, orientation and height. Hiding them changes 1.1–2.7% of a frame, which is the right
+scale for a detail that is silhouette rather than bulk.
+
+The source is the NYC DCP 3-D Building Model (`DSRC-020`), whose download page had moved; it is
+found, and `scripts/extract_rooftop_structures.py` reduces the 672 MB Rhino file to a 21 KB committed
+artifact so the heavy file is needed once rather than at every build.
+
+**The lesson worth keeping is about datums.** The model's absolute heights and ours disagree by
+5–13 m — it is a 2014 survey, ours is the current footprint release — so anchoring to its Z put every
+bulkhead *inside* its building. What a survey is reliable about is the *difference* it measures
+against itself, so the rise comes from the model and the base from our own geometry. Then the base
+has to be the roof **deck**, which the viewer draws a parapet below the declared top (`DCTL-081`);
+using the declared top left all 103 floating by exactly 0.90 m. They now sit within ±1 cm.
 
 ## 6. Nothing moves except the ferries
 

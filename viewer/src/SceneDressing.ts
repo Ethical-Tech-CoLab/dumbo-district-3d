@@ -606,6 +606,16 @@ function proceduralPrototype(prototype: ScenePrototype): THREE.BufferGeometry[] 
       head.translate(0, sz - 0.35, 0);
       return [post, head];
     }
+    case 'rooftop_structure': {
+      // A unit box standing on its base, so the instance's per-axis scale is read directly as the
+      // structure's surveyed length, width and height. Deliberately plain: what these are -- stair
+      // bulkhead, lift overrun, water tank -- was not surveyed, so claiming a shape would be
+      // inventing evidence. A parapet-less box at the right size in the right place is the whole
+      // of what the model actually knows, and at the distance a roofline is read, it is enough.
+      const box = new THREE.BoxGeometry(1, 1, 1);
+      box.translate(0, 0.5, 0);
+      return [box];
+    }
     default: {
       const box = new THREE.BoxGeometry(sx, sz, sx);
       box.translate(0, sz / 2, 0);
@@ -716,6 +726,11 @@ export function buildProps(
       // both the schema's default and the safe one — a missing shadow is cheaper than a wrong one.
       mesh.castShadow = prototype.casts_shadow === true;
       mesh.receiveShadow = true;
+      // Which prototype drew this. Costs nothing and is the only way to tell one instanced mesh
+      // from another at runtime, which matters when checking whether a class of prop is actually
+      // reaching the screen.
+      mesh.userData.prototype_id = prototype.prototype_id;
+      mesh.userData.kind = prototype.kind;
 
       capped.forEach((instance, i) => {
         const [x, y] = instance.xy;
@@ -731,6 +746,13 @@ export function buildProps(
           ((instance.r ?? 0) * Math.PI) / 180,
         );
         scaleVec.set(scale, scale, scale);
+        // Per-axis scale wins where present. A uniform scale cannot describe a roof bulkhead, which
+        // is measured as a plan extent and a height, not as a multiple of anything. Note the axis
+        // swap: the contract's [x, y, z] is scene-frame (Z-up) and the geometry is render-frame.
+        if (instance.s3) {
+          const [ex, ey, ez] = instance.s3;
+          scaleVec.set(ex, ez, ey);
+        }
         matrix.compose(positionVec, quaternion, scaleVec);
         mesh.setMatrixAt(i, matrix);
       });

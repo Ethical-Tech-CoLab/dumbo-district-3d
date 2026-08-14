@@ -476,6 +476,44 @@ the surface as it stands today, after however many repaintings.
 
 ---
 
+### DSRC-020 - NYC DCP 3-D Building Model (Brooklyn CD2) - Tier A - grants B
+
+| | |
+|---|---|
+| Publisher | NYC Department of City Planning, from DOITT's 2014 aerial survey |
+| Accessed | 2026-08-13 |
+| License | NYC Open Data Terms of Use |
+| Attribution | **Required** - "Rooftop structures: NYC Department of City Planning 3-D Building Model" |
+| Native CRS | EPSG:2263, US survey feet, vertical NAVD88 |
+| Format | Rhino `.3dm`, read with `rhino3dm` (MIT) |
+| Verified | Yes - `NYC_3DModel_BK02.3dm`, sha256 `c22a7e7225425e01` |
+
+**Closes DOQ-012.** Roof *shape* was already settled by measurement (73 of 81 flat, DOQ-011), but a
+DUMBO roofline seen from the Manhattan Bridge is not its roof decks - it is the bulkheads, stair
+houses, lift overruns and timber water tanks standing on them. This is the only open source that has
+them, because DOITT's survey resolved roof *structure* rather than roof outline.
+
+The model carries no "this is a bulkhead" flag. What it carries is **15,322 roof polygons for 8,530
+buildings**, each planar and at its own height, and that is enough: a polygon whose centroid falls
+inside a *lower* polygon is standing on that lower roof. Two further conditions stop a taller
+neighbour being classified as its neighbour's chimney - the structure must cover less than half its
+host, and at least 80% of its vertices must lie inside it. Without them the first run produced a
+"rooftop structure" of 3,797 square metres.
+
+**113 structures** over the district, 1.3-18.1 m tall, median plan area 32 square metres. The tallest
+are small in plan - 6.6 by 6.1 m at 18 m - which is what a lift overrun or a tank on a frame looks
+like.
+
+Graded **B**, not A. The survey is authoritative and from 2014, but each structure is reduced to its
+minimum-area rectangle, and *what* each one is was never surveyed. The families the viewer labels
+(bulkhead, housing, tank, overrun) are inferred from proportion and are explicitly not a survey
+claim.
+
+The 672 MB model is deliberately untracked. `scripts/extract_rooftop_structures.py` reduces it to a
+21 KB artifact that is committed, so the heavy file is needed once rather than at every build.
+
+---
+
 ## 3. Definition sources
 
 `DEF-001` … `DEF-007` are project decisions, not external evidence: the frame anchor, the boundary,
@@ -534,3 +572,4 @@ data/terrain/hydrography.raw.json            + .source.json
 
 Re-run `python scripts/ingest_sources.py --all` to refresh. The sidecars are what make this register
 auditable rather than aspirational.
+

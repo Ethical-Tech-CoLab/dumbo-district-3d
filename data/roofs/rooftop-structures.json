@@ -1,0 +1,1383 @@
+{
+ "generated_at": "2026-08-14T02:22:08+00:00",
+ "generated_by": "dumbo-district-3d/scripts@1.0.0",
+ "source_refs": [
+  "DSRC-020"
+ ],
+ "source_basis": [
+  "official_dataset"
+ ],
+ "confidence": "B",
+ "notes": "Rooftop structures over DUMBO, extracted from the NYC DCP 3-D Building Model. Position, plan extent, orientation and height are measured from the model, which derives from DOITT's 2014 aerial survey. Graded B rather than A because the survey is from 2014 and because each structure is reduced to its minimum-area rectangle: a stair bulkhead is a box to within a few tens of centimetres, a water tank on a steel frame is not. What kind of structure each one is was not surveyed and is not claimed.",
+ "source_model": {
+  "path": "data/roofs/NYC_3DModel_BK02.3dm",
+  "sha256": "c22a7e7225425e01b5f50e5d68f6dc75b93a9d05c8a4ae566f1c1d40ec981493",
+  "bytes": 704392255
+ },
+ "criteria": {
+  "min_rise_m": 1.2,
+  "max_rise_m": 20.0,
+  "min_area_m2": 4.0,
+  "max_host_area_fraction": 0.5,
+  "min_vertices_inside_host": 0.8
+ },
+ "count": 113,
+ "structures": [
+  {
+   "xy": [
+    -506.48,
+    -130.21
+   ],
+   "roof_z_m": 36.5,
+   "height_m": 18.05,
+   "length_m": 6.56,
+   "width_m": 6.14,
+   "yaw_deg": -109.5,
+   "area_m2": 40.3
+  },
+  {
+   "xy": [
+    182.35,
+    -30.46
+   ],
+   "roof_z_m": 29.65,
+   "height_m": 15.65,
+   "length_m": 4.95,
+   "width_m": 2.73,
+   "yaw_deg": -92.6,
+   "area_m2": 13.5
+  },
+  {
+   "xy": [
+    -75.07,
+    60.19
+   ],
+   "roof_z_m": 21.5,
+   "height_m": 15.64,
+   "length_m": 8.7,
+   "width_m": 5.14,
+   "yaw_deg": 88.1,
+   "area_m2": 33.0
+  },
+  {
+   "xy": [
+    -208.56,
+    -21.55
+   ],
+   "roof_z_m": 14.63,
+   "height_m": 15.17,
+   "length_m": 6.51,
+   "width_m": 3.18,
+   "yaw_deg": -2.6,
+   "area_m2": 20.7
+  },
+  {
+   "xy": [
+    -15.92,
+    63.13
+   ],
+   "roof_z_m": 21.5,
+   "height_m": 15.11,
+   "length_m": 5.36,
+   "width_m": 2.17,
+   "yaw_deg": -91.9,
+   "area_m2": 10.8
+  },
+  {
+   "xy": [
+    -30.1,
+    64.08
+   ],
+   "roof_z_m": 21.5,
+   "height_m": 14.96,
+   "length_m": 5.58,
+   "width_m": 2.27,
+   "yaw_deg": 88.1,
+   "area_m2": 11.2
+  },
+  {
+   "xy": [
+    -166.25,
+    -32.54
+   ],
+   "roof_z_m": 14.63,
+   "height_m": 14.59,
+   "length_m": 24.03,
+   "width_m": 13.93,
+   "yaw_deg": 177.4,
+   "area_m2": 146.4
+  },
+  {
+   "xy": [
+    621.91,
+    -251.78
+   ],
+   "roof_z_m": 46.52,
+   "height_m": 14.1,
+   "length_m": 8.45,
+   "width_m": 7.97,
+   "yaw_deg": 174.9,
+   "area_m2": 47.2
+  },
+  {
+   "xy": [
+    403.96,
+    -244.97
+   ],
+   "roof_z_m": 50.23,
+   "height_m": 13.09,
+   "length_m": 8.47,
+   "width_m": 7.59,
+   "yaw_deg": 42.3,
+   "area_m2": 45.2
+  },
+  {
+   "xy": [
+    -198.88,
+    -31.85
+   ],
+   "roof_z_m": 14.63,
+   "height_m": 12.68,
+   "length_m": 8.96,
+   "width_m": 3.04,
+   "yaw_deg": -92.6,
+   "area_m2": 27.3
+  },
+  {
+   "xy": [
+    -198.8,
+    -27.57
+   ],
+   "roof_z_m": 14.63,
+   "height_m": 12.68,
+   "length_m": 26.53,
+   "width_m": 20.91,
+   "yaw_deg": 177.4,
+   "area_m2": 515.4
+  },
+  {
+   "xy": [
+    -196.89,
+    -23.31
+   ],
+   "roof_z_m": 14.63,
+   "height_m": 12.68,
+   "length_m": 5.63,
+   "width_m": 4.87,
+   "yaw_deg": 87.4,
+   "area_m2": 24.7
+  },
+  {
+   "xy": [
+    0.23,
+    -30.97
+   ],
+   "roof_z_m": 29.65,
+   "height_m": 12.64,
+   "length_m": 8.54,
+   "width_m": 6.64,
+   "yaw_deg": -92.6,
+   "area_m2": 56.7
+  },
+  {
+   "xy": [
+    -76.03,
+    57.44
+   ],
+   "roof_z_m": 21.5,
+   "height_m": 12.62,
+   "length_m": 14.24,
+   "width_m": 10.61,
+   "yaw_deg": 88.1,
+   "area_m2": 98.3
+  },
+  {
+   "xy": [
+    500.29,
+    -129.33
+   ],
+   "roof_z_m": 22.72,
+   "height_m": 12.0,
+   "length_m": 8.29,
+   "width_m": 5.19,
+   "yaw_deg": 177.3,
+   "area_m2": 35.6
+  },
+  {
+   "xy": [
+    -168.35,
+    -30.17
+   ],
+   "roof_z_m": 29.65,
+   "height_m": 10.93,
+   "length_m": 19.65,
+   "width_m": 9.38,
+   "yaw_deg": -2.6,
+   "area_m2": 140.6
+  },
+  {
+   "xy": [
+    138.19,
+    -291.74
+   ],
+   "roof_z_m": 63.06,
+   "height_m": 10.55,
+   "length_m": 6.45,
+   "width_m": 5.91,
+   "yaw_deg": -2.4,
+   "area_m2": 38.1
+  },
+  {
+   "xy": [
+    -15.64,
+    -454.26
+   ],
+   "roof_z_m": 28.54,
+   "height_m": 10.24,
+   "length_m": 24.11,
+   "width_m": 1.22,
+   "yaw_deg": -3.1,
+   "area_m2": 28.8
+  },
+  {
+   "xy": [
+    54.69,
+    -145.2
+   ],
+   "roof_z_m": 22.72,
+   "height_m": 10.18,
+   "length_m": 9.37,
+   "width_m": 1.43,
+   "yaw_deg": -2.6,
+   "area_m2": 13.4
+  },
+  {
+   "xy": [
+    -374.44,
+    -135.12
+   ],
+   "roof_z_m": 22.72,
+   "height_m": 9.92,
+   "length_m": 14.74,
+   "width_m": 9.86,
+   "yaw_deg": 160.5,
+   "area_m2": 145.3
+  },
+  {
+   "xy": [
+    92.66,
+    29.46
+   ],
+   "roof_z_m": 21.5,
+   "height_m": 9.53,
+   "length_m": 5.6,
+   "width_m": 3.52,
+   "yaw_deg": 112.8,
+   "area_m2": 17.8
+  },
+  {
+   "xy": [
+    -33.06,
+    -135.87
+   ],
+   "roof_z_m": 22.72,
+   "height_m": 9.37,
+   "length_m": 5.56,
+   "width_m": 2.66,
+   "yaw_deg": -92.6,
+   "area_m2": 14.8
+  },
+  {
+   "xy": [
+    -75.83,
+    41.65
+   ],
+   "roof_z_m": 21.82,
+   "height_m": 9.11,
+   "length_m": 5.49,
+   "width_m": 2.86,
+   "yaw_deg": 178.1,
+   "area_m2": 15.7
+  },
+  {
+   "xy": [
+    505.56,
+    -128.16
+   ],
+   "roof_z_m": 22.72,
+   "height_m": 8.91,
+   "length_m": 8.02,
+   "width_m": 7.4,
+   "yaw_deg": 87.3,
+   "area_m2": 50.5
+  },
+  {
+   "xy": [
+    394.02,
+    -27.04
+   ],
+   "roof_z_m": 56.65,
+   "height_m": 8.87,
+   "length_m": 7.1,
+   "width_m": 3.77,
+   "yaw_deg": -2.7,
+   "area_m2": 26.7
+  },
+  {
+   "xy": [
+    -39.58,
+    60.6
+   ],
+   "roof_z_m": 21.5,
+   "height_m": 8.73,
+   "length_m": 4.5,
+   "width_m": 3.75,
+   "yaw_deg": -1.9,
+   "area_m2": 16.9
+  },
+  {
+   "xy": [
+    188.19,
+    118.28
+   ],
+   "roof_z_m": 48.93,
+   "height_m": 8.41,
+   "length_m": 14.65,
+   "width_m": 4.64,
+   "yaw_deg": 87.4,
+   "area_m2": 58.4
+  },
+  {
+   "xy": [
+    -161.9,
+    -22.31
+   ],
+   "roof_z_m": 14.63,
+   "height_m": 8.4,
+   "length_m": 6.9,
+   "width_m": 5.06,
+   "yaw_deg": -92.6,
+   "area_m2": 34.9
+  },
+  {
+   "xy": [
+    -265.75,
+    -256.96
+   ],
+   "roof_z_m": 27.89,
+   "height_m": 7.61,
+   "length_m": 3.26,
+   "width_m": 3.15,
+   "yaw_deg": -20.5,
+   "area_m2": 10.3
+  },
+  {
+   "xy": [
+    164.41,
+    -92.02
+   ],
+   "roof_z_m": 106.5,
+   "height_m": 7.3,
+   "length_m": 8.42,
+   "width_m": 5.76,
+   "yaw_deg": -92.6,
+   "area_m2": 48.5
+  },
+  {
+   "xy": [
+    -170.32,
+    2.04
+   ],
+   "roof_z_m": 47.93,
+   "height_m": 6.92,
+   "length_m": 11.12,
+   "width_m": 6.68,
+   "yaw_deg": -92.6,
+   "area_m2": 74.3
+  },
+  {
+   "xy": [
+    2.07,
+    28.35
+   ],
+   "roof_z_m": 21.5,
+   "height_m": 6.69,
+   "length_m": 6.43,
+   "width_m": 3.3,
+   "yaw_deg": 177.6,
+   "area_m2": 10.6
+  },
+  {
+   "xy": [
+    146.48,
+    -385.83
+   ],
+   "roof_z_m": 127.05,
+   "height_m": 6.59,
+   "length_m": 5.12,
+   "width_m": 3.55,
+   "yaw_deg": -92.4,
+   "area_m2": 18.2
+  },
+  {
+   "xy": [
+    147.23,
+    -370.88
+   ],
+   "roof_z_m": 127.05,
+   "height_m": 6.59,
+   "length_m": 4.75,
+   "width_m": 3.28,
+   "yaw_deg": -92.4,
+   "area_m2": 15.6
+  },
+  {
+   "xy": [
+    -376.99,
+    -140.53
+   ],
+   "roof_z_m": 22.72,
+   "height_m": 6.29,
+   "length_m": 13.56,
+   "width_m": 2.05,
+   "yaw_deg": -19.5,
+   "area_m2": 27.8
+  },
+  {
+   "xy": [
+    -156.58,
+    -22.55
+   ],
+   "roof_z_m": 14.63,
+   "height_m": 6.27,
+   "length_m": 6.9,
+   "width_m": 5.59,
+   "yaw_deg": 87.4,
+   "area_m2": 38.5
+  },
+  {
+   "xy": [
+    679.78,
+    -325.39
+   ],
+   "roof_z_m": 42.92,
+   "height_m": 6.23,
+   "length_m": 8.45,
+   "width_m": 7.84,
+   "yaw_deg": 149.6,
+   "area_m2": 46.2
+  },
+  {
+   "xy": [
+    128.34,
+    -277.62
+   ],
+   "roof_z_m": 63.06,
+   "height_m": 5.73,
+   "length_m": 8.7,
+   "width_m": 6.04,
+   "yaw_deg": -2.4,
+   "area_m2": 52.6
+  },
+  {
+   "xy": [
+    413.93,
+    -95.55
+   ],
+   "roof_z_m": 34.9,
+   "height_m": 5.69,
+   "length_m": 6.39,
+   "width_m": 3.2,
+   "yaw_deg": -92.7,
+   "area_m2": 20.4
+  },
+  {
+   "xy": [
+    473.11,
+    -214.81
+   ],
+   "roof_z_m": 48.08,
+   "height_m": 5.65,
+   "length_m": 8.45,
+   "width_m": 7.78,
+   "yaw_deg": 154.2,
+   "area_m2": 46.0
+  },
+  {
+   "xy": [
+    548.96,
+    -319.08
+   ],
+   "roof_z_m": 45.39,
+   "height_m": 5.58,
+   "length_m": 8.48,
+   "width_m": 7.71,
+   "yaw_deg": 132.1,
+   "area_m2": 45.6
+  },
+  {
+   "xy": [
+    127.66,
+    -362.65
+   ],
+   "roof_z_m": 47.96,
+   "height_m": 5.54,
+   "length_m": 7.29,
+   "width_m": 7.12,
+   "yaw_deg": -2.4,
+   "area_m2": 51.8
+  },
+  {
+   "xy": [
+    126.16,
+    -394.02
+   ],
+   "roof_z_m": 47.96,
+   "height_m": 5.52,
+   "length_m": 7.34,
+   "width_m": 7.22,
+   "yaw_deg": 87.6,
+   "area_m2": 53.0
+  },
+  {
+   "xy": [
+    508.71,
+    32.13
+   ],
+   "roof_z_m": 16.4,
+   "height_m": 5.43,
+   "length_m": 7.76,
+   "width_m": 7.72,
+   "yaw_deg": 84.1,
+   "area_m2": 59.9
+  },
+  {
+   "xy": [
+    -196.87,
+    -304.11
+   ],
+   "roof_z_m": 93.58,
+   "height_m": 5.4,
+   "length_m": 11.96,
+   "width_m": 6.3,
+   "yaw_deg": -110.0,
+   "area_m2": 75.4
+  },
+  {
+   "xy": [
+    312.1,
+    -17.62
+   ],
+   "roof_z_m": 29.65,
+   "height_m": 5.39,
+   "length_m": 5.55,
+   "width_m": 3.06,
+   "yaw_deg": 87.3,
+   "area_m2": 17.0
+  },
+  {
+   "xy": [
+    553.14,
+    -218.53
+   ],
+   "roof_z_m": 47.53,
+   "height_m": 5.22,
+   "length_m": 8.22,
+   "width_m": 7.9,
+   "yaw_deg": -156.7,
+   "area_m2": 45.3
+  },
+  {
+   "xy": [
+    143.4,
+    123.59
+   ],
+   "roof_z_m": 53.16,
+   "height_m": 5.17,
+   "length_m": 10.3,
+   "width_m": 6.89,
+   "yaw_deg": 87.4,
+   "area_m2": 70.9
+  },
+  {
+   "xy": [
+    49.42,
+    -286.25
+   ],
+   "roof_z_m": 46.55,
+   "height_m": 5.1,
+   "length_m": 7.95,
+   "width_m": 3.99,
+   "yaw_deg": -2.4,
+   "area_m2": 31.7
+  },
+  {
+   "xy": [
+    144.54,
+    -378.35
+   ],
+   "roof_z_m": 127.05,
+   "height_m": 5.06,
+   "length_m": 19.9,
+   "width_m": 11.79,
+   "yaw_deg": -92.4,
+   "area_m2": 195.6
+  },
+  {
+   "xy": [
+    722.33,
+    -12.9
+   ],
+   "roof_z_m": 12.66,
+   "height_m": 5.05,
+   "length_m": 5.35,
+   "width_m": 2.59,
+   "yaw_deg": -94.2,
+   "area_m2": 13.8
+  },
+  {
+   "xy": [
+    298.05,
+    102.13
+   ],
+   "roof_z_m": 27.66,
+   "height_m": 5.01,
+   "length_m": 4.44,
+   "width_m": 3.08,
+   "yaw_deg": -92.7,
+   "area_m2": 13.7
+  },
+  {
+   "xy": [
+    129.9,
+    126.61
+   ],
+   "roof_z_m": 48.93,
+   "height_m": 4.87,
+   "length_m": 11.18,
+   "width_m": 4.12,
+   "yaw_deg": -92.6,
+   "area_m2": 46.1
+  },
+  {
+   "xy": [
+    0.23,
+    -30.97
+   ],
+   "roof_z_m": 42.29,
+   "height_m": 4.76,
+   "length_m": 8.54,
+   "width_m": 6.64,
+   "yaw_deg": -92.6,
+   "area_m2": 56.7
+  },
+  {
+   "xy": [
+    320.6,
+    -52.43
+   ],
+   "roof_z_m": 29.65,
+   "height_m": 4.72,
+   "length_m": 9.89,
+   "width_m": 8.08,
+   "yaw_deg": 87.3,
+   "area_m2": 79.9
+  },
+  {
+   "xy": [
+    -163.6,
+    3.59
+   ],
+   "roof_z_m": 47.93,
+   "height_m": 4.67,
+   "length_m": 9.31,
+   "width_m": 6.6,
+   "yaw_deg": -92.6,
+   "area_m2": 61.5
+  },
+  {
+   "xy": [
+    377.98,
+    -124.47
+   ],
+   "roof_z_m": 34.45,
+   "height_m": 4.56,
+   "length_m": 5.35,
+   "width_m": 3.4,
+   "yaw_deg": -2.7,
+   "area_m2": 18.2
+  },
+  {
+   "xy": [
+    -80.1,
+    -107.58
+   ],
+   "roof_z_m": 61.87,
+   "height_m": 4.47,
+   "length_m": 9.42,
+   "width_m": 5.24,
+   "yaw_deg": 87.5,
+   "area_m2": 49.3
+  },
+  {
+   "xy": [
+    115.95,
+    -362.32
+   ],
+   "roof_z_m": 47.96,
+   "height_m": 4.46,
+   "length_m": 7.06,
+   "width_m": 5.7,
+   "yaw_deg": 87.6,
+   "area_m2": 40.2
+  },
+  {
+   "xy": [
+    121.68,
+    -351.0
+   ],
+   "roof_z_m": 47.96,
+   "height_m": 4.35,
+   "length_m": 6.46,
+   "width_m": 4.5,
+   "yaw_deg": 177.6,
+   "area_m2": 29.1
+  },
+  {
+   "xy": [
+    143.4,
+    123.59
+   ],
+   "roof_z_m": 48.93,
+   "height_m": 4.23,
+   "length_m": 10.3,
+   "width_m": 6.89,
+   "yaw_deg": 87.4,
+   "area_m2": 70.9
+  },
+  {
+   "xy": [
+    163.66,
+    118.82
+   ],
+   "roof_z_m": 48.93,
+   "height_m": 4.23,
+   "length_m": 53.69,
+   "width_m": 43.0,
+   "yaw_deg": -2.6,
+   "area_m2": 1657.3
+  },
+  {
+   "xy": [
+    -297.04,
+    -413.7
+   ],
+   "roof_z_m": 56.1,
+   "height_m": 4.15,
+   "length_m": 13.07,
+   "width_m": 6.16,
+   "yaw_deg": 160.7,
+   "area_m2": 80.6
+  },
+  {
+   "xy": [
+    -297.04,
+    -413.7
+   ],
+   "roof_z_m": 52.04,
+   "height_m": 4.06,
+   "length_m": 13.07,
+   "width_m": 6.16,
+   "yaw_deg": 160.7,
+   "area_m2": 80.6
+  },
+  {
+   "xy": [
+    541.07,
+    -113.12
+   ],
+   "roof_z_m": 35.8,
+   "height_m": 4.05,
+   "length_m": 26.6,
+   "width_m": 6.77,
+   "yaw_deg": 87.5,
+   "area_m2": 115.8
+  },
+  {
+   "xy": [
+    276.1,
+    -7.12
+   ],
+   "roof_z_m": 25.48,
+   "height_m": 3.74,
+   "length_m": 11.62,
+   "width_m": 6.82,
+   "yaw_deg": 87.3,
+   "area_m2": 79.2
+  },
+  {
+   "xy": [
+    -507.48,
+    -113.66
+   ],
+   "roof_z_m": 39.52,
+   "height_m": 3.65,
+   "length_m": 12.18,
+   "width_m": 6.03,
+   "yaw_deg": 70.5,
+   "area_m2": 64.6
+  },
+  {
+   "xy": [
+    548.53,
+    -107.97
+   ],
+   "roof_z_m": 35.8,
+   "height_m": 3.5,
+   "length_m": 6.0,
+   "width_m": 4.43,
+   "yaw_deg": -92.5,
+   "area_m2": 26.6
+  },
+  {
+   "xy": [
+    139.54,
+    61.8
+   ],
+   "roof_z_m": 21.5,
+   "height_m": 3.47,
+   "length_m": 3.61,
+   "width_m": 3.16,
+   "yaw_deg": 177.4,
+   "area_m2": 11.4
+  },
+  {
+   "xy": [
+    548.04,
+    -120.15
+   ],
+   "roof_z_m": 35.8,
+   "height_m": 3.45,
+   "length_m": 5.93,
+   "width_m": 4.34,
+   "yaw_deg": 87.5,
+   "area_m2": 25.7
+  },
+  {
+   "xy": [
+    336.55,
+    -184.25
+   ],
+   "roof_z_m": 31.37,
+   "height_m": 3.38,
+   "length_m": 5.13,
+   "width_m": 4.37,
+   "yaw_deg": 87.6,
+   "area_m2": 20.3
+  },
+  {
+   "xy": [
+    97.05,
+    73.13
+   ],
+   "roof_z_m": 12.28,
+   "height_m": 3.34,
+   "length_m": 11.49,
+   "width_m": 10.95,
+   "yaw_deg": 87.5,
+   "area_m2": 96.1
+  },
+  {
+   "xy": [
+    411.03,
+    -39.43
+   ],
+   "roof_z_m": 38.12,
+   "height_m": 3.32,
+   "length_m": 6.68,
+   "width_m": 3.87,
+   "yaw_deg": -92.7,
+   "area_m2": 25.9
+  },
+  {
+   "xy": [
+    122.12,
+    -276.64
+   ],
+   "roof_z_m": 63.06,
+   "height_m": 3.24,
+   "length_m": 4.6,
+   "width_m": 3.81,
+   "yaw_deg": 87.6,
+   "area_m2": 17.5
+  },
+  {
+   "xy": [
+    84.75,
+    55.31
+   ],
+   "roof_z_m": 12.28,
+   "height_m": 3.21,
+   "length_m": 4.0,
+   "width_m": 3.9,
+   "yaw_deg": -92.5,
+   "area_m2": 15.6
+  },
+  {
+   "xy": [
+    -75.83,
+    41.65
+   ],
+   "roof_z_m": 30.93,
+   "height_m": 3.2,
+   "length_m": 5.49,
+   "width_m": 2.86,
+   "yaw_deg": 178.1,
+   "area_m2": 15.7
+  },
+  {
+   "xy": [
+    -11.12,
+    74.57
+   ],
+   "roof_z_m": 33.39,
+   "height_m": 3.14,
+   "length_m": 5.38,
+   "width_m": 2.27,
+   "yaw_deg": -1.9,
+   "area_m2": 10.0
+  },
+  {
+   "xy": [
+    728.12,
+    25.88
+   ],
+   "roof_z_m": 22.01,
+   "height_m": 3.11,
+   "length_m": 4.9,
+   "width_m": 1.8,
+   "yaw_deg": -2.7,
+   "area_m2": 8.8
+  },
+  {
+   "xy": [
+    310.24,
+    -16.11
+   ],
+   "roof_z_m": 29.65,
+   "height_m": 3.08,
+   "length_m": 8.39,
+   "width_m": 2.88,
+   "yaw_deg": -92.7,
+   "area_m2": 18.3
+  },
+  {
+   "xy": [
+    315.26,
+    -17.77
+   ],
+   "roof_z_m": 29.65,
+   "height_m": 3.08,
+   "length_m": 5.55,
+   "width_m": 3.27,
+   "yaw_deg": -92.7,
+   "area_m2": 18.1
+  },
+  {
+   "xy": [
+    -175.92,
+    2.62
+   ],
+   "roof_z_m": 47.93,
+   "height_m": 3.04,
+   "length_m": 8.61,
+   "width_m": 4.55,
+   "yaw_deg": -92.6,
+   "area_m2": 39.2
+  },
+  {
+   "xy": [
+    420.59,
+    -95.47
+   ],
+   "roof_z_m": 34.9,
+   "height_m": 3.0,
+   "length_m": 6.14,
+   "width_m": 5.52,
+   "yaw_deg": 177.3,
+   "area_m2": 33.9
+  },
+  {
+   "xy": [
+    154.47,
+    -2.03
+   ],
+   "roof_z_m": 28.62,
+   "height_m": 2.98,
+   "length_m": 10.02,
+   "width_m": 8.55,
+   "yaw_deg": 87.4,
+   "area_m2": 58.1
+  },
+  {
+   "xy": [
+    -181.83,
+    -28.33
+   ],
+   "roof_z_m": 14.63,
+   "height_m": 2.94,
+   "length_m": 20.91,
+   "width_m": 7.46,
+   "yaw_deg": -92.6,
+   "area_m2": 155.9
+  },
+  {
+   "xy": [
+    -193.52,
+    -32.05
+   ],
+   "roof_z_m": 27.31,
+   "height_m": 2.91,
+   "length_m": 5.31,
+   "width_m": 3.47,
+   "yaw_deg": 177.4,
+   "area_m2": 18.4
+  },
+  {
+   "xy": [
+    -381.85,
+    -19.71
+   ],
+   "roof_z_m": 14.63,
+   "height_m": 2.88,
+   "length_m": 24.04,
+   "width_m": 7.89,
+   "yaw_deg": -126.5,
+   "area_m2": 171.4
+  },
+  {
+   "xy": [
+    -33.06,
+    -135.87
+   ],
+   "roof_z_m": 32.09,
+   "height_m": 2.83,
+   "length_m": 5.56,
+   "width_m": 2.66,
+   "yaw_deg": -92.6,
+   "area_m2": 14.8
+  },
+  {
+   "xy": [
+    -196.89,
+    -23.31
+   ],
+   "roof_z_m": 27.31,
+   "height_m": 2.81,
+   "length_m": 5.63,
+   "width_m": 4.87,
+   "yaw_deg": 87.4,
+   "area_m2": 24.7
+  },
+  {
+   "xy": [
+    243.81,
+    -9.38
+   ],
+   "roof_z_m": 27.57,
+   "height_m": 2.81,
+   "length_m": 8.74,
+   "width_m": 4.62,
+   "yaw_deg": 87.3,
+   "area_m2": 40.4
+  },
+  {
+   "xy": [
+    385.24,
+    -124.46
+   ],
+   "roof_z_m": 34.45,
+   "height_m": 2.8,
+   "length_m": 7.23,
+   "width_m": 3.12,
+   "yaw_deg": 177.3,
+   "area_m2": 22.6
+  },
+  {
+   "xy": [
+    459.08,
+    -18.27
+   ],
+   "roof_z_m": 26.89,
+   "height_m": 2.78,
+   "length_m": 5.33,
+   "width_m": 2.76,
+   "yaw_deg": 177.3,
+   "area_m2": 14.7
+  },
+  {
+   "xy": [
+    205.49,
+    -11.78
+   ],
+   "roof_z_m": 27.57,
+   "height_m": 2.77,
+   "length_m": 4.7,
+   "width_m": 3.15,
+   "yaw_deg": -2.7,
+   "area_m2": 14.8
+  },
+  {
+   "xy": [
+    -119.2,
+    62.58
+   ],
+   "roof_z_m": 83.88,
+   "height_m": 2.75,
+   "length_m": 6.79,
+   "width_m": 5.66,
+   "yaw_deg": 178.1,
+   "area_m2": 38.4
+  },
+  {
+   "xy": [
+    383.09,
+    39.72
+   ],
+   "roof_z_m": 21.82,
+   "height_m": 2.73,
+   "length_m": 12.53,
+   "width_m": 4.13,
+   "yaw_deg": 87.3,
+   "area_m2": 51.7
+  },
+  {
+   "xy": [
+    37.41,
+    -227.02
+   ],
+   "roof_z_m": 53.7,
+   "height_m": 2.67,
+   "length_m": 7.64,
+   "width_m": 5.3,
+   "yaw_deg": 177.6,
+   "area_m2": 28.4
+  },
+  {
+   "xy": [
+    466.05,
+    -18.62
+   ],
+   "roof_z_m": 26.89,
+   "height_m": 2.66,
+   "length_m": 5.33,
+   "width_m": 2.58,
+   "yaw_deg": -2.7,
+   "area_m2": 13.8
+  },
+  {
+   "xy": [
+    554.21,
+    -160.46
+   ],
+   "roof_z_m": 32.68,
+   "height_m": 2.64,
+   "length_m": 7.51,
+   "width_m": 3.74,
+   "yaw_deg": -2.1,
+   "area_m2": 23.4
+  },
+  {
+   "xy": [
+    335.1,
+    -47.71
+   ],
+   "roof_z_m": 29.65,
+   "height_m": 2.59,
+   "length_m": 5.99,
+   "width_m": 3.43,
+   "yaw_deg": 177.3,
+   "area_m2": 20.6
+  },
+  {
+   "xy": [
+    -267.19,
+    -261.38
+   ],
+   "roof_z_m": 33.68,
+   "height_m": 2.54,
+   "length_m": 7.0,
+   "width_m": 2.98,
+   "yaw_deg": 159.5,
+   "area_m2": 17.8
+  },
+  {
+   "xy": [
+    239.03,
+    61.27
+   ],
+   "roof_z_m": 21.5,
+   "height_m": 2.46,
+   "length_m": 18.02,
+   "width_m": 5.07,
+   "yaw_deg": -92.7,
+   "area_m2": 91.4
+  },
+  {
+   "xy": [
+    -248.95,
+    -298.97
+   ],
+   "roof_z_m": 40.35,
+   "height_m": 2.35,
+   "length_m": 21.22,
+   "width_m": 11.84,
+   "yaw_deg": 69.5,
+   "area_m2": 216.2
+  },
+  {
+   "xy": [
+    -209.94,
+    8.55
+   ],
+   "roof_z_m": 21.25,
+   "height_m": 2.34,
+   "length_m": 5.54,
+   "width_m": 2.9,
+   "yaw_deg": 87.4,
+   "area_m2": 16.1
+  },
+  {
+   "xy": [
+    -219.62,
+    -227.73
+   ],
+   "roof_z_m": 28.13,
+   "height_m": 2.27,
+   "length_m": 5.46,
+   "width_m": 2.1,
+   "yaw_deg": -134.4,
+   "area_m2": 11.5
+  },
+  {
+   "xy": [
+    237.66,
+    31.47
+   ],
+   "roof_z_m": 21.5,
+   "height_m": 2.25,
+   "length_m": 18.29,
+   "width_m": 5.03,
+   "yaw_deg": -92.7,
+   "area_m2": 92.0
+  },
+  {
+   "xy": [
+    344.82,
+    65.6
+   ],
+   "roof_z_m": 26.75,
+   "height_m": 2.24,
+   "length_m": 5.13,
+   "width_m": 2.69,
+   "yaw_deg": -2.7,
+   "area_m2": 13.8
+  },
+  {
+   "xy": [
+    462.39,
+    -157.75
+   ],
+   "roof_z_m": 33.22,
+   "height_m": 2.22,
+   "length_m": 3.32,
+   "width_m": 2.86,
+   "yaw_deg": -1.1,
+   "area_m2": 9.5
+  },
+  {
+   "xy": [
+    228.89,
+    61.84
+   ],
+   "roof_z_m": 21.5,
+   "height_m": 2.15,
+   "length_m": 5.2,
+   "width_m": 3.31,
+   "yaw_deg": 177.3,
+   "area_m2": 17.2
+  },
+  {
+   "xy": [
+    138.15,
+    -11.81
+   ],
+   "roof_z_m": 28.62,
+   "height_m": 2.06,
+   "length_m": 3.55,
+   "width_m": 3.17,
+   "yaw_deg": 87.4,
+   "area_m2": 11.3
+  },
+  {
+   "xy": [
+    -357.68,
+    -28.38
+   ],
+   "roof_z_m": 12.13,
+   "height_m": 2.05,
+   "length_m": 4.54,
+   "width_m": 3.88,
+   "yaw_deg": -66.8,
+   "area_m2": 17.6
+  },
+  {
+   "xy": [
+    71.89,
+    127.78
+   ],
+   "roof_z_m": 14.42,
+   "height_m": 1.98,
+   "length_m": 21.32,
+   "width_m": 4.3,
+   "yaw_deg": 87.5,
+   "area_m2": 91.6
+  },
+  {
+   "xy": [
+    -198.88,
+    -31.85
+   ],
+   "roof_z_m": 29.65,
+   "height_m": 1.9,
+   "length_m": 8.96,
+   "width_m": 3.04,
+   "yaw_deg": -92.6,
+   "area_m2": 27.3
+  },
+  {
+   "xy": [
+    503.98,
+    -135.35
+   ],
+   "roof_z_m": 22.72,
+   "height_m": 1.32,
+   "length_m": 6.48,
+   "width_m": 2.94,
+   "yaw_deg": -92.7,
+   "area_m2": 19.1
+  },
+  {
+   "xy": [
+    -3.3,
+    -18.18
+   ],
+   "roof_z_m": 42.29,
+   "height_m": 1.26,
+   "length_m": 6.79,
+   "width_m": 5.46,
+   "yaw_deg": 177.4,
+   "area_m2": 37.1
+  }
+ ]
+}

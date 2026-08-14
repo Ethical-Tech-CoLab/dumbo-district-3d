@@ -137,6 +137,9 @@ SHADOW_CASTING_KINDS = {
     "lamp",
     "traffic_light",
     "kiosk",
+    # A rooftop structure's shadow is why a roof reads as a surface rather than a lid, and these are
+    # the tallest things standing on anything.
+    "rooftop_structure",
 }
 
 # Trunk diameter to canopy height. A forestry rule of thumb for street trees is roughly 0.55 m of
@@ -366,6 +369,10 @@ def build_props(control: DistrictControl, index: dict) -> dict:
     storefront_prototypes, storefront_instances = build_storefronts(control, index)
     prototypes.extend(storefront_prototypes)
     instances.extend(storefront_instances)
+
+    rooftop_prototypes, rooftop_instances = build_rooftop_structures(control, index)
+    prototypes.extend(rooftop_prototypes)
+    instances.extend(rooftop_instances)
 
     return {
         "contract_version": CONTRACT_VERSION,
@@ -668,12 +675,173 @@ def _as_float(value: object) -> float | None:
         return None
 
 
+# ------------------------------------------------------------- rooftop structures
 
-    try:
-        result = float(str(value))
-        return result if math.isfinite(result) else None
-    except (TypeError, ValueError):
-        return None
+ROOFTOP_SOURCE = DATA / "roofs" / "rooftop-structures.json"
+
+# The same foot the buildings are extruded with (DCTL-061), because these heights are compared
+# against those. Note this is *not* the constant the extraction script uses for EPSG:2263
+# coordinates, which are in US survey feet: same word, different definition, and mixing them would
+# put every structure a few millimetres out and every reader an hour out.
+FOOT_M = 0.3048
+
+# Rooftop clutter is weathered brick, painted block and tarred timber, and it is seen against the
+# sky at middle distance where hue matters much less than value. Four tints, chosen by size so a
+# roofline reads as several objects rather than one repeated: small bulkheads tend to be brick like
+# the building, big mechanical housings tend to be pale block, tank frames tend to be dark timber.
+ROOFTOP_TINT = {
+    "brick": "#6d5548",
+    "block": "#8c8880",
+    "timber": "#4a3b31",
+    "metal": "#6a6f73",
+}
+
+
+def build_rooftop_structures(control: DistrictControl, index: dict) -> tuple[list[dict], list[dict]]:
+    """Bulkheads, stair houses, lift overruns and water tanks, from the DCP 3-D model.
+
+    Closes DOQ-012. Roof *shape* was settled by measurement -- 73 of 81 flat -- but a DUMBO roofline
+    seen from the Manhattan Bridge is not its roof decks, it is the clutter standing on them. Ours
+    had none, so every warehouse ended in a clean horizontal line no real one has.
+
+    The extraction lives in `scripts/extract_rooftop_structures.py` because it needs a 672 MB Rhino
+    file; this reads the small artifact that produces. Each structure arrives already measured --
+    position, plan extent, orientation, height above its roof -- so the only work here is choosing a
+    tint and expressing the size as a per-axis scale on a unit box.
+
+    Graded B. Position and dimensions are survey; what each structure *is* was never recorded, so no
+    claim is made about that beyond drawing a box of the right size in the right place.
+    """
+    if not ROOFTOP_SOURCE.exists():
+        print("    no rooftop source; run scripts/extract_rooftop_structures.py")
+        return [], []
+
+    document = load(ROOFTOP_SOURCE)
+    structures = document.get("structures", [])
+    ring = control.boundary_ring
+    size = index["scheme"]["tile_size_m"]
+    ox, oy = index["scheme"]["origin_xy_m"]
+
+    # Our own roofs, so a structure stands on the building we actually draw.
+    #
+    # The DCP model's absolute heights and ours disagree by 5-13 m -- it is a 2014 survey and our
+    # extrusion is ground_elevation + height_roof from the current footprint release -- so trusting
+    # its Z put every bulkhead *inside* its building. What the model is reliable about is the
+    # *difference* between a structure and the roof under it, because that is one survey measured
+    # against itself. So the rise is taken from the model and the base from our own geometry.
+    #
+    # The base is the roof *deck*, which the viewer draws a parapet's height below the building's
+    # declared top (DCTL-081). Using the declared top instead left every structure floating by
+    # exactly 0.90 m. Where a building has no parapet the structure sinks by that much instead,
+    # which is the right way to be wrong: a box slightly buried in a roof is invisible, a box
+    # hovering above one is the first thing you see.
+    parapet_m = control.value_m("DCTL-081")
+    roofs: list[tuple[list[tuple[float, float]], float]] = []
+    grid: dict[tuple[int, int], list[int]] = {}
+    cell = 60.0
+    for record in load(DATA / "footprints" / "footprints.raw.json"):
+        ground_ft = _as_float(record.get("ground_elevation"))
+        roof_ft = _as_float(record.get("height_roof"))
+        if ground_ft is None or roof_ft is None:
+            continue
+        for polygon in _rings_of(record.get("the_geom")):
+            projected = [control.geodetic_to_enu(float(p[0]), float(p[1]))[:2] for p in polygon]
+            if len(projected) < 3:
+                continue
+            roofs.append((projected, (ground_ft + roof_ft) * FOOT_M - parapet_m))
+            xs = [p[0] for p in projected]
+            ys = [p[1] for p in projected]
+            idx = len(roofs) - 1
+            for gx in range(int(min(xs) // cell), int(max(xs) // cell) + 1):
+                for gy in range(int(min(ys) // cell), int(max(ys) // cell) + 1):
+                    grid.setdefault((gx, gy), []).append(idx)
+
+    instances: list[dict] = []
+    used: set[str] = set()
+    families: dict[str, int] = {}
+    orphaned = 0
+    for structure in structures:
+        x, y = structure["xy"]
+        lon, lat, _ = control.enu_to_geodetic(x, y, 0.0)
+        if not point_in_ring((lon, lat), ring):
+            continue
+
+        base_m = None
+        for idx in grid.get((int(x // cell), int(y // cell)), ()):
+            polygon, roof_m = roofs[idx]
+            if point_in_ring((x, y), polygon) and (base_m is None or roof_m > base_m):
+                base_m = roof_m
+        if base_m is None:
+            # No building of ours under it. Drawing it anyway would leave a box in mid-air.
+            orphaned += 1
+            continue
+
+        length = structure["length_m"]
+        width = structure["width_m"]
+        height = structure["height_m"]
+        area = structure["area_m2"]
+
+        # Family by proportion rather than by guess: something twice as tall as it is wide, on a
+        # small plan, is a tank frame or a lift overrun; something broad and low is a mechanical
+        # housing; the rest is a stair bulkhead in the building's own brick.
+        if height > max(length, width) * 1.4:
+            family = "timber" if area < 30 else "metal"
+        elif area > 200:
+            family = "block"
+        else:
+            family = "brick"
+        families[family] = families.get(family, 0) + 1
+        used.add(family)
+
+        instances.append(
+            {
+                "p": f"prop_rooftop_{family}",
+                "xy": [round(x, 2), round(y, 2)],
+                # Our roof, not the terrain and not the DCP model's. Omitting z would drop every one
+                # of these to the pavement, which is the whole reason an instance may state its own.
+                "z": round(base_m, 2),
+                "r": structure["yaw_deg"],
+                "s3": [length, width, height],
+                "tile": f"t_{int((x - ox) // size)}_{int((y - oy) // size)}",
+            }
+        )
+
+    prototypes = []
+    for family in sorted(used):
+        prototypes.append(
+            {
+                "prototype_id": f"prop_rooftop_{family}",
+                "kind": "rooftop_structure",
+                "label": {
+                    "brick": "Roof bulkhead",
+                    "block": "Rooftop mechanical housing",
+                    "timber": "Rooftop water tank",
+                    "metal": "Lift overrun",
+                }[family],
+                "format": "procedural",
+                # A unit box. Every instance carries its own measured size in s3, so authoring a
+                # nominal size here and scaling by a ratio would only add a rounding step.
+                "size_m": [1.0, 1.0, 1.0],
+                "billboard": False,
+                "casts_shadow": "rooftop_structure" in SHADOW_CASTING_KINDS,
+                "source_basis": ["official_dataset"],
+                "source_refs": ["DSRC-020"],
+                "confidence": "B",
+                "notes": (
+                    "Structure standing on a roof, measured from the NYC DCP 3-D Building Model, "
+                    "which derives from DOITT's 2014 aerial survey. Position, plan extent, "
+                    "orientation and height are survey values. Graded B rather than A because the "
+                    "survey is from 2014 and because the structure is reduced to its minimum-area "
+                    "rectangle. The label is inferred from proportion and is not a survey claim. "
+                    f"Tint {ROOFTOP_TINT[family]}."
+                ),
+            }
+        )
+
+    print(f"    {len(instances)} rooftop structures on {len(prototypes)} families {families}")
+    if orphaned:
+        print(f"    {orphaned} discarded: no building of ours underneath them")
+    return prototypes, instances
 
 
 # ------------------------------------------------------------------ paving
